@@ -1,10 +1,10 @@
-package rs.ac.uns.ftn.nistagram.campaign.service;
+package rs.ac.uns.ftn.nistagram.post;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SpringNistagramCampaignServiceApplicationTests {
+class SpringNistagramPostServiceApplicationTests {
 
     @Test
     void contextLoads() {

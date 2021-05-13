@@ -1,10 +1,10 @@
-package rs.ac.uns.ftn.nistagram.chat.service;
+package rs.ac.uns.ftn.nistagram.feed;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SpringNistagramChatServiceApplicationTests {
+class SpringNistagramFeedServiceApplicationTests {
 
     @Test
     void contextLoads() {

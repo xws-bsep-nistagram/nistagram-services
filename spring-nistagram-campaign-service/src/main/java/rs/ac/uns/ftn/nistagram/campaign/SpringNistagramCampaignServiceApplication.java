@@ -1,13 +1,13 @@
-package rs.ac.uns.ftn.nistagram.chat.service;
+package rs.ac.uns.ftn.nistagram.campaign;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringNistagramChatServiceApplication {
+public class SpringNistagramCampaignServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringNistagramChatServiceApplication.class, args);
+        SpringApplication.run(SpringNistagramCampaignServiceApplication.class, args);
     }
 
 }

@@ -1,13 +1,13 @@
-package rs.ac.uns.ftn.nistagram.media.service;
+package rs.ac.uns.ftn.nistagram.post;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringNistagramMediaServiceApplication {
+public class SpringNistagramPostServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringNistagramMediaServiceApplication.class, args);
+        SpringApplication.run(SpringNistagramPostServiceApplication.class, args);
     }
 
 }

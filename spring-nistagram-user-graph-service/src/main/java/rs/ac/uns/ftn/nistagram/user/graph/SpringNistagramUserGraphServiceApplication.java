@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.user.graph.service;
+package rs.ac.uns.ftn.nistagram.user.graph;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
