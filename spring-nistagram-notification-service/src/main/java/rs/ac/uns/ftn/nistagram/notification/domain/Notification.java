@@ -9,7 +9,7 @@ public class Notification {
     private String causerUsername;
     private String content;
     private NotificationType notificationType;
-    private String postId;
+    private Long postId;
     private String messageContent;
 
 }

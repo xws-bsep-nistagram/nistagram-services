@@ -3,23 +3,23 @@ package rs.ac.uns.ftn.nistagram.chat.domain;
 import java.time.Instant;
 
 public abstract class Message {
-    private User sender;
-    private User receiver;
+    private String sender;
+    private String receiver;
     private Instant timestamp;
 
-    public User getSender() {
+    public String getSender() {
         return sender;
     }
 
-    public void setSender(User sender) {
+    public void setSender(String sender) {
         this.sender = sender;
     }
 
-    public User getReceiver() {
+    public String getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(User receiver) {
+    public void setReceiver(String receiver) {
         this.receiver = receiver;
     }
 
