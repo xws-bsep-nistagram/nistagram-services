@@ -6,7 +6,5 @@ public class UserFeedEntry {
 
     private String username;
     private Instant createdAt;
-    private String postId;
-
 
 }
