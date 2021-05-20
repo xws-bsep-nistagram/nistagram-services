@@ -7,6 +7,5 @@ public class PrivacyData {
     private boolean profilePrivate;
     private boolean messagesFromNonFollowersAllowed;
     private boolean taggable;
-    private List<User> mutedUsers;
-    private List<User> blockedUsers;
+
 }

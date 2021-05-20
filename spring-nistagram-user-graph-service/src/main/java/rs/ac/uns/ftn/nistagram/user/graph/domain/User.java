@@ -8,5 +8,7 @@ public class User {
     private ProfileType profileType;
     private Set<FollowRelationship> following;
     private Set<PendingFollowRelationship> pendingFollows;
+    private Set<MutedRelationship> mutedUsers;
+    private Set<BlockedRelationship> blockedUsers;
 
 }
