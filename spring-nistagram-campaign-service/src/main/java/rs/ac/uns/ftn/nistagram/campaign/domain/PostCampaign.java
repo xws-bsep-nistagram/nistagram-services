@@ -2,8 +2,8 @@ package rs.ac.uns.ftn.nistagram.campaign.domain;
 
 import java.util.List;
 
-public class PostCampaign extends Campaign{
+public class PostCampaign extends Campaign {
 
-    private List<PostAdvertisement> postAdvertisements;
+    private List<PostAdvertisement> advertisements;
 
 }

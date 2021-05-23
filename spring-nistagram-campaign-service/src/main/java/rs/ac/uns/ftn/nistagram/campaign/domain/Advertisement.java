@@ -8,8 +8,8 @@ public class Advertisement {
     private Instant createdAt;
     private String caption;
     private String mediaUrl;
-    private String websiteLink;
-    private long numberOfRedirects;
+    private String websiteUrl;
+    private long redirectCount;
 
 
 }
