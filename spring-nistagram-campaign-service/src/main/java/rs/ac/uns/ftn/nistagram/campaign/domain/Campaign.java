@@ -2,18 +2,17 @@ package rs.ac.uns.ftn.nistagram.campaign.domain;
 
 import rs.ac.uns.ftn.nistagram.campaign.domain.enums.CampaignType;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 public class Campaign {
-
     private String placedBy;
-    private String name;
-    private CampaignType type;
-    private List<Instant> dailyExposureMoments;
-    private int timesShown;
-    private Instant createdAt;
-    private Instant startsAt;
-    private Instant endsAt;
-
+    private String campaingName;
+    private CampaignType campaignType;
+    private List<LocalTime> dailyExposureMoments;
+    private int timesExposured;
+    private LocalDateTime createdAt;
+    private LocalDateTime startsAt;
+    private LocalDateTime endsAt;
 }
