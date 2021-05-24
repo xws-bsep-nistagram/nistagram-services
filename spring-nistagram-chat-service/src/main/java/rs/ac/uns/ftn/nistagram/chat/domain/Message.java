@@ -1,11 +1,13 @@
 package rs.ac.uns.ftn.nistagram.chat.domain;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 public abstract class Message {
+
     private String sender;
     private String receiver;
-    private Instant timestamp;
+    private LocalDateTime timestamp;
 
     public String getSender() {
         return sender;
@@ -23,11 +25,11 @@ public abstract class Message {
         this.receiver = receiver;
     }
 
-    public Instant getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Instant timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 }
