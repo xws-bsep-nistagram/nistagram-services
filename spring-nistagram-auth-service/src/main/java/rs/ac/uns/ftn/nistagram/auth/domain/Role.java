@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.user.domain.user;
+package rs.ac.uns.ftn.nistagram.auth.domain;
 
 import java.util.ArrayList;
 import java.util.List;
