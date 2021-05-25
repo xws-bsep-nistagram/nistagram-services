@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class UserContent {
-    private String createdBy;
-    private LocalDateTime createdOn;
+    private String author;
+    private LocalDateTime time;
     private String caption;
     private Location location;
     private List<String> hashTags;

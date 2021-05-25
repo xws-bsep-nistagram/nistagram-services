@@ -1,16 +1,16 @@
 package rs.ac.uns.ftn.nistagram.user.domain.user.notification_preferences;
 
-import rs.ac.uns.ftn.nistagram.user.domain.user.notification_preferences.enums.ContentNotificationPreference;
-
 public class NotificationPreferences {
     private Following following;
     private Message message;
     private Content content;
 
     public static class Content {
-        private ContentNotificationPreference comment;
-        private ContentNotificationPreference likes;
-        private ContentNotificationPreference photosOfMe;
+        private Preference comment;
+        private Preference likes;
+        private Preference photosOfMe;
+
+        public enum Preference { OFF, PEOPLE_I_FOLLOW, EVERYONE }
     }
 
     public static class Following {

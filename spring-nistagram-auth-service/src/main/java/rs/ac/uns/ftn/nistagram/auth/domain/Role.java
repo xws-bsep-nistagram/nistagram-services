@@ -4,6 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Role {
-    private final List<Permission> allowedPermissions = new ArrayList<>();
     private String id;
+    private final List<Permission> allowedActions = new ArrayList<>();
 }
