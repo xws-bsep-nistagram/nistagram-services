@@ -15,6 +15,7 @@
     <description>Auth microservice</description>
     <properties>
         <java.version>11</java.version>
+        <java-jwt.version>3.15.0</java-jwt.version>
     </properties>
     <dependencies>
         <dependency>
@@ -60,6 +61,12 @@
             <artifactId>mysql-connector-java</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>${java-jwt.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
