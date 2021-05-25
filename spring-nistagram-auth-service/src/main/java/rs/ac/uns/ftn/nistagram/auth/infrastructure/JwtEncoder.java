@@ -5,10 +5,12 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Component;
 import rs.ac.uns.ftn.nistagram.auth.config.PropertyConfiguration;
 
 import java.io.IOException;
 
+@Component
 public class JwtEncoder {
 
     private static final String JWT_CLAIM = "user";
