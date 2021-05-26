@@ -45,6 +45,7 @@
     </dependencies>
 
     <build>
+        <finalName>spring-nistagram-user-graph-service</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

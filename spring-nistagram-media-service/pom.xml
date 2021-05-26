@@ -30,6 +30,7 @@
     </dependencies>
 
     <build>
+        <finalName>spring-nistagram-media-service</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
