@@ -1,0 +1,13 @@
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-post-service/src/main/java/rs/ac/uns/ftn/nistagram/post/domain/content/story/MediaStory.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-post-service/src/main/java/rs/ac/uns/ftn/nistagram/post/domain/content/post/PostCollection.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-post-service/src/main/java/rs/ac/uns/ftn/nistagram/post/SpringNistagramPostServiceApplication.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-post-service/src/main/java/rs/ac/uns/ftn/nistagram/post/domain/content/UserContent.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-post-service/src/main/java/rs/ac/uns/ftn/nistagram/post/domain/locale/Location.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-post-service/src/main/java/rs/ac/uns/ftn/nistagram/post/domain/content/Report.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-post-service/src/main/java/rs/ac/uns/ftn/nistagram/post/domain/content/story/Story.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-post-service/src/main/java/rs/ac/uns/ftn/nistagram/post/domain/content/story/StoryHighlights.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-post-service/src/main/java/rs/ac/uns/ftn/nistagram/post/domain/content/post/Post.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-post-service/src/main/java/rs/ac/uns/ftn/nistagram/post/domain/content/story/ShareStory.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-post-service/src/main/java/rs/ac/uns/ftn/nistagram/post/domain/content/post/SavedPosts.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-post-service/src/main/java/rs/ac/uns/ftn/nistagram/post/domain/content/UserPostInteractionHistory.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-post-service/src/main/java/rs/ac/uns/ftn/nistagram/post/domain/content/post/Comment.java

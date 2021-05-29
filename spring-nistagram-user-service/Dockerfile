@@ -9,5 +9,11 @@ RUN mvn package -DskipTests
 FROM azul/zulu-openjdk-alpine:11 AS appRuntime
 WORKDIR /app
 COPY --from=appBuild /usr/src/spring_nistagram_user_service/target/spring-nistagram-user-service.jar ./
-EXPOSE 8080
+EXPOSE ${USER_SERVICE_PORT}
+CMD java -jar spring-nistagram-user-service.jar
+
+FROM azul/zulu-openjdk-alpine:11 AS appDebug
+WORKDIR /app
+COPY  target/spring-nistagram-user-service.jar spring-nistagram-user-service.jar
+EXPOSE ${USER_SERVICE_PORT}
 CMD java -jar spring-nistagram-user-service.jar
