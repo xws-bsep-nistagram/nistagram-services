@@ -1,0 +1,9 @@
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-user-service/src/main/java/rs/ac/uns/ftn/nistagram/user/domain/user/User.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-user-service/src/main/java/rs/ac/uns/ftn/nistagram/user/domain/verification/VerificationStatus.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-user-service/src/main/java/rs/ac/uns/ftn/nistagram/user/domain/user/PrivacyData.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-user-service/src/main/java/rs/ac/uns/ftn/nistagram/user/SpringNistagramUserServiceApplication.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-user-service/src/main/java/rs/ac/uns/ftn/nistagram/user/domain/user/PersonalData.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-user-service/src/main/java/rs/ac/uns/ftn/nistagram/user/domain/verification/VerificationRequest.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-user-service/src/main/java/rs/ac/uns/ftn/nistagram/user/domain/user/Gender.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-user-service/src/main/java/rs/ac/uns/ftn/nistagram/user/domain/user/AdministrativeData.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-user-service/src/main/java/rs/ac/uns/ftn/nistagram/user/domain/user/notification_preferences/NotificationPreferences.java
