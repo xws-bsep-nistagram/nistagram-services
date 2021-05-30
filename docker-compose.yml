@@ -1,0 +1,189 @@
+version: '3'
+services:
+    zookeeper:
+        image: wurstmeister/zookeeper
+        container_name: zookeeper
+        ports:
+          - "${ZOOKEEPER_PORT}:2181"
+        networks: 
+            - backend
+        environment:
+            KAFKA_ADVERTISED_HOST_NAME: "${KAFKA_ADVERTISED_HOST_NAME}"
+    
+    kafka:
+        image: wurstmeister/kafka
+        container_name: kafka
+        ports:
+            - "${KAFKA_PORT}:9092"
+        networks: 
+            - backend
+        environment:
+            KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+            KAFKA_ADVERTISED_PORT: "${KAFKA_ADVERTISED_PORT}"
+            KAFKA_ZOOKEEPER_CONNECT: "${KAFKA_ZOOKEEPER_CONNECT}"
+        depends_on:
+            - zookeeper
+
+    neo4j-db:
+        image: neo4j:latest
+        container_name: neo4j-db
+        ports:
+            - "${NEO4J_DEFAULT_HTTP_PORT}:7474"
+            - "${NEO4J_DEFAULT_BOLT_PORT}:7687"
+        volumes:
+            - ${NEO4J_LOCAL_PATH}/data:/data
+            - ${NEO4J_LOCAL_PATH}/logs:/logs
+            - ${NEO4J_LOCAL_PATH}/import:/var/lib/neo4j/import
+            - ${NEO4J_LOCAL_PATH}/plugins:/plugins
+        environment:
+            NEO4J_AUTH: "${NEO4J_USERNAME}/${NEO4J_PASSWORD}"
+        networks:
+            - database
+    
+    mysql-db:
+        image: mysql:latest
+        container_name: mysql-db
+        restart: always
+        ports:
+            - "3300:3306"
+        networks: 
+            - database
+        environment: 
+            MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+            MYSQL_USER: "${MYSQL_USER}"
+            MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+        volumes: 
+            - ${MYSQL_LOCAL_PATH}/data:/var/lib/mysql
+            - ${MYSQL_LOCAL_PATH}/init:/tmp/database
+        command: mysqld --init-file="/tmp/database/init.sql"
+
+    gateway:
+        image: nginx:1.19.8-alpine
+        container_name: nginx
+        ports:
+            - "${NGINX_PORT}:8080"
+        depends_on:
+            - user-service
+            - user-graph-service
+            - auth-service
+            - post-service
+            - media-service
+        networks:
+            - backend
+        volumes:
+            - ./nginx-nistagram-api-gateway/nginx.conf:/etc/nginx/nginx.conf
+            - ./nginx-nistagram-api-gateway/api_gateway.conf:/etc/nginx/api_gateway.conf
+    
+    auth-service:
+        image: nistagram/auth-service
+        container_name: auth-service
+        build:
+            context: ./spring-nistagram-auth-service
+            dockerfile: Dockerfile
+            target: "${STAGE}"
+        ports:
+            - "${AUTH_SERVICE_PORT}:${AUTH_SERVICE_PORT}"
+        depends_on: 
+            - mysql-db
+        restart: on-failure
+        environment:
+            AUTH_SERVICE_PORT: "${AUTH_SERVICE_PORT}"
+            MYSQL_HOST: "${MYSQL_HOST}"
+            MYSQL_PORT: "${MYSQL_PORT}"
+            AUTH_DB_NAME: "${AUTH_DB_NAME}"
+            MYSQL_USER: "${MYSQL_USER}"
+            MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+        networks:
+            - backend
+            - database
+
+    media-service:
+        image: nistagram/media-service
+        container_name: media-service
+        build:
+            context: ./spring-nistagram-media-service
+            dockerfile: Dockerfile
+            target: "${STAGE}"
+        ports:
+            - "${MEDIA_SERVICE_PORT}:${MEDIA_SERVICE_PORT}"
+        restart: on-failure
+        environment:
+            MEDIA_SERVICE_PORT: "${MEDIA_SERVICE_PORT}"
+        networks:
+            - backend
+
+    post-service:
+        image: nistagram/post-service
+        container_name: post-service
+        build:
+            context: ./spring-nistagram-post-service
+            dockerfile: Dockerfile
+            target: "${STAGE}"
+        ports:
+            - "${POST_SERVICE_PORT}:${POST_SERVICE_PORT}"
+        depends_on:
+            - mysql-db
+        restart: on-failure
+        environment :
+            POST_SERVICE_PORT : "${POST_SERVICE_PORT}"
+            MYSQL_HOST : "${MYSQL_HOST}"
+            MYSQL_PORT : "${MYSQL_PORT}"
+            POST_DB_NAME : "${POST_DB_NAME}"
+            MYSQL_USER : "${MYSQL_USER}"
+            MYSQL_PASSWORD : "${MYSQL_PASSWORD}"
+        networks:
+            - backend
+            - database
+
+    user-service:
+        image: nistagram/user-service
+        container_name: user-service
+        build:
+            context: ./spring-nistagram-user-service
+            dockerfile: Dockerfile
+            target: "${STAGE}"
+        ports:
+            - "${USER_SERVICE_PORT}:${USER_SERVICE_PORT}"
+        depends_on :
+            - mysql-db
+        restart : on-failure
+        environment :
+            USER_SERVICE_PORT : "${USER_SERVICE_PORT}"
+            MYSQL_HOST : "${MYSQL_HOST}"
+            MYSQL_PORT : "${MYSQL_PORT}"
+            USER_DB_NAME : "${USER_DB_NAME}"
+            MYSQL_USER : "${MYSQL_USER}"
+            MYSQL_PASSWORD : "${MYSQL_PASSWORD}"
+        networks:
+            - backend
+            - database
+
+    user-graph-service:
+        image: nistagram/user-graph-service
+        container_name: user-graph-service
+        build:
+         context: ./spring-nistagram-user-graph-service
+         dockerfile: Dockerfile
+         target: "${STAGE}"
+        ports:
+         - "${USER_GRAPH_SERVICE_PORT}:${USER_GRAPH_SERVICE_PORT}"
+        depends_on :
+            - neo4j-db
+        restart : on-failure
+        environment :
+            USER_GRAPH_SERVICE_PORT : "${USER_GRAPH_SERVICE_PORT}"
+            NEO4J_HOST: "${NEO4J_HOST}"
+            NEO4J_DEFAULT_BOLT_PORT: "${NEO4J_DEFAULT_BOLT_PORT}"
+            NEO4J_USERNAME: "${NEO4J_USERNAME}"
+            NEO4J_PASSWORD: "${NEO4J_PASSWORD}"
+        networks:
+         - backend
+         - database
+
+networks:
+    backend:
+        name: backend
+        driver: bridge
+    database:
+        name: database
+        driver: bridge

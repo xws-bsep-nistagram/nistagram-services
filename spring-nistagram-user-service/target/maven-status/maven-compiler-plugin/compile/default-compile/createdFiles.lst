@@ -1,0 +1,14 @@
+rs/ac/uns/ftn/nistagram/user/domain/user/AdministrativeData.class
+rs/ac/uns/ftn/nistagram/user/domain/user/notification_preferences/NotificationPreferences$Content$Preference.class
+rs/ac/uns/ftn/nistagram/user/SpringNistagramUserServiceApplication.class
+rs/ac/uns/ftn/nistagram/user/domain/user/notification_preferences/NotificationPreferences.class
+rs/ac/uns/ftn/nistagram/user/controllers/TestController.class
+rs/ac/uns/ftn/nistagram/user/domain/user/User.class
+rs/ac/uns/ftn/nistagram/user/domain/verification/VerificationRequest.class
+rs/ac/uns/ftn/nistagram/user/domain/user/notification_preferences/NotificationPreferences$Content.class
+rs/ac/uns/ftn/nistagram/user/domain/user/notification_preferences/NotificationPreferences$Following.class
+rs/ac/uns/ftn/nistagram/user/domain/user/notification_preferences/NotificationPreferences$Message.class
+rs/ac/uns/ftn/nistagram/user/domain/user/Gender.class
+rs/ac/uns/ftn/nistagram/user/domain/user/PrivacyData.class
+rs/ac/uns/ftn/nistagram/user/domain/user/PersonalData.class
+rs/ac/uns/ftn/nistagram/user/domain/verification/VerificationStatus.class
