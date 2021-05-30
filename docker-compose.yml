@@ -54,8 +54,6 @@ services:
             MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
         volumes: 
             - ${MYSQL_LOCAL_PATH}/data:/var/lib/mysql
-            - ${MYSQL_LOCAL_PATH}/init:/tmp/database
-        command: mysqld --init-file="/tmp/database/init.sql"
 
     gateway:
         image: nginx:1.19.8-alpine
@@ -91,8 +89,8 @@ services:
             MYSQL_HOST: "${MYSQL_HOST}"
             MYSQL_PORT: "${MYSQL_PORT}"
             AUTH_DB_NAME: "${AUTH_DB_NAME}"
-            MYSQL_USER: "${MYSQL_USER}"
-            MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+            MYSQL_ROOT: "${MYSQL_ROOT}"
+            MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
         networks:
             - backend
             - database
@@ -129,8 +127,8 @@ services:
             MYSQL_HOST : "${MYSQL_HOST}"
             MYSQL_PORT : "${MYSQL_PORT}"
             POST_DB_NAME : "${POST_DB_NAME}"
-            MYSQL_USER : "${MYSQL_USER}"
-            MYSQL_PASSWORD : "${MYSQL_PASSWORD}"
+            MYSQL_ROOT : "${MYSQL_ROOT}"
+            MYSQL_ROOT_PASSWORD : "${MYSQL_ROOT_PASSWORD}"
         networks:
             - backend
             - database
@@ -152,8 +150,8 @@ services:
             MYSQL_HOST : "${MYSQL_HOST}"
             MYSQL_PORT : "${MYSQL_PORT}"
             USER_DB_NAME : "${USER_DB_NAME}"
-            MYSQL_USER : "${MYSQL_USER}"
-            MYSQL_PASSWORD : "${MYSQL_PASSWORD}"
+            MYSQL_ROOT : "${MYSQL_ROOT}"
+            MYSQL_ROOT_PASSWORD : "${MYSQL_ROOT_PASSWORD}"
         networks:
             - backend
             - database
