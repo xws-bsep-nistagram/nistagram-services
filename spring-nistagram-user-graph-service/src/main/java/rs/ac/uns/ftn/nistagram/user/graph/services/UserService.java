@@ -7,11 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
 import rs.ac.uns.ftn.nistagram.user.graph.exceptions.EntityAlreadyExistsException;
-import rs.ac.uns.ftn.nistagram.user.graph.exceptions.OperationNotPermittedException;
 import rs.ac.uns.ftn.nistagram.user.graph.repositories.UserRepository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @AllArgsConstructor
 @Slf4j

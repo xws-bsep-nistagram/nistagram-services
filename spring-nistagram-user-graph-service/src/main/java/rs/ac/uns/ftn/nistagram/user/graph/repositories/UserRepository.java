@@ -27,4 +27,13 @@ public interface UserRepository extends Neo4jRepository<User, String> {
     @Query("MATCH (n1:User{ username:$0 })-[r:FOLLOWS]->(n2:User{ username:$1 }) DELETE r")
     void unfollow(String subject, String target);
 
+    @Query("RETURN EXISTS ((:User{username:$0})-[:HAS_BLOCKED]->(:User))")
+    Boolean hasBlockedUsers(String username);
+
+    @Query("OPTIONAL MATCH (n:User{username:$0})-[:HAS_BLOCKED]->(f:User) Return f")
+    List<User> findBlockedUsers(String username);
+
+    @Query("MATCH (n1:User{ username:$0 })-[r:HAS_BLOCKED]->(n2:User{ username:$1 }) DELETE r")
+    void unblock(String subject, String target);
+
 }

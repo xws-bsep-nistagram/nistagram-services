@@ -11,7 +11,6 @@ import javax.validation.Valid;
 import java.util.stream.Collectors;
 
 @RestController
-@Slf4j
 @RequestMapping("api/user-graph/")
 public class UserFollowersController {
 
@@ -22,7 +21,6 @@ public class UserFollowersController {
         this.userFollowerService = userFollowerService;
         this.modelMapper = new ModelMapper();
     }
-
 
     @GetMapping("/{username}/followers")
     public ResponseEntity<?> findFollowers(@PathVariable String username) {
@@ -44,4 +42,5 @@ public class UserFollowersController {
         userFollowerService.unfollow(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
         return ResponseEntity.ok("Request successfully processed");
     }
+
 }

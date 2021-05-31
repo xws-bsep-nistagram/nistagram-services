@@ -19,6 +19,7 @@ public class UserFollowersService {
 
     private final UserRepository userRepository;
 
+    //TODO: dodaj endpoint koji vraca sve korisnike koje korisnik prati
     public List<User> findFollowers(String username) {
         userPresenceCheck(username);
 
@@ -55,21 +56,18 @@ public class UserFollowersService {
     }
     @Transactional
     public void unfollow(String followerUsername, String followingUsername) {
-
         log.info("Received a unfollow request from {} to {}",
                 followerUsername,
                 followingUsername);
 
         userPresenceCheck(followerUsername);
         userPresenceCheck(followingUsername);
-
         followingConstraintCheck(followerUsername, followingUsername);
 
         userRepository.unfollow(followerUsername,followingUsername);
         log.info("User {} is no longer following {}",
                 followerUsername,
                 followingUsername);
-
     }
 
     private void blockedConstraintCheck(String followerUsername, String followingUsername) {
