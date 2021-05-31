@@ -25,15 +25,6 @@ public class UserController {
         this.modelMapper = new ModelMapper();
     }
 
-    @GetMapping("/{username}/followers")
-    public ResponseEntity<?> findFollowers(@PathVariable String username) {
-        var users = userService.findFollowers(username)
-                .stream()
-                .map(e-> modelMapper.map(e,UserPayload.class))
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(users);
-    }
-
     @PostMapping
     public ResponseEntity<?> create(@RequestBody @Valid UserPayload userPayload){
         userService.create(modelMapper.map(userPayload, User.class));
@@ -41,16 +32,6 @@ public class UserController {
         return ResponseEntity.ok("User has been successfully created");
     }
 
-    @PostMapping("/followers")
-    public ResponseEntity<?> follow(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest){
-        userService.follow(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
-        return ResponseEntity.ok("Request successfully processed");
-    }
 
-    @DeleteMapping("/followers")
-    public ResponseEntity<?> unfollow(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest){
-        userService.unfollow(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
-        return ResponseEntity.ok("Request successfully processed");
-    }
 
 }
