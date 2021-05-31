@@ -38,35 +38,32 @@ public class User {
             addFollow(following);
     }
 
-    private void addFollow(User following) {
+    private void addFollow(User targetUser) {
         if (follows == null)
             follows = new HashSet<>();
 
-        follows.add(following);
+        follows.add(targetUser);
     }
 
-    private void addPendingFollow(User following) {
+    private void addPendingFollow(User targetUser) {
         if (pendingFollows == null)
             pendingFollows = new HashSet<>();
 
-        pendingFollows.add(following);
+        pendingFollows.add(targetUser);
     }
 
-    public void block(User blocking) {
+    public void addBlocked(User targetUser) {
         if(blockedUsers == null)
             blockedUsers = new HashSet<>();
 
-        addBlocked(blocking);
+        blockedUsers.add(targetUser);
     }
 
-    public void unblock(User blocking) {
-        blockedUsers.remove(blocking);
-    }
+    public void addMuted(User targetUser) {
+        if(mutedUsers == null)
+            mutedUsers = new HashSet<>();
 
-    private void addBlocked(User user){
-        if(blockedUsers == null)
-            blockedUsers = new HashSet<>();
-        blockedUsers.add(user);
+        mutedUsers.add(targetUser);
     }
 
     private Boolean hasFollows(){
@@ -76,4 +73,6 @@ public class User {
     private Boolean followsUser(User user){
         return follows.contains(user);
     }
+
+
 }
