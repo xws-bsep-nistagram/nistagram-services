@@ -30,6 +30,42 @@ public class UserFollowersController {
         return ResponseEntity.ok(users);
     }
 
+    @GetMapping("/{username}/following")
+    public ResponseEntity<?> findFollowing(@PathVariable String username){
+        var users = userFollowerService.findFollowing(username)
+                .stream()
+                .map(e-> modelMapper.map(e, UserPayload.class))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/{username}/followers/pending")
+    public ResponseEntity<?> findPendingFollowers(@PathVariable String username) {
+        var users = userFollowerService.findPendingFollowers(username)
+                .stream()
+                .map(e-> modelMapper.map(e, UserPayload.class))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(users);
+    }
+
+    @PostMapping("/followers/accept")
+    public ResponseEntity<?> acceptFollowRequest(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest) {
+        userFollowerService.acceptFollowRequest(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
+        return ResponseEntity.ok("Request successfully processed");
+    }
+
+    @DeleteMapping("/followers/pending")
+    public ResponseEntity<?> revokeFollowRequest(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest) {
+        userFollowerService.revokeFollowRequest(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
+        return ResponseEntity.ok("Request successfully processed");
+    }
+
+    @DeleteMapping("/followers/pending/decline")
+    public ResponseEntity<?> declineFollowRequest(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest) {
+        userFollowerService.declineFollowRequest(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
+        return ResponseEntity.ok("Request successfully processed");
+    }
+
     @PostMapping("/followers")
     public ResponseEntity<?> follow(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest){
         userFollowerService.follow(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());

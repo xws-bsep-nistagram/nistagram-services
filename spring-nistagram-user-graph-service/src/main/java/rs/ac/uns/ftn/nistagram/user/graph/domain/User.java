@@ -75,4 +75,7 @@ public class User {
     }
 
 
+    public Boolean hasPrivateProfile() {
+        return profileType.equals(ProfileType.PRIVATE);
+    }
 }

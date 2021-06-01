@@ -22,7 +22,7 @@ public class UserBlocksController {
         this.modelMapper = new ModelMapper();
     }
 
-    @GetMapping("/{username}/blocked-users")
+    @GetMapping("/{username}/blocked")
     public ResponseEntity<?> findBlockedUsers(@PathVariable String username) {
         var users = userBlocksService.findBlocked(username)
                 .stream()
@@ -31,13 +31,13 @@ public class UserBlocksController {
         return ResponseEntity.ok(users);
     }
 
-    @PostMapping("/blocked-users")
+    @PostMapping("/block")
     public ResponseEntity<?> block(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest){
         userBlocksService.block(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
         return ResponseEntity.ok("Request successfully processed");
     }
 
-    @DeleteMapping("/blocked-users")
+    @DeleteMapping("/block")
     public ResponseEntity<?> unblock(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest){
         userBlocksService.unblock(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
         return ResponseEntity.ok("Request successfully processed");

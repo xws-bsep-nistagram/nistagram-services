@@ -22,7 +22,7 @@ public class UserMutesController {
         this.modelMapper = new ModelMapper();
     }
 
-    @GetMapping("/{username}/muted-users")
+    @GetMapping("/{username}/muted")
     public ResponseEntity<?> findMutedUsers(@PathVariable String username) {
         var users = userMutesService.findMutedUsers(username)
                 .stream()
@@ -31,13 +31,13 @@ public class UserMutesController {
         return ResponseEntity.ok(users);
     }
 
-    @PostMapping("/muted-users")
+    @PostMapping("/mute")
     public ResponseEntity<?> mute(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest){
         userMutesService.mute(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
         return ResponseEntity.ok("Request successfully processed");
     }
 
-    @DeleteMapping("/muted-users")
+    @DeleteMapping("/mute")
     public ResponseEntity<?> unmute(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest){
         userMutesService.unmute(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
         return ResponseEntity.ok("Request successfully processed");

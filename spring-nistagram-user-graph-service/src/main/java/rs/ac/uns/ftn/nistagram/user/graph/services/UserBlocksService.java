@@ -1,26 +1,28 @@
 package rs.ac.uns.ftn.nistagram.user.graph.services;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
-import rs.ac.uns.ftn.nistagram.user.graph.exceptions.EntityAlreadyExistsException;
-import rs.ac.uns.ftn.nistagram.user.graph.exceptions.OperationNotPermittedException;
 import rs.ac.uns.ftn.nistagram.user.graph.repositories.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@AllArgsConstructor
 @Slf4j
 @Service
 public class UserBlocksService {
 
     private final UserRepository userRepository;
+    private final UserConstraintChecker constraintChecker;
+
+    public UserBlocksService(UserRepository userRepository, UserConstraintChecker constraintChecker) {
+        this.userRepository = userRepository;
+        this.constraintChecker = new UserConstraintChecker(userRepository);
+    }
 
     public List<User> findBlocked(String username){
-        userPresenceCheck(username);
+        constraintChecker.userPresenceCheck(username);
         if(!userRepository.hasBlockedUsers(username)){
             log.info("User {} has no blocked users", username);
             return new ArrayList<>();
@@ -38,10 +40,7 @@ public class UserBlocksService {
                 subject,
                 target);
 
-        userPresenceCheck(subject);
-        userPresenceCheck(target);
-        alreadyBlockedCheck(subject, target);
-
+        constraintChecker.blockRequestCheck(subject, target);
         blockUser(subject, target);
 
         log.info("User {} has blocked {}",
@@ -55,41 +54,12 @@ public class UserBlocksService {
                 subject,
                 target);
 
-        userPresenceCheck(subject);
-        userPresenceCheck(target);
-        blockedConstraintCheck(subject, target);
-
+        constraintChecker.unblockRequestCheck(subject, target);
         userRepository.unblock(subject,target);
 
         log.info("User {} has unblocked {}",
                 subject,
                 target);
-    }
-
-    private void userPresenceCheck(String username){
-        if(!userRepository.existsByUsername(username)){
-            var message = String.format("User %s doesn't exist", username);
-            log.warn(message);
-            throw new EntityAlreadyExistsException(message);
-        }
-    }
-    private void alreadyBlockedCheck(String subject, String target) {
-        if(userRepository.hasBlocked(subject, target)) {
-            var message = String.format("User %s has already blocked user %s",
-                    subject,
-                    target);
-            log.warn(message);
-            throw new OperationNotPermittedException(message);
-        }
-    }
-    private void blockedConstraintCheck(String subject, String target) {
-        if(!userRepository.hasBlocked(subject, target)) {
-            var message = String.format("User %s hasn't blocked user %s",
-                    subject,
-                    target);
-            log.warn(message);
-            throw new OperationNotPermittedException(message);
-        }
     }
 
     private void blockUser(String subject, String target) {
@@ -98,11 +68,7 @@ public class UserBlocksService {
         removeFollowRequestIfPresent(subject, target);
         removeFollowRequestIfPresent(target, subject);
 
-        var subjectUser = userRepository.findById(subject).get();
-        var targetUser = userRepository.findById(target).get();
-
-        subjectUser.addBlocked(targetUser);
-        userRepository.save(subjectUser);
+        userRepository.block(subject, target);
     }
 
     private void removeFollowRequestIfPresent(String subject, String target) {
