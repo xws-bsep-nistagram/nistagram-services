@@ -9,4 +9,7 @@ public interface CredentialsRepository extends JpaRepository<Credentials, String
 
     Optional<Credentials> findByUsername(String username);
 
+    boolean existsByUsername(String username);
+
+    boolean existsByEmail(String email);
 }

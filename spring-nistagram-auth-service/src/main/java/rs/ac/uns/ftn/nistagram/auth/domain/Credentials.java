@@ -24,9 +24,17 @@ public class Credentials implements UserDetails {
     @Column(unique = true)
     private String email;
     private Boolean activated;
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable
     private List<Role> roles;
+
+    public Credentials(String username, String passwordHash, String email) {
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.email = email;
+        this.activated = false;
+        this.roles = List.of(new Role("ROLE_USER"));
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
