@@ -65,7 +65,6 @@ services:
             - user-graph-service
             - auth-service
             - post-service
-            - media-service
         networks:
             - backend
         volumes:
@@ -94,21 +93,6 @@ services:
         networks:
             - backend
             - database
-
-    media-service:
-        image: nistagram/media-service
-        container_name: media-service
-        build:
-            context: ./spring-nistagram-media-service
-            dockerfile: Dockerfile
-            target: "${STAGE}"
-        ports:
-            - "${MEDIA_SERVICE_PORT}:${MEDIA_SERVICE_PORT}"
-        restart: on-failure
-        environment:
-            MEDIA_SERVICE_PORT: "${MEDIA_SERVICE_PORT}"
-        networks:
-            - backend
 
     post-service:
         image: nistagram/post-service
