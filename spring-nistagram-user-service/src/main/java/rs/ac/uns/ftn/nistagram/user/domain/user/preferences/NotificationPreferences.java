@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.user.domain.user.notification_preferences;
+package rs.ac.uns.ftn.nistagram.user.domain.user.preferences;
 
 public class NotificationPreferences {
     private Following following;
