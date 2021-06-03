@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.post;
+package rs.ac.uns.ftn.nistagram.content;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

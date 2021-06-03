@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.post.domain.content;
+package rs.ac.uns.ftn.nistagram.content.domain.core;
 
 import java.time.LocalDateTime;
 

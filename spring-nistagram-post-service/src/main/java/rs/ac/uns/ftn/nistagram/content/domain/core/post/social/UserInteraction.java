@@ -1,8 +1,9 @@
-package rs.ac.uns.ftn.nistagram.post.domain.content.post.social;
+package rs.ac.uns.ftn.nistagram.content.domain.core.post.social;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
-import rs.ac.uns.ftn.nistagram.post.domain.content.post.Post;
+import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

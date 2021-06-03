@@ -1,13 +1,11 @@
-package rs.ac.uns.ftn.nistagram.post.domain.content;
+package rs.ac.uns.ftn.nistagram.content.domain.core;
 
 import lombok.Getter;
 import lombok.Setter;
-import rs.ac.uns.ftn.nistagram.post.domain.locale.Location;
+import rs.ac.uns.ftn.nistagram.content.domain.locale.Location;
 
 import javax.persistence.*;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
