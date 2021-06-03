@@ -1,6 +1,5 @@
 package rs.ac.uns.ftn.nistagram.content.domain.core.post;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import rs.ac.uns.ftn.nistagram.content.domain.core.UserContent;

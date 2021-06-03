@@ -23,12 +23,24 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody PostCreationDTO dto) {
-        postService.create(mapper.toDomain(dto));
+        postService.create(mapper.toDomain(dto));   // TODO Extract username from HTTP
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("{postId}")
     public ResponseEntity<?> getById(@PathVariable String postId) {
         return ResponseEntity.ok(mapper.toDto(postService.getById(Long.parseLong(postId))));
+    }
+
+    @GetMapping("like/{postId}")
+    public ResponseEntity<?> like(@PathVariable String postId) {
+        postService.like(Long.parseLong(postId), "nikola"); // TODO Extract username from HTTP
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("dislike/{postId}")
+    public ResponseEntity<?> dislike(@PathVariable String postId) {
+        postService.dislike(Long.parseLong(postId), "nikola"); // TODO Extract username from HTTP
+        return ResponseEntity.ok().build();
     }
 }
