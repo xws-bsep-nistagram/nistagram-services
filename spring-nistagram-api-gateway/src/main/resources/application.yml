@@ -1,0 +1,50 @@
+server:
+  port: ${API_GATEWAY_PORT}
+
+zuul :
+  ignoredServices: '*'
+  routes :
+    auth-service:
+      path : /api/auth/**
+      serviceId : auth-service
+      stripPrefix: false
+      sensitive-headers: Cookie,Set-Cookie
+    post-service:
+      path: /api/post/**
+      serviceId : post-service
+      stripPrefix: false
+      sensitive-headers : Cookie,Set-Cookie
+    user-service :
+      path : /api/user/**
+      serviceId : user-service
+      stripPrefix: false
+      sensitive-headers : Cookie,Set-Cookie
+    user-graph-service :
+      path : /api/user-graph/**
+      serviceId : user-graph-service
+      stripPrefix: false
+      sensitive-headers : Cookie,Set-Cookie
+
+ribbon:
+  eureka:
+    enabled: false
+
+auth-service:
+  ribbon:
+    listOfServers: auth-service:${AUTH_SERVICE_PORT}
+
+post-service:
+  ribbon:
+    listOfServers: post-service:${POST_SERVICE_PORT}
+
+user-service:
+  ribbon:
+    listOfServers: user-service:${USER_SERVICE_PORT}
+
+user-graph-service:
+  ribbon:
+    listOfServers: user-graph-service:${USER_GRAPH_SERVICE_PORT}
+
+
+nistagram.security.jwt.secret: ${JWT_SECRET}
+
