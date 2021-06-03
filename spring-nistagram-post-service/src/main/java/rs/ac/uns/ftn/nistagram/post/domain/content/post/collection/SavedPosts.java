@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.post.domain.content.post;
+package rs.ac.uns.ftn.nistagram.post.domain.content.post.collection;
 
 import java.util.List;
 
