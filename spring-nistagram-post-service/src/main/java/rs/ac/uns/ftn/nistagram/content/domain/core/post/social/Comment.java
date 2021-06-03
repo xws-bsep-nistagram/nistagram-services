@@ -1,7 +1,6 @@
 package rs.ac.uns.ftn.nistagram.content.domain.core.post.social;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 
 import javax.persistence.*;
@@ -11,6 +10,9 @@ import java.time.LocalDateTime;
 @Table(name = "comments")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

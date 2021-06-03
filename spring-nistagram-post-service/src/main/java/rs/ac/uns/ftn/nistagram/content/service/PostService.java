@@ -2,7 +2,9 @@ package rs.ac.uns.ftn.nistagram.content.service;
 
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
+import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.UserInteraction;
+import rs.ac.uns.ftn.nistagram.content.repository.CommentRepository;
 import rs.ac.uns.ftn.nistagram.content.repository.PostRepository;
 import rs.ac.uns.ftn.nistagram.content.repository.UserInteractionRepository;
 
@@ -14,10 +16,12 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserInteractionRepository interactionRepository;
+    private final CommentRepository commentRepository;
 
-    public PostService(PostRepository postRepository, UserInteractionRepository interactionRepository) {
+    public PostService(PostRepository postRepository, UserInteractionRepository interactionRepository, CommentRepository commentRepository) {
         this.postRepository = postRepository;
         this.interactionRepository = interactionRepository;
+        this.commentRepository = commentRepository;
     }
 
     public void create(Post post) {
@@ -29,10 +33,13 @@ public class PostService {
         return postRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 
+
+    // TODO Check whether the user follows the author of this post!
     public void like(long id, String username) {
         addInteraction(id, username, UserInteraction.Sentiment.LIKE);
     }
 
+    // TODO Check whether the user follows the author of this post!
     public void dislike(long id, String username) {
         addInteraction(id, username, UserInteraction.Sentiment.DISLIKE);
     }
@@ -56,5 +63,11 @@ public class PostService {
             interaction.setSentiment(sentiment);
             interactionRepository.save(interaction);
         }
+    }
+
+    public void comment(Comment comment, long postId) {
+        comment.setPost(postRepository.findById(postId).orElseThrow(RuntimeException::new));
+        comment.setTime(LocalDateTime.now());
+        commentRepository.save(comment);
     }
 }

@@ -2,9 +2,11 @@ package rs.ac.uns.ftn.nistagram.content.controller.mapper;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+import rs.ac.uns.ftn.nistagram.content.controller.dto.input.CommentCreationDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.PostCreationDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.output.PostOverviewDTO;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
+import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
 
 @Component
 public class DomainDTOMapper {
@@ -27,5 +29,12 @@ public class DomainDTOMapper {
         // Manual prevention of SO-exception due to circular references
         dto.getMediaUrls().forEach(url -> url.setPost(null));
         return dto;
+    }
+
+    public Comment toDomain(CommentCreationDTO dto) {
+        return Comment.builder()
+                .author(dto.getAuthor())
+                .text(dto.getText())
+            .build();
     }
 }

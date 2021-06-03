@@ -3,6 +3,7 @@ package rs.ac.uns.ftn.nistagram.content.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import rs.ac.uns.ftn.nistagram.content.controller.dto.input.CommentCreationDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.PostCreationDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.mapper.DomainDTOMapper;
 import rs.ac.uns.ftn.nistagram.content.service.PostService;
@@ -41,6 +42,13 @@ public class PostController {
     @GetMapping("dislike/{postId}")
     public ResponseEntity<?> dislike(@PathVariable String postId) {
         postService.dislike(Long.parseLong(postId), "nikola"); // TODO Extract username from HTTP
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("comment")
+    public ResponseEntity<?> comment(@RequestBody CommentCreationDTO dto) {
+        dto.setAuthor("nikola");    // TODO Extract username from HTTP
+        postService.comment(mapper.toDomain(dto), dto.getPostId());
         return ResponseEntity.ok().build();
     }
 }
