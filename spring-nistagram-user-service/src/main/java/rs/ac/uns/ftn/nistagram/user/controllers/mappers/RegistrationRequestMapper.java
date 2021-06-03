@@ -9,18 +9,15 @@ import rs.ac.uns.ftn.nistagram.user.domain.user.RegistrationRequest;
 public class RegistrationRequestMapper {
 
     public RegistrationRequest toDomain(RegistrationRequestDTO dto) {
-        PersonalData personalData = null;
-        if (dto.getPersonalData() != null) {
-            personalData = new PersonalData(
-                    dto.getPersonalData().getFullName(),
-                    dto.getEmail(),
-                    dto.getPersonalData().getPhoneNumber(),
-                    dto.getPersonalData().getGender(),
-                    dto.getPersonalData().getDateOfBirth(),
-                    dto.getPersonalData().getWebsite(),
-                    dto.getPersonalData().getBio()
-            );
-        }
+        PersonalData personalData = new PersonalData(
+                dto.getFullName(),
+                dto.getEmail(),
+                dto.getPhoneNumber(),
+                dto.getGender(),
+                dto.getDateOfBirth(),
+                dto.getWebsite(),
+                dto.getBio()
+        );
         return new RegistrationRequest(
                 dto.getUsername(),
                 dto.getPassword(),

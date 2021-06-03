@@ -4,7 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 
 // TODO: nekako namestiti da se ovo vuce iz env
-@FeignClient(name = "auth-service", url = "http://localhost:9000/api/auth")
+@FeignClient(name = "auth-service", url = "http://auth-service:9000/api/auth")
 public interface AuthClient {
 
     @PostMapping("register")

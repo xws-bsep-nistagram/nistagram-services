@@ -17,6 +17,7 @@ public class AuthExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     String handleBadCredentials(BadCredentialsException e) {
         log.info(e.getMessage());
+        log.trace(e.getMessage(), e);
         return e.getMessage();
     }
 
@@ -24,6 +25,7 @@ public class AuthExceptionHandler {
     @ExceptionHandler(DisabledException.class)
     String handleDisabled(DisabledException e) {
         log.info(e.getMessage());
+        log.trace(e.getMessage(), e);
         return "Account not activated!";
     }
 
@@ -31,6 +33,7 @@ public class AuthExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     String handleE(AuthenticationException e) {
         log.info(e.getMessage());
+        log.trace(e.getMessage(), e);
         return "Cannot authenticate user!";
     }
 

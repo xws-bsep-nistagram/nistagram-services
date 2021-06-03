@@ -10,6 +10,8 @@ import rs.ac.uns.ftn.nistagram.user.controllers.dtos.RegistrationRequestDTO;
 import rs.ac.uns.ftn.nistagram.user.controllers.mappers.RegistrationRequestMapper;
 import rs.ac.uns.ftn.nistagram.user.service.RegistrationService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("api/users")
 public class UserController {
@@ -23,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping("register")
-    public ResponseEntity<Void> register(@RequestBody RegistrationRequestDTO request) {
+    public ResponseEntity<Void> register(@Valid @RequestBody RegistrationRequestDTO request) {
         String jwt = registrationService.register(registrationRequestMapper.toDomain(request));
         return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, jwt).build();
     }

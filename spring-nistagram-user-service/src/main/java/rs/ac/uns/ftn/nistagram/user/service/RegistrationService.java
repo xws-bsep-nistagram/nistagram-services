@@ -30,31 +30,26 @@ public class RegistrationService {
                 request.getPassword(),
                 request.getEmail()
         );
-        String jwt = null;
-        try {
-            jwt = authClient.register(credentials);
-        } catch (FeignException e) {
-            handleStatus(
-                    e.status(),
-                    StandardCharsets.UTF_8.decode(e.responseBody().get()).toString());
-        }
 
         repository.save(createNewUser(request));
-        return jwt;
+
+        return sendRegistrationRequest(credentials);
+    }
+
+    private String sendRegistrationRequest(Credentials credentials) {
+        try {
+            return authClient.register(credentials);
+        } catch (FeignException e) {
+            if (e.status() == 403) {
+                String message = StandardCharsets.UTF_8.decode(e.responseBody().get()).toString();
+                throw new RegistrationException(message);
+            }
+            throw new RegistrationException("Unsuccessful registration!");
+        }
     }
 
     private User createNewUser(RegistrationRequest request) {
-        User newUser = new User(request.getUsername(), request.getPersonalData());
-        return newUser;
-    }
-
-    private void handleStatus(int status, String message) {
-        switch (status) {
-            case 403:
-                throw new RegistrationException(message);
-            default:
-                throw new RegistrationException("Unsuccessful registration!");
-        }
+        return new User(request.getUsername(), request.getPersonalData());
     }
 
 }
