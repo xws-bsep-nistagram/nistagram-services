@@ -56,21 +56,30 @@ services:
             - ${MYSQL_LOCAL_PATH}/data:/var/lib/mysql
 
     gateway:
-        image: nginx:1.19.8-alpine
-        container_name: nginx
+        image: nistagram/api-gateway
+        container_name: gateway
+        build:
+            context: ./spring-nistagram-api-gateway
+            dockerfile: Dockerfile
+            target: "${STAGE}"
         ports:
-            - "${NGINX_PORT}:8080"
+            - "${API_GATEWAY_PORT}:${API_GATEWAY_PORT}"
+        restart: on-failure
         depends_on:
             - user-service
             - user-graph-service
             - auth-service
             - post-service
             - media-service
+        environment:
+            API_GATEWAY_PORT: "${API_GATEWAY_PORT}"
+            AUTH_SERVICE_PORT: "${AUTH_SERVICE_PORT}"
+            POST_SERVICE_PORT: "${POST_SERVICE_PORT}"
+            USER_SERVICE_PORT: "${USER_SERVICE_PORT}"
+            USER_GRAPH_SERVICE_PORT: "${USER_GRAPH_SERVICE_PORT}"
+            JWT_SECRET: "${JWT_SECRET}"
         networks:
             - backend
-        volumes:
-            - ./nginx-nistagram-api-gateway/nginx.conf:/etc/nginx/nginx.conf
-            - ./nginx-nistagram-api-gateway/api_gateway.conf:/etc/nginx/api_gateway.conf
     
     auth-service:
         image: nistagram/auth-service
