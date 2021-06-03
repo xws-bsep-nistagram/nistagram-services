@@ -5,12 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 public class AuthExceptionHandler {
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
@@ -40,6 +40,5 @@ public class AuthExceptionHandler {
         log.error(e.getMessage(), e);
         return "Internal server error has occurred!";
     }
-
 
 }

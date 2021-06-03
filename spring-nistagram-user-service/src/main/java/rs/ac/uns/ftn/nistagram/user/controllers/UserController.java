@@ -1,10 +1,13 @@
 package rs.ac.uns.ftn.nistagram.user.controllers;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import rs.ac.uns.ftn.nistagram.user.domain.user.RegistrationRequest;
+import rs.ac.uns.ftn.nistagram.user.controllers.dtos.RegistrationRequestDTO;
+import rs.ac.uns.ftn.nistagram.user.controllers.mappers.RegistrationRequestMapper;
 import rs.ac.uns.ftn.nistagram.user.service.RegistrationService;
 
 @RestController
@@ -12,14 +15,17 @@ import rs.ac.uns.ftn.nistagram.user.service.RegistrationService;
 public class UserController {
 
     private final RegistrationService registrationService;
+    private final RegistrationRequestMapper registrationRequestMapper;
 
-    public UserController(RegistrationService registrationService) {
+    public UserController(RegistrationService registrationService, RegistrationRequestMapper registrationRequestMapper) {
         this.registrationService = registrationService;
+        this.registrationRequestMapper = registrationRequestMapper;
     }
 
     @PostMapping("register")
-    public void register(@RequestBody RegistrationRequest request) {
-        registrationService.register(request);
+    public ResponseEntity<Void> register(@RequestBody RegistrationRequestDTO request) {
+        String jwt = registrationService.register(registrationRequestMapper.toDomain(request));
+        return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, jwt).build();
     }
 
 }

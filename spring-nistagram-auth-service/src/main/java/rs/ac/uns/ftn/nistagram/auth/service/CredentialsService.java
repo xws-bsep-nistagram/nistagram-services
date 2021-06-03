@@ -1,14 +1,13 @@
 package rs.ac.uns.ftn.nistagram.auth.service;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.auth.domain.Credentials;
 import rs.ac.uns.ftn.nistagram.auth.domain.RegistrationRequest;
-import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.AuthException;
 import rs.ac.uns.ftn.nistagram.auth.repository.CredentialsRepository;
 
 @Service
@@ -40,9 +39,9 @@ public class CredentialsService implements UserDetailsService {
 
     private void validateRegistration(Credentials credentials) {
         if (repository.existsByUsername(credentials.getUsername())) {
-            throw new AuthException("Username already taken!");
+            throw new BadCredentialsException("Username already taken!");
         } else if (repository.existsByEmail(credentials.getEmail())) {
-            throw new AuthException("E-mail already taken!");
+            throw new BadCredentialsException("E-mail already taken!");
         }
     }
 
