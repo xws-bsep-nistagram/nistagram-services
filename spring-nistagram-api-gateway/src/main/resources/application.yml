@@ -1,5 +1,5 @@
 server:
-  port: ${API_GATEWAY_PORT}
+  port: ${API_GATEWAY_PORT:9090}
 
 zuul :
   ignoredServices: '*'
@@ -46,5 +46,5 @@ user-graph-service:
     listOfServers: user-graph-service:${USER_GRAPH_SERVICE_PORT}
 
 
-nistagram.security.jwt.secret: ${JWT_SECRET}
+nistagram.security.jwt.secret: ${JWT_SECRET:test_secret}
 

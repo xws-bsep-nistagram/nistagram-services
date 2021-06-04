@@ -1,51 +1,57 @@
 package rs.ac.uns.ftn.nistagram.api.gateway.filters;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
-import rs.ac.uns.ftn.nistagram.api.gateway.config.JwtAuthenticationConfig;
+import rs.ac.uns.ftn.nistagram.api.gateway.domain.AuthToken;
+import rs.ac.uns.ftn.nistagram.api.gateway.domain.AuthoritiesRequest;
+import rs.ac.uns.ftn.nistagram.api.gateway.http.AuthClient;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
+@Service
 public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtAuthenticationConfig config;
 
-    public JwtTokenAuthenticationFilter(JwtAuthenticationConfig config) {
-        this.config = config;
+    private final AuthClient authClient;
+
+    public JwtTokenAuthenticationFilter(AuthClient authClient) {
+        this.authClient = authClient;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse rsp, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String token = req.getHeader(config.getHeader());
-        if (token != null && token.startsWith(config.getPrefix() + " ")) {
-            token = token.replace(config.getPrefix() + " ", "");
-            try {
-                Claims claims = Jwts.parser()
-                        .setSigningKey(config.getSecret().getBytes())
-                        .parseClaimsJws(token)
-                        .getBody();
-                String username = claims.getSubject();
-                @SuppressWarnings("unchecked")
-                List<String> authorities = claims.get("authorities", List.class);
-                if (username != null) {
-                    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, null,
-                            authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
-                    SecurityContextHolder.getContext().setAuthentication(auth);
-                }
-            } catch (Exception ignore) {
-                SecurityContextHolder.clearContext();
-            }
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String jwt = getJwtFromHeader(authHeader);
+
+        if (jwt == null) {
+            filterChain.doFilter(request, response);
+            return;
         }
-        filterChain.doFilter(req, rsp);
+
+        AuthToken authToken = requestAuthToken(jwt);
+
+        SecurityContextHolder.getContext().setAuthentication(authToken.getAuthentication());
+
+        filterChain.doFilter(request, response);
     }
+
+    private AuthToken requestAuthToken(String jwt) {
+        return authClient.getAuthToken(new AuthoritiesRequest(jwt));
+    }
+
+    private String getJwtFromHeader(String authHeader) {
+        if (authHeader == null || authHeader.isEmpty() || !authHeader.startsWith("Bearer ")) {
+            return null;
+        }
+
+        String[] headerTokens = authHeader.split(" ");
+        return headerTokens.length == 2 ? headerTokens[1] : null;
+    }
+
 }
