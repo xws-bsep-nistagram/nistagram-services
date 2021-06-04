@@ -9,6 +9,7 @@ import rs.ac.uns.ftn.nistagram.content.controller.mapper.DomainDTOMapper;
 import rs.ac.uns.ftn.nistagram.content.service.PostService;
 
 import javax.validation.Valid;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("api/content/post")
@@ -50,5 +51,22 @@ public class PostController {
         dto.setAuthor("nikola");    // TODO Extract username from HTTP
         postService.comment(mapper.toDomain(dto), dto.getPostId());
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("save/{postId}")
+    public ResponseEntity<?> save(@PathVariable String postId) {
+        String username = "nikola"; // TODO Extract username from HTTP
+        postService.save(username, Long.parseLong(postId));
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("saved")
+    public ResponseEntity<?> getSaved() {
+        String username = "nikola"; // TODO Extract username from HTTP
+        return ResponseEntity.ok(
+                postService.getSaved(username)
+                .stream().map(savedPost -> mapper.toDto(savedPost.getPost()))
+                .collect(Collectors.toList())
+        );
     }
 }
