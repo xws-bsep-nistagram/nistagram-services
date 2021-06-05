@@ -60,6 +60,13 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("unsave/{postId}")
+    public ResponseEntity<?> unsave(@PathVariable String postId) {
+        String username = "nikola"; // TODO Extract username from HTTP
+        postService.unsave(username, Long.parseLong(postId));
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("saved")
     public ResponseEntity<?> getSaved() {
         String username = "nikola"; // TODO Extract username from HTTP
@@ -70,10 +77,10 @@ public class PostController {
         );
     }
 
-    @PostMapping("collection/{name}")
-    public ResponseEntity<?> createCollection(@PathVariable String name) {
+    @PostMapping("collection/{collectionName}")
+    public ResponseEntity<?> createCollection(@PathVariable String collectionName) {
         String username = "nikola"; // TODO Extract username from HTTP
-        postService.createCollection(username, name);
+        postService.createCollection(username, collectionName);
         return ResponseEntity.ok().build();
     }
 
@@ -84,13 +91,20 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("collection/{name}")
-    public ResponseEntity<?> getCollectionPosts(@PathVariable String name) {
+    @GetMapping("collection/{collectionName}")
+    public ResponseEntity<?> getCollectionPosts(@PathVariable String collectionName) {
         String username = "nikola"; // TODO Extract username from HTTP
         return ResponseEntity.ok(
-                postService.getCollectionPosts(username, name)
+                postService.getCollectionPosts(username, collectionName)
                         .stream().map(mapper::toDto)
                         .collect(Collectors.toList())
         );
+    }
+
+    @DeleteMapping("collection/{collectionName}")
+    public ResponseEntity<?> deleteCollection(@PathVariable String collectionName) {
+        String username = "nikola"; // TODO Extract username from HTTP
+        postService.deleteCollection(username, collectionName);
+        return ResponseEntity.ok().build();
     }
 }

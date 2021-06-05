@@ -19,20 +19,20 @@ public class PostService {
     private final UserInteractionRepository interactionRepository;
     private final CommentRepository commentRepository;
     private final SavedPostRepository savedPostRepository;
-    private final CustomPostCollectionRepository customCollectionRepository;
+    private final CustomPostCollectionRepository collectionRepository;
 
     public PostService(
             PostRepository postRepository,
             UserInteractionRepository interactionRepository,
             CommentRepository commentRepository,
             SavedPostRepository savedPostRepository,
-            CustomPostCollectionRepository customCollectionRepository
+            CustomPostCollectionRepository collectionRepository
     ) {
         this.postRepository = postRepository;
         this.interactionRepository = interactionRepository;
         this.commentRepository = commentRepository;
         this.savedPostRepository = savedPostRepository;
-        this.customCollectionRepository = customCollectionRepository;
+        this.collectionRepository = collectionRepository;
     }
 
     public void create(Post post) {
@@ -94,22 +94,29 @@ public class PostService {
         );
     }
 
+    public void unsave(String username, long postId) {
+        SavedPost savedPost = savedPostRepository.findByUserAndPost(username, postId).orElseThrow(RuntimeException::new);
+        savedPostRepository.delete(savedPost);
+
+        // TODO Cascade delete from all Collections where it is present
+    }
+
     public List<SavedPost> getSaved(String username) {
         return savedPostRepository.findByUser(username);
     }
 
     public void createCollection(String username, String collectionName) {
-        if (customCollectionRepository.getByUserAndName(username, collectionName).isPresent())
+        if (collectionRepository.getByUserAndName(username, collectionName).isPresent())
             throw new RuntimeException("Collection '" + collectionName + "' already exists.");
 
-        customCollectionRepository.save(
+        collectionRepository.save(
             CustomPostCollection.builder().name(collectionName).owner(username).build()
         );
     }
 
     public void addPostToCollection(String username, String collectionName, long postId) {
         CustomPostCollection customPostCollection =
-                customCollectionRepository.getByUserAndName(username, collectionName)
+                collectionRepository.getByUserAndName(username, collectionName)
                         .orElseThrow(RuntimeException::new);
 
         Post post = postRepository.findById(postId).orElseThrow(RuntimeException::new);
@@ -122,10 +129,15 @@ public class PostService {
         catch (RuntimeException ignored) {}
 
         customPostCollection.getPosts().add(post);
-        customCollectionRepository.save(customPostCollection);
+        collectionRepository.save(customPostCollection);
     }
 
     public List<Post> getCollectionPosts(String username, String name) {
-        return customCollectionRepository.getByUserAndName(username, name).orElseThrow(RuntimeException::new).getPosts();
+        return collectionRepository.getByUserAndName(username, name).orElseThrow(RuntimeException::new).getPosts();
+    }
+
+    public void deleteCollection(String username, String collectionName) {
+        CustomPostCollection collection = collectionRepository.getByUserAndName(username, collectionName).orElseThrow(RuntimeException::new);
+        collectionRepository.delete(collection);
     }
 }
