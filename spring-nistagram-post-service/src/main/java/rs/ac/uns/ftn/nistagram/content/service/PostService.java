@@ -106,10 +106,9 @@ public class PostService {
         savedPostRepository.delete(savedPost);
 
         // Fetch collection IDs from this user
-        List<CustomPostCollection> collections = collectionRepository.getByUser(username);
-        if (collections.isEmpty()) return;
+        List<Long> collectionIds = collectionRepository.getIdsByUser(username);
+        if (collectionIds.isEmpty()) return;
 
-        List<Long> collectionIds = collections.stream().map(CustomPostCollection::getId).collect(Collectors.toList());
         postInCollectionRepository.deletePostFromUserCollections(postId, collectionIds);
     }
 

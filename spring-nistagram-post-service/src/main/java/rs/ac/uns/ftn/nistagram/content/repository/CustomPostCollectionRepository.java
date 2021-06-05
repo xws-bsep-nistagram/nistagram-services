@@ -16,4 +16,7 @@ public interface CustomPostCollectionRepository extends JpaRepository<CustomPost
 
     @Query(value = "select c from CustomPostCollection c where c.owner = ?1")
     List<CustomPostCollection> getByUser(String username);
+
+    @Query(value = "select c.id from CustomPostCollection c where c.owner = ?1")
+    List<Long> getIdsByUser(String username);
 }
