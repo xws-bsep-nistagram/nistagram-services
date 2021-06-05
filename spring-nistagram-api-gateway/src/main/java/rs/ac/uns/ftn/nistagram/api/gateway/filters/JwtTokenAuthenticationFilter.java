@@ -2,6 +2,9 @@ package rs.ac.uns.ftn.nistagram.api.gateway.filters;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
+import org.springframework.security.web.session.SessionManagementFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 import rs.ac.uns.ftn.nistagram.api.gateway.domain.AuthToken;
@@ -27,17 +30,12 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        String jwt = getJwtFromHeader(authHeader);
+        final String jwt = getJwtFromHeader(authHeader);
 
-        if (jwt == null) {
-            filterChain.doFilter(request, response);
-            return;
+        if (jwt != null) {
+            AuthToken authToken = requestAuthToken(jwt);
+            SecurityContextHolder.getContext().setAuthentication(authToken.getAuthentication());
         }
-
-        AuthToken authToken = requestAuthToken(jwt);
-
-        SecurityContextHolder.getContext().setAuthentication(authToken.getAuthentication());
-
         filterChain.doFilter(request, response);
     }
 
@@ -49,7 +47,6 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
         if (authHeader == null || authHeader.isEmpty() || !authHeader.startsWith("Bearer ")) {
             return null;
         }
-
         String[] headerTokens = authHeader.split(" ");
         return headerTokens.length == 2 ? headerTokens[1] : null;
     }
