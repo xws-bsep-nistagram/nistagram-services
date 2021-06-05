@@ -2,13 +2,11 @@ package rs.ac.uns.ftn.nistagram.content.service;
 
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
+import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.CustomPostCollection;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.SavedPost;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.UserInteraction;
-import rs.ac.uns.ftn.nistagram.content.repository.CommentRepository;
-import rs.ac.uns.ftn.nistagram.content.repository.PostRepository;
-import rs.ac.uns.ftn.nistagram.content.repository.SavedPostRepository;
-import rs.ac.uns.ftn.nistagram.content.repository.UserInteractionRepository;
+import rs.ac.uns.ftn.nistagram.content.repository.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,17 +19,20 @@ public class PostService {
     private final UserInteractionRepository interactionRepository;
     private final CommentRepository commentRepository;
     private final SavedPostRepository savedPostRepository;
+    private final CustomPostCollectionRepository customCollectionRepository;
 
     public PostService(
             PostRepository postRepository,
             UserInteractionRepository interactionRepository,
             CommentRepository commentRepository,
-            SavedPostRepository savedPostRepository
+            SavedPostRepository savedPostRepository,
+            CustomPostCollectionRepository customCollectionRepository
     ) {
         this.postRepository = postRepository;
         this.interactionRepository = interactionRepository;
         this.commentRepository = commentRepository;
         this.savedPostRepository = savedPostRepository;
+        this.customCollectionRepository = customCollectionRepository;
     }
 
     public void create(Post post) {
@@ -95,5 +96,36 @@ public class PostService {
 
     public List<SavedPost> getSaved(String username) {
         return savedPostRepository.findByUser(username);
+    }
+
+    public void createCollection(String username, String collectionName) {
+        if (customCollectionRepository.getByUserAndName(username, collectionName).isPresent())
+            throw new RuntimeException("Collection '" + collectionName + "' already exists.");
+
+        customCollectionRepository.save(
+            CustomPostCollection.builder().name(collectionName).owner(username).build()
+        );
+    }
+
+    public void addPostToCollection(String username, String collectionName, long postId) {
+        CustomPostCollection customPostCollection =
+                customCollectionRepository.getByUserAndName(username, collectionName)
+                        .orElseThrow(RuntimeException::new);
+
+        Post post = postRepository.findById(postId).orElseThrow(RuntimeException::new);
+        if (customPostCollection.getPosts().contains(post))
+            throw new RuntimeException("Post already present in this collection");
+
+        try {
+            save(username, postId); // This will throw if the post is already saved
+        }
+        catch (RuntimeException ignored) {}
+
+        customPostCollection.getPosts().add(post);
+        customCollectionRepository.save(customPostCollection);
+    }
+
+    public List<Post> getCollectionPosts(String username, String name) {
+        return customCollectionRepository.getByUserAndName(username, name).orElseThrow(RuntimeException::new).getPosts();
     }
 }

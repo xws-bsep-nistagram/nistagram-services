@@ -1,7 +1,6 @@
 package rs.ac.uns.ftn.nistagram.content.domain.core.post.collection;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 
 import javax.persistence.*;
@@ -11,6 +10,9 @@ import java.util.List;
 @Table(name = "collections")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CustomPostCollection {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

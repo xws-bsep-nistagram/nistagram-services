@@ -28,6 +28,12 @@ public class Post extends UserContent {
     @OneToMany(mappedBy = "post")
     private List<HashTag> hashTags;
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() != Post.class) return false;
+        else return this.id == ((Post) obj).getId();
+    }
+
     @Entity
     @Table(name = "media_links")
     @Getter

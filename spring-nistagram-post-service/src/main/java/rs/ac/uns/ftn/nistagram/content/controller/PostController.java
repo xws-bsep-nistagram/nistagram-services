@@ -69,4 +69,28 @@ public class PostController {
                 .collect(Collectors.toList())
         );
     }
+
+    @PostMapping("collection/{name}")
+    public ResponseEntity<?> createCollection(@PathVariable String name) {
+        String username = "nikola"; // TODO Extract username from HTTP
+        postService.createCollection(username, name);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("collection/{collectionName}/add/{postId}")
+    public ResponseEntity<?> addPostToCollection(@PathVariable String collectionName, @PathVariable String postId) {
+        String username = "nikola"; // TODO Extract username from HTTP
+        postService.addPostToCollection(username, collectionName, Long.parseLong(postId));
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("collection/{name}")
+    public ResponseEntity<?> getCollectionPosts(@PathVariable String name) {
+        String username = "nikola"; // TODO Extract username from HTTP
+        return ResponseEntity.ok(
+                postService.getCollectionPosts(username, name)
+                        .stream().map(mapper::toDto)
+                        .collect(Collectors.toList())
+        );
+    }
 }
