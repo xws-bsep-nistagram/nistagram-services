@@ -1,8 +1,10 @@
 package rs.ac.uns.ftn.nistagram.content.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.CustomPostCollection;
+import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.PostInCollection;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.SavedPost;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.UserInteraction;
@@ -11,6 +13,7 @@ import rs.ac.uns.ftn.nistagram.content.repository.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -20,19 +23,22 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final SavedPostRepository savedPostRepository;
     private final CustomPostCollectionRepository collectionRepository;
+    private final PostInCollectionRepository postInCollectionRepository;
 
     public PostService(
             PostRepository postRepository,
             UserInteractionRepository interactionRepository,
             CommentRepository commentRepository,
             SavedPostRepository savedPostRepository,
-            CustomPostCollectionRepository collectionRepository
+            CustomPostCollectionRepository collectionRepository,
+            PostInCollectionRepository postInCollectionRepository
     ) {
         this.postRepository = postRepository;
         this.interactionRepository = interactionRepository;
         this.commentRepository = commentRepository;
         this.savedPostRepository = savedPostRepository;
         this.collectionRepository = collectionRepository;
+        this.postInCollectionRepository = postInCollectionRepository;
     }
 
     public void create(Post post) {
@@ -94,11 +100,17 @@ public class PostService {
         );
     }
 
+    @Transactional
     public void unsave(String username, long postId) {
         SavedPost savedPost = savedPostRepository.findByUserAndPost(username, postId).orElseThrow(RuntimeException::new);
         savedPostRepository.delete(savedPost);
 
-        // TODO Cascade delete from all Collections where it is present
+        // Fetch collection IDs from this user
+        List<CustomPostCollection> collections = collectionRepository.getByUser(username);
+        if (collections.isEmpty()) return;
+
+        List<Long> collectionIds = collections.stream().map(CustomPostCollection::getId).collect(Collectors.toList());
+        postInCollectionRepository.deletePostFromUserCollections(postId, collectionIds);
     }
 
     public List<SavedPost> getSaved(String username) {
@@ -120,7 +132,7 @@ public class PostService {
                         .orElseThrow(RuntimeException::new);
 
         Post post = postRepository.findById(postId).orElseThrow(RuntimeException::new);
-        if (customPostCollection.getPosts().contains(post))
+        if (postInCollectionRepository.postFromCollection(post.getId(), customPostCollection.getId()).isPresent())
             throw new RuntimeException("Post already present in this collection");
 
         try {
@@ -128,16 +140,19 @@ public class PostService {
         }
         catch (RuntimeException ignored) {}
 
-        customPostCollection.getPosts().add(post);
-        collectionRepository.save(customPostCollection);
+        postInCollectionRepository.save(PostInCollection.builder().collection(customPostCollection).post(post).build());
     }
 
-    public List<Post> getCollectionPosts(String username, String name) {
-        return collectionRepository.getByUserAndName(username, name).orElseThrow(RuntimeException::new).getPosts();
+    public List<PostInCollection> getAllFromCollection(String username, String collectionName) {
+        long collectionId =
+                collectionRepository.getByUserAndName(username, collectionName).orElseThrow(RuntimeException::new).getId();
+        return postInCollectionRepository.allPostsFromCollection(collectionId);
     }
 
     public void deleteCollection(String username, String collectionName) {
         CustomPostCollection collection = collectionRepository.getByUserAndName(username, collectionName).orElseThrow(RuntimeException::new);
+
+        postInCollectionRepository.deleteAllFromCollection(collection.getId());
         collectionRepository.delete(collection);
     }
 }

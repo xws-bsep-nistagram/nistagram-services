@@ -95,8 +95,8 @@ public class PostController {
     public ResponseEntity<?> getCollectionPosts(@PathVariable String collectionName) {
         String username = "nikola"; // TODO Extract username from HTTP
         return ResponseEntity.ok(
-                postService.getCollectionPosts(username, collectionName)
-                        .stream().map(mapper::toDto)
+                postService.getAllFromCollection(username, collectionName)
+                        .stream().map(postInCollection -> mapper.toDto(postInCollection.getPost()))
                         .collect(Collectors.toList())
         );
     }
