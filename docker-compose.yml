@@ -1,28 +1,13 @@
 version: '3'
 services:
-    zookeeper:
-        image: wurstmeister/zookeeper
-        container_name: zookeeper
-        ports:
-          - "${ZOOKEEPER_PORT}:2181"
-        networks: 
+    rabbitmq :
+        image : rabbitmq:3-management-alpine
+        container_name : 'rabbitmq'
+        ports :
+            - 5672:5672
+            - 15672:15672
+        networks :
             - backend
-        environment:
-            KAFKA_ADVERTISED_HOST_NAME: "${KAFKA_ADVERTISED_HOST_NAME}"
-    
-    kafka:
-        image: wurstmeister/kafka
-        container_name: kafka
-        ports:
-            - "${KAFKA_PORT}:9092"
-        networks: 
-            - backend
-        environment:
-            KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
-            KAFKA_ADVERTISED_PORT: "${KAFKA_ADVERTISED_PORT}"
-            KAFKA_ZOOKEEPER_CONNECT: "${KAFKA_ZOOKEEPER_CONNECT}"
-        depends_on:
-            - zookeeper
 
     neo4j-db:
         image: neo4j:latest
@@ -67,10 +52,10 @@ services:
         restart: on-failure
         depends_on:
             - user-service
-            - user-graph-service
+#            - user-graph-service
             - auth-service
-            - post-service
-            - media-service
+#            - post-service
+#            - media-service
         environment:
             API_GATEWAY_PORT: "${API_GATEWAY_PORT}"
             AUTH_SERVICE_PORT: "${AUTH_SERVICE_PORT}"
@@ -104,43 +89,43 @@ services:
             - backend
             - database
 
-    media-service:
-        image: nistagram/media-service
-        container_name: media-service
-        build:
-            context: ./spring-nistagram-media-service
-            dockerfile: Dockerfile
-            target: "${STAGE}"
-        ports:
-            - "${MEDIA_SERVICE_PORT}:${MEDIA_SERVICE_PORT}"
-        restart: on-failure
-        environment:
-            MEDIA_SERVICE_PORT: "${MEDIA_SERVICE_PORT}"
-        networks:
-            - backend
+#    media-service:
+#        image: nistagram/media-service
+#        container_name: media-service
+#        build:
+#            context: ./spring-nistagram-media-service
+#            dockerfile: Dockerfile
+#            target: "${STAGE}"
+#        ports:
+#            - "${MEDIA_SERVICE_PORT}:${MEDIA_SERVICE_PORT}"
+#        restart: on-failure
+#        environment:
+#            MEDIA_SERVICE_PORT: "${MEDIA_SERVICE_PORT}"
+#        networks:
+#            - backend
 
-    post-service:
-        image: nistagram/post-service
-        container_name: post-service
-        build:
-            context: ./spring-nistagram-post-service
-            dockerfile: Dockerfile
-            target: "${STAGE}"
-        ports:
-            - "${POST_SERVICE_PORT}:${POST_SERVICE_PORT}"
-        depends_on:
-            - mysql-db
-        restart: on-failure
-        environment :
-            POST_SERVICE_PORT : "${POST_SERVICE_PORT}"
-            MYSQL_HOST : "${MYSQL_HOST}"
-            MYSQL_PORT : "${MYSQL_PORT}"
-            POST_DB_NAME : "${POST_DB_NAME}"
-            MYSQL_ROOT : "${MYSQL_ROOT}"
-            MYSQL_ROOT_PASSWORD : "${MYSQL_ROOT_PASSWORD}"
-        networks:
-            - backend
-            - database
+#    post-service:
+#        image: nistagram/post-service
+#        container_name: post-service
+#        build:
+#            context: ./spring-nistagram-post-service
+#            dockerfile: Dockerfile
+#            target: "${STAGE}"
+#        ports:
+#            - "${POST_SERVICE_PORT}:${POST_SERVICE_PORT}"
+#        depends_on:
+#            - mysql-db
+#        restart: on-failure
+#        environment :
+#            POST_SERVICE_PORT : "${POST_SERVICE_PORT}"
+#            MYSQL_HOST : "${MYSQL_HOST}"
+#            MYSQL_PORT : "${MYSQL_PORT}"
+#            POST_DB_NAME : "${POST_DB_NAME}"
+#            MYSQL_ROOT : "${MYSQL_ROOT}"
+#            MYSQL_ROOT_PASSWORD : "${MYSQL_ROOT_PASSWORD}"
+#        networks:
+#            - backend
+#            - database
 
     user-service:
         image: nistagram/user-service
@@ -153,6 +138,7 @@ services:
             - "${USER_SERVICE_PORT}:${USER_SERVICE_PORT}"
         depends_on :
             - mysql-db
+            - rabbitmq
         restart : on-failure
         environment :
             USER_SERVICE_PORT : "${USER_SERVICE_PORT}"
@@ -176,6 +162,7 @@ services:
          - "${USER_GRAPH_SERVICE_PORT}:${USER_GRAPH_SERVICE_PORT}"
         depends_on :
             - neo4j-db
+            - rabbitmq
         restart : on-failure
         environment :
             USER_GRAPH_SERVICE_PORT : "${USER_GRAPH_SERVICE_PORT}"
