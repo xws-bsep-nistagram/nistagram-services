@@ -8,6 +8,7 @@ import rs.ac.uns.ftn.nistagram.user.domain.user.User;
 import rs.ac.uns.ftn.nistagram.user.http.auth.AuthClient;
 import rs.ac.uns.ftn.nistagram.user.http.auth.Credentials;
 import rs.ac.uns.ftn.nistagram.user.infrastructure.exceptions.RegistrationException;
+import rs.ac.uns.ftn.nistagram.user.messaging.UserProducer;
 import rs.ac.uns.ftn.nistagram.user.repository.UserRepository;
 
 import java.nio.charset.StandardCharsets;
@@ -17,10 +18,14 @@ public class RegistrationService {
 
     private final AuthClient authClient;
     private final UserRepository repository;
+    private final UserProducer producer;
 
-    public RegistrationService(AuthClient authClient, UserRepository repository) {
+    public RegistrationService(AuthClient authClient,
+                               UserRepository repository,
+                               UserProducer producer) {
         this.authClient = authClient;
         this.repository = repository;
+        this.producer = producer;
     }
 
     @Transactional
@@ -31,9 +36,10 @@ public class RegistrationService {
                 request.getEmail()
         );
 
-        repository.save(createNewUser(request));
-
-        return sendRegistrationRequest(credentials);
+        var user = repository.save(createNewUser(request));
+        var response = sendRegistrationRequest(credentials);
+        producer.publishCreatedUser(user);
+        return response;
     }
 
     private String sendRegistrationRequest(Credentials credentials) {
@@ -43,8 +49,8 @@ public class RegistrationService {
             if (e.status() == 403) {
                 String message = StandardCharsets.UTF_8.decode(e.responseBody().get()).toString();
                 throw new RegistrationException(message);
-            }
-            throw new RegistrationException("Unsuccessful registration!");
+            }else
+                throw new RegistrationException("Unsuccessful registration!");
         }
     }
 
