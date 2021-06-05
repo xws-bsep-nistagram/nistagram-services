@@ -1,17 +1,22 @@
 package rs.ac.uns.ftn.nistagram.auth.service;
 
+import com.auth0.jwt.interfaces.Claim;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.auth.domain.AuthRequest;
 import rs.ac.uns.ftn.nistagram.auth.domain.AuthToken;
 import rs.ac.uns.ftn.nistagram.auth.domain.RegistrationRequest;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.JwtEncoder;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.JwtEncryptionException;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.JwtException;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,14 +48,9 @@ public class AuthService {
         return encryptDetails(userDetails);
     }
 
-    /**
-     * Encrypts user details into JWT. Edit this to include additional fields/claims in a token.
-     * @param userDetails source of details to be encrypted.
-     * @return Encrypted JWT.
-     */
     private String encryptDetails(UserDetails userDetails) {
         try {
-            return encoder.encrypt(
+            return encoder.encode(
                     new AuthToken(
                             userDetails.getUsername(),
                             userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
@@ -60,4 +60,23 @@ public class AuthService {
         }
     }
 
+    @Transactional
+    public AuthToken getAuthToken(String jwt) {
+        if (jwt == null) {
+            throw new JwtException("JWT cannot be null!");
+        }
+        String username = getUsernameFromJwt(jwt);
+        UserDetails found = credentialsService.loadUserByUsername(username);
+        return new AuthToken(
+                found.getUsername(),
+                found.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    private String getUsernameFromJwt(String jwt) {
+        Map<String, Claim> claims = this.encoder.decode(jwt);
+        return claims.get("username").asString();
+    }
 }
