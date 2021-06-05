@@ -10,12 +10,12 @@ zuul :
       stripPrefix: false
       sensitive-headers: Cookie,Set-Cookie
     post-service:
-      path: /api/post/**
+      path: /api/posts/**
       serviceId : post-service
       stripPrefix: false
       sensitive-headers : Cookie,Set-Cookie
     user-service :
-      path : /api/user/**
+      path : /api/users/**
       serviceId : user-service
       stripPrefix: false
       sensitive-headers : Cookie,Set-Cookie

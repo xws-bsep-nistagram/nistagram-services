@@ -2,9 +2,6 @@ package rs.ac.uns.ftn.nistagram.api.gateway.filters;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
-import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
-import org.springframework.security.web.session.SessionManagementFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 import rs.ac.uns.ftn.nistagram.api.gateway.domain.AuthToken;
