@@ -4,12 +4,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.*;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.output.PostOverviewDTO;
+import rs.ac.uns.ftn.nistagram.content.controller.dto.output.StoryHighlightOverviewDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.output.StoryOverviewDTO;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.MediaStory;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.ShareStory;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.Story;
+import rs.ac.uns.ftn.nistagram.content.domain.core.story.StoryHighlights;
 
 @Component
 public class DomainDTOMapper {
@@ -101,5 +103,11 @@ public class DomainDTOMapper {
         StoryOverviewDTO dto = modelMapper.map(story, StoryOverviewDTO.class);
         dto.setCloseFriends(story.isCloseFriends());
         return dto;
+    }
+
+    // Story highlights
+
+    public StoryHighlightOverviewDTO toDto(StoryHighlights highlight) {
+        return StoryHighlightOverviewDTO.builder().id(highlight.getId()).name(highlight.getName()).build();
     }
 }

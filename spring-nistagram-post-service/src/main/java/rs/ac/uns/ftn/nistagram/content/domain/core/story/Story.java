@@ -19,4 +19,12 @@ public abstract class Story extends UserContent {
 
     @OneToMany(mappedBy = "reportedStory", cascade = CascadeType.REMOVE)
     protected List<StoryReport> storyReports;
+
+    @Override
+    public boolean equals(Object obj) {
+        try {
+            return ((Story)obj).getId() == this.id;
+        }
+        catch (Exception e) { return false; }
+    }
 }

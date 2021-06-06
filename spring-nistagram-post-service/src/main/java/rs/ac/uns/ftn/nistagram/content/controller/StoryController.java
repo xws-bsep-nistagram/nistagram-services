@@ -66,4 +66,36 @@ public class StoryController {
                 .stream().map(mapper::toDto).collect(Collectors.toList())
         );
     }
+
+    @PostMapping("highlights/{name}")
+    public ResponseEntity<?> createStoryHighlights(@PathVariable String name) {
+        String username = "nikola"; // TODO Extract username from HTTP
+        storyService.createStoryHighlights(name, username);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("highlights/{highlightsId}/story/{storyId}")
+    public ResponseEntity<?> addStoryToHighlights(@PathVariable String highlightsId, @PathVariable String storyId) {
+        String username = "nikola"; // TODO Extract username from HTTP
+        storyService.addStoryToHighlights(Long.parseLong(highlightsId), Long.parseLong(storyId), username);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("highlights/user/{username}")
+    public ResponseEntity<?> getHighlightsByUsername(@PathVariable String username) {
+        String caller = "nikola"; // TODO Extract username from HTTP
+        return ResponseEntity.ok(
+                storyService.getHighlightsByUsername(username, caller)
+                .stream().map(mapper::toDto).collect(Collectors.toList())
+        );
+    }
+
+    @GetMapping("highlights/{highlightId}")
+    public ResponseEntity<?> getStoriesFromHighlight(@PathVariable String highlightId) {
+        String username = "nikola"; // TODO Extract username from HTTP
+        return ResponseEntity.ok(
+                storyService.getStoriesFromHighlight(Long.parseLong(highlightId), username)
+                .stream().map(mapper::toDto).collect(Collectors.toList())
+        );
+    }
 }
