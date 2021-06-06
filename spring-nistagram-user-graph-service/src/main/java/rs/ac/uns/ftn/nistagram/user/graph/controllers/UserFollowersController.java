@@ -3,8 +3,9 @@ package rs.ac.uns.ftn.nistagram.user.graph.controllers;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import rs.ac.uns.ftn.nistagram.user.graph.payload.UserPayload;
-import rs.ac.uns.ftn.nistagram.user.graph.payload.UserRelationshipRequest;
+import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserFollowingResponse;
+import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserPayload;
+import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserRelationshipRequest;
 import rs.ac.uns.ftn.nistagram.user.graph.services.UserFollowersService;
 import javax.validation.Valid;
 import java.util.stream.Collectors;
@@ -47,6 +48,13 @@ public class UserFollowersController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(users);
     }
+
+    @GetMapping("{subject}/follows/{target}")
+    public ResponseEntity<?> checkFollowing(@PathVariable String subject, @PathVariable String target){
+        var response = new UserFollowingResponse(userFollowerService.checkFollowing(subject, target));
+        return ResponseEntity.ok(response);
+    }
+
 
     @PostMapping("/followers/accept")
     public ResponseEntity<?> acceptFollowRequest(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest) {

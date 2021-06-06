@@ -3,8 +3,8 @@ package rs.ac.uns.ftn.nistagram.user.graph.controllers;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import rs.ac.uns.ftn.nistagram.user.graph.payload.UserPayload;
-import rs.ac.uns.ftn.nistagram.user.graph.payload.UserRelationshipRequest;
+import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserPayload;
+import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserRelationshipRequest;
 import rs.ac.uns.ftn.nistagram.user.graph.services.UserMutesService;
 
 import javax.validation.Valid;
