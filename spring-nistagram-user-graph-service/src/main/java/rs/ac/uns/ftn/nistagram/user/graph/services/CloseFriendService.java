@@ -51,4 +51,9 @@ public class CloseFriendService {
         return closeFriends;
     }
 
+    public boolean checkIfCloseFriends(String subject, String target) {
+        constraintChecker.userPresenceCheck(subject);
+        constraintChecker.userPresenceCheck(target);
+        return closeFriendRepository.isCloseFriend(subject, target);
+    }
 }
