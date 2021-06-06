@@ -3,10 +3,7 @@ package rs.ac.uns.ftn.nistagram.user.controllers;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.NotificationPreferencesViewDTO;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.PrivacyDataViewDTO;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.ProfileViewDTO;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.RegistrationRequestDTO;
+import rs.ac.uns.ftn.nistagram.user.controllers.dtos.*;
 import rs.ac.uns.ftn.nistagram.user.controllers.mappers.ProfileMapper;
 import rs.ac.uns.ftn.nistagram.user.controllers.mappers.RegistrationRequestMapper;
 import rs.ac.uns.ftn.nistagram.user.domain.user.User;
@@ -53,6 +50,28 @@ public class UserController {
     public NotificationPreferencesViewDTO getNotificationPreferences(@RequestHeader("username") String username) {
         User found = profileService.get(username);
         return profileMapper.map(found.getNotificationPreferences());
+    }
+
+    @PutMapping("profile")
+    public ProfileViewDTO updateProfile(@RequestHeader("username") String username, @RequestBody ProfileUpdateDTO update) {
+        User updated = profileService.update(username, profileMapper.map(update));
+        return profileMapper.map(updated);
+    }
+
+    @PutMapping("profile/privacy")
+    public PrivacyDataViewDTO updatePrivacyData(
+            @RequestHeader("username") String username,
+            @RequestBody PrivacyDataUpdateDTO update) {
+        User updated = profileService.update(username, profileMapper.map(update));
+        return profileMapper.map(updated.getPrivacyData());
+    }
+
+    @PutMapping("profile/preferences")
+    public NotificationPreferencesViewDTO updateNotificationPreferences(
+            @RequestHeader("username") String username,
+            @RequestBody NotificationPreferencesUpdateDTO update) {
+        User updated = profileService.update(username, profileMapper.map(update));
+        return profileMapper.map(updated.getNotificationPreferences());
     }
 
 }
