@@ -5,26 +5,26 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserPayload;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserRelationshipRequest;
-import rs.ac.uns.ftn.nistagram.user.graph.services.CloseFriendsService;
+import rs.ac.uns.ftn.nistagram.user.graph.services.CloseFriendService;
 
 import javax.validation.Valid;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/user-graph/")
-public class CloseFriendsController {
+public class CloseFriendController {
 
-    private final CloseFriendsService closeFriendsService;
+    private final CloseFriendService closeFriendService;
     private final ModelMapper mapper;
 
-    public CloseFriendsController(CloseFriendsService closeFriendsService) {
-        this.closeFriendsService = closeFriendsService;
+    public CloseFriendController(CloseFriendService closeFriendService) {
+        this.closeFriendService = closeFriendService;
         this.mapper = new ModelMapper();
     }
 
     @GetMapping("/{username}/close-friends")
     public ResponseEntity<?> findCloseFriends(@PathVariable String username){
-        var closeFriends = closeFriendsService.findCloseFriends(username)
+        var closeFriends = closeFriendService.findCloseFriends(username)
                                         .stream()
                                         .map(e-> mapper.map(e, UserPayload.class))
                                         .collect(Collectors.toList());
@@ -33,14 +33,14 @@ public class CloseFriendsController {
 
     @PostMapping("close-friends")
     public ResponseEntity<?> addCloseFriends(@RequestBody @Valid UserRelationshipRequest relationshipRequest){
-        closeFriendsService.addCloseFriend(relationshipRequest.getSubject(),
+        closeFriendService.addCloseFriend(relationshipRequest.getSubject(),
                 relationshipRequest.getTarget());
         return ResponseEntity.ok("Request successfully processed");
     }
 
     @DeleteMapping("close-friends")
     public ResponseEntity<?> removeCloseFriends(@RequestBody @Valid UserRelationshipRequest relationshipRequest){
-        closeFriendsService.removeCloseFriend(relationshipRequest.getSubject(),
+        closeFriendService.removeCloseFriend(relationshipRequest.getSubject(),
                 relationshipRequest.getTarget());
         return ResponseEntity.ok("Request successfully processed");
     }

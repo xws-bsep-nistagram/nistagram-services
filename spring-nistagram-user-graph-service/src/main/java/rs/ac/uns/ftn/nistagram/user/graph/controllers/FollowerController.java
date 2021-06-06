@@ -6,18 +6,18 @@ import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserFollowingResponse;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserPayload;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserRelationshipRequest;
-import rs.ac.uns.ftn.nistagram.user.graph.services.UserFollowersService;
+import rs.ac.uns.ftn.nistagram.user.graph.services.FollowerService;
 import javax.validation.Valid;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/user-graph/")
-public class UserFollowersController {
+public class FollowerController {
 
-    private final UserFollowersService userFollowerService;
+    private final FollowerService userFollowerService;
     private final ModelMapper modelMapper;
 
-    public UserFollowersController(UserFollowersService userFollowerService) {
+    public FollowerController(FollowerService userFollowerService) {
         this.userFollowerService = userFollowerService;
         this.modelMapper = new ModelMapper();
     }
