@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @PutMapping("profile")
-    public ProfileViewDTO updateProfile(@RequestHeader("username") String username, ProfileUpdateDTO update) {
+    public ProfileViewDTO updateProfile(@RequestHeader("username") String username, @RequestBody ProfileUpdateDTO update) {
         User updated = profileService.update(username, profileMapper.map(update));
         return profileMapper.map(updated);
     }
@@ -61,7 +61,7 @@ public class UserController {
     @PutMapping("profile/privacy")
     public PrivacyDataViewDTO updatePrivacyData(
             @RequestHeader("username") String username,
-            PrivacyDataUpdateDTO update) {
+            @RequestBody PrivacyDataUpdateDTO update) {
         User updated = profileService.update(username, profileMapper.map(update));
         return profileMapper.map(updated.getPrivacyData());
     }
@@ -69,7 +69,7 @@ public class UserController {
     @PutMapping("profile/preferences")
     public NotificationPreferencesViewDTO updateNotificationPreferences(
             @RequestHeader("username") String username,
-            NotificationPreferencesUpdateDTO update) {
+            @RequestBody NotificationPreferencesUpdateDTO update) {
         User updated = profileService.update(username, profileMapper.map(update));
         return profileMapper.map(updated.getNotificationPreferences());
     }
