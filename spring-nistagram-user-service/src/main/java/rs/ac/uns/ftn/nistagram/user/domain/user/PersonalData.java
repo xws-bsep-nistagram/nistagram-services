@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @Setter
 @Embeddable
 public class PersonalData {
+
     private String fullName;
     private String email;
     private String phoneNumber;
@@ -21,4 +22,5 @@ public class PersonalData {
     private LocalDate dateOfBirth;
     private String website;
     private String bio;
+
 }
