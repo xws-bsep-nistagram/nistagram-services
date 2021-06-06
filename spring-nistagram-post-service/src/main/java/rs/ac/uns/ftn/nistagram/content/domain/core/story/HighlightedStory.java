@@ -3,21 +3,21 @@ package rs.ac.uns.ftn.nistagram.content.domain.core.story;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
-@Table(name = "story_highlights")
+@Table(name = "stories_in_highlights")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StoryHighlights {
+public class HighlightedStory {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
-    private String owner;
-    private String name;
-    @OneToMany(mappedBy = "highlights", cascade = CascadeType.ALL)
-    private List<HighlightedStory> stories;
+    @OneToOne
+    private Story story;
+    @OneToOne
+    private StoryHighlights highlights;
+
 }

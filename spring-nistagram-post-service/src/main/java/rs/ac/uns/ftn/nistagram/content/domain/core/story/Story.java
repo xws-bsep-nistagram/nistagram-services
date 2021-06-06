@@ -20,6 +20,9 @@ public abstract class Story extends UserContent {
     @OneToMany(mappedBy = "reportedStory", cascade = CascadeType.REMOVE)
     protected List<StoryReport> storyReports;
 
+    @OneToMany(mappedBy = "story", cascade = CascadeType.REMOVE)
+    private List<HighlightedStory> highlights;
+
     @Override
     public boolean equals(Object obj) {
         try {

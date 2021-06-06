@@ -67,6 +67,13 @@ public class StoryController {
         );
     }
 
+    @DeleteMapping("{storyId}")
+    public ResponseEntity<?> delete(@PathVariable String storyId) {
+        String username = "nikola"; // TODO Extract username from HTTP
+        storyService.delete(Long.parseLong(storyId), username);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("highlights/{name}")
     public ResponseEntity<?> createStoryHighlights(@PathVariable String name) {
         String username = "nikola"; // TODO Extract username from HTTP
@@ -75,7 +82,7 @@ public class StoryController {
     }
 
     @PostMapping("highlights/{highlightsId}/story/{storyId}")
-    public ResponseEntity<?> addStoryToHighlights(@PathVariable String highlightsId, @PathVariable String storyId) {
+    public ResponseEntity<?> addStoryToHighlight(@PathVariable String highlightsId, @PathVariable String storyId) {
         String username = "nikola"; // TODO Extract username from HTTP
         storyService.addStoryToHighlights(Long.parseLong(highlightsId), Long.parseLong(storyId), username);
         return ResponseEntity.ok().build();
@@ -97,5 +104,12 @@ public class StoryController {
                 storyService.getStoriesFromHighlight(Long.parseLong(highlightId), username)
                 .stream().map(mapper::toDto).collect(Collectors.toList())
         );
+    }
+
+    @DeleteMapping("highlights/{highlightId}")
+    public ResponseEntity<?> deleteHighlight(@PathVariable String highlightId) {
+        String username = "nikola"; // TODO Extract username from HTTP
+        storyService.deleteHighlight(Long.parseLong(highlightId), username);
+        return ResponseEntity.ok().build();
     }
 }

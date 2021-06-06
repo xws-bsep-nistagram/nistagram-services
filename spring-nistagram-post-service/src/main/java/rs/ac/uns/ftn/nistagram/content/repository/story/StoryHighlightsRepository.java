@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface StoryHighlightsRepository extends JpaRepository<StoryHighlights, Long> {
 
-    @Query(value = "select h from StoryHighlights h where h.author = ?1")
+    @Query(value = "select h from StoryHighlights h where h.owner = ?1")
     List<StoryHighlights> getByUsername(String username);
 }
