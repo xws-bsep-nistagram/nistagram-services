@@ -7,6 +7,8 @@ import rs.ac.uns.ftn.nistagram.feed.domain.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @MappedSuperclass
 @NoArgsConstructor
@@ -17,9 +19,9 @@ public class FeedEntry {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne
+    @ManyToMany
     @JoinColumn(name = "username")
-    private User user;
+    private List<User> users;
     private String publisher;
     private LocalDateTime createdAt;
 
@@ -28,4 +30,9 @@ public class FeedEntry {
         this.createdAt = createdAt;
     }
 
+    protected void addUser(User user) {
+        if(this.users == null)
+            this.users = new ArrayList<>();
+        this.users.add(user);
+    }
 }

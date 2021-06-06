@@ -36,14 +36,11 @@ public class FeedService {
                 postFeedEntry.getPublisher());
     }
 
-    //Using a copy constructor because otherwise, jpa would just update PostFeedEntry database
-    //entry in each iteration
     private void populateFeeds( List<UserPayload> followers, PostFeedEntry postFeedEntry) {
         followers.forEach(follower -> {
-            var feedEntry = new PostFeedEntry(postFeedEntry);
             User foundFollower = userRepository.getOne(follower.getUsername());
-            feedEntry.setUser(foundFollower);
-            foundFollower.addToFeed(feedEntry);
+            postFeedEntry.addUser(foundFollower);
+            foundFollower.addToFeed(postFeedEntry);
         });
     }
 

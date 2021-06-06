@@ -1,6 +1,8 @@
 package rs.ac.uns.ftn.nistagram.feed.domain.entry.feed;
 
 import lombok.*;
+import rs.ac.uns.ftn.nistagram.feed.domain.user.User;
+import rs.ac.uns.ftn.nistagram.feed.http.payload.UserPayload;
 
 import javax.persistence.Entity;
 import java.time.LocalDateTime;
@@ -24,5 +26,9 @@ public class PostFeedEntry extends FeedEntry {
     public PostFeedEntry(String publisher, LocalDateTime createdAt, Long postId){
         super(publisher, createdAt);
         this.postId = postId;
+    }
+
+    public void addUser(User user) {
+        super.addUser(user);
     }
 }
