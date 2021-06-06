@@ -12,6 +12,6 @@ import javax.validation.constraints.NotEmpty;
 public class Location {
     @NotEmpty
     private String address;
-    private float latitude;
-    private float longitude;
+    private Float latitude;
+    private Float longitude;
 }

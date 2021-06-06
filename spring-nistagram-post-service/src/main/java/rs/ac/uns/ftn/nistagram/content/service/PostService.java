@@ -8,12 +8,11 @@ import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.PostInCollect
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.SavedPost;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.UserInteraction;
-import rs.ac.uns.ftn.nistagram.content.repository.*;
+import rs.ac.uns.ftn.nistagram.content.repository.post.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -151,6 +150,11 @@ public class PostService {
         catch (RuntimeException ignored) {}
 
         postInCollectionRepository.save(PostInCollection.builder().collection(customPostCollection).post(post).build());
+    }
+
+    public void removePostFromCollection(String username, String collectionName, long postId) {
+        CustomPostCollection collection = collectionRepository.getByUserAndName(username, collectionName).orElseThrow(RuntimeException::new);
+        postInCollectionRepository.deletePostFromCollection(postId, collection.getId());
     }
 
     public List<PostInCollection> getAllFromCollection(String username, String collectionName) {

@@ -3,14 +3,16 @@ package rs.ac.uns.ftn.nistagram.content.controller.dto.output;
 import lombok.Getter;
 import lombok.Setter;
 import rs.ac.uns.ftn.nistagram.content.domain.core.UserContent;
-import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
-
-import java.util.List;
 
 @Getter
 @Setter
-public class PostOverviewDTO extends UserContent {
+public class StoryOverviewDTO extends UserContent {
     private long id;
+    private boolean closeFriends;
 
-    private List<Post.MediaLink> mediaUrls;
+    private boolean isReshare;
+
+    private String mediaUrl;
+    private PostOverviewDTO post;
 }
+

@@ -107,6 +107,13 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("collection/{collectionName}/remove/{postId}")
+    public ResponseEntity<?> removePostFromCollection(@PathVariable String collectionName, @PathVariable String postId) {
+        String username = "nikola"; // TODO Extract username from HTTP
+        postService.removePostFromCollection(username, collectionName, Long.parseLong(postId));
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("collection/{collectionName}")
     public ResponseEntity<?> getCollectionPosts(@PathVariable String collectionName) {
         String username = "nikola"; // TODO Extract username from HTTP

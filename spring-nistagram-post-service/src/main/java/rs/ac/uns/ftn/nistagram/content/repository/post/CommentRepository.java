@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.content.repository;
+package rs.ac.uns.ftn.nistagram.content.repository.post;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

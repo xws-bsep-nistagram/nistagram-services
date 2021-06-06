@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.content.repository;
+package rs.ac.uns.ftn.nistagram.content.repository.post;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -33,4 +33,9 @@ public interface PostInCollectionRepository extends JpaRepository<PostInCollecti
             value = "delete from PostInCollection pc where pc.post.id = :postId and pc.collection.id in (:collectionIds)"
     )
     void deletePostFromUserCollections(@Param("postId") long postId, @Param("collectionIds") List<Long> collectionIds);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from PostInCollection pc where pc.post.id = ?1 and pc.collection.id = ?2")
+    void deletePostFromCollection(long postId, long id);
 }
