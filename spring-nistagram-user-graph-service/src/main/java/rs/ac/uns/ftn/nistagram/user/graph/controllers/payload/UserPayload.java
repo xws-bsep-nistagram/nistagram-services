@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.user.graph.payload;
+package rs.ac.uns.ftn.nistagram.user.graph.controllers.payload;
 
 import lombok.Data;
 import rs.ac.uns.ftn.nistagram.user.graph.annotations.EnumNamePattern;
