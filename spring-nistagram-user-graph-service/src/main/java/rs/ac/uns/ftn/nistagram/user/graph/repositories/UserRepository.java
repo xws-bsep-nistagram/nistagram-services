@@ -80,4 +80,17 @@ public interface UserRepository extends Neo4jRepository<User, String> {
 
     @Query("MATCH (n1:User{username:$0}) MATCH (n2:User{username:$1}) CREATE (n1)-[:SENT_FOLLOW_REQUEST]->(n2)")
     void sendFollowRequest(String subject, String target);
+
+    @Query("RETURN EXISTS( (:User {username: $0})-[:IS_CLOSE_FRIEND]->(:User {username: $1}) )")
+    Boolean isCloseFriend(String subject, String target);
+
+    @Query("MATCH (n1:User{username:$0}) MATCH (n2:User{username:$1}) CREATE (n1)-[:IS_CLOSE_FRIEND]->(n2)")
+    void addToCloseFriends(String subject, String target);
+
+    @Query("MATCH (n1:User{ username:$0 })-[r:IS_CLOSE_FRIEND]->(n2:User{ username:$1 }) DELETE r")
+    void removeFromCloseFriends(String subject, String target);
+
+    @Query("OPTIONAL MATCH (n:User{username:$0})<-[:IS_CLOSE_FRIEND]-(f:User) Return f")
+    List<User> findCloseFriends(String username);
+
 }

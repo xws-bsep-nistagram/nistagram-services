@@ -57,6 +57,36 @@ public class UserConstraintChecker {
         userPresenceCheck(target);
         unblockConstraintCheck(subject, target);
     }
+    public void closeFriendRequestCheck(String subject, String target){
+        userPresenceCheck(subject);
+        userPresenceCheck(target);
+        blockedConstraintCheck(subject, target);
+        followingConstraintCheck(subject, target);
+        alreadyCloseFriendCheck(subject, target);
+    }
+    public void closeFriendRemovalCheck(String subject, String target){
+        userPresenceCheck(subject);
+        userPresenceCheck(target);
+        closeFriendConstraintCheck(subject, target);
+    }
+
+    private void closeFriendConstraintCheck(String subject, String target) {
+        if(!userRepository.isCloseFriend(subject, target)){
+            var message = String.format("User %s isn't in users %s close friends list",
+                    subject, target);
+            log.warn(message);
+            throw new OperationNotPermittedException(message);
+        }
+    }
+
+    private void alreadyCloseFriendCheck(String subject, String target) {
+        if(userRepository.isCloseFriend(subject, target)){
+            var message = String.format("User %s is already in users %s close friends list",
+                    subject, target);
+            log.warn(message);
+            throw new OperationNotPermittedException(message);
+        }
+    }
 
     public void userPresenceCheck(String username){
         if(!userRepository.existsByUsername(username)){

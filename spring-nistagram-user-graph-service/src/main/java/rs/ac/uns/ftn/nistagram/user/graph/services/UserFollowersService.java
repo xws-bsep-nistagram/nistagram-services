@@ -69,8 +69,6 @@ public class UserFollowersService {
 
     @Transactional
     public void acceptFollowRequest(String subject, String target){
-        constraintChecker.userPresenceCheck(subject);
-        constraintChecker.userPresenceCheck(target);
         log.info("Received a follow request confirmation from {} to {}",
                 subject,
                 target);
@@ -87,8 +85,6 @@ public class UserFollowersService {
 
     @Transactional
     public void revokeFollowRequest(String subject, String target){
-        constraintChecker.userPresenceCheck(subject);
-        constraintChecker.userPresenceCheck(target);
         log.info("Received a follow request cancellation from {} to {}",
                 subject,
                 target);
@@ -102,8 +98,6 @@ public class UserFollowersService {
     }
 
     public void declineFollowRequest(String subject, String target){
-        constraintChecker.userPresenceCheck(subject);
-        constraintChecker.userPresenceCheck(target);
         log.info("Received a follow request rejection from {} to {}",
                 subject,
                 target);
@@ -119,8 +113,6 @@ public class UserFollowersService {
 
     @Transactional
     public void follow(String subject, String target){
-        constraintChecker.userPresenceCheck(subject);
-        constraintChecker.userPresenceCheck(target);
         log.info("Received a follow request from {} to {}",
                 subject,
                 target);
@@ -143,8 +135,6 @@ public class UserFollowersService {
     }
     @Transactional
     public void unfollow(String subject, String target) {
-        constraintChecker.userPresenceCheck(subject);
-        constraintChecker.userPresenceCheck(target);
         log.info("Received a unfollow request from {} to {}",
                 subject,
                 target);
