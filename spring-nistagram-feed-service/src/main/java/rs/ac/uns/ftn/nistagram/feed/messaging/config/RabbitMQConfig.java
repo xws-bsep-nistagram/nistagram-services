@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.user.messaging.config;
+package rs.ac.uns.ftn.nistagram.feed.messaging.config;
 
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-    public static final String USER_CREATED_GRAPH_SERVICE = "user.created.graph-service";
     public static final String USER_CREATED_FEED_SERVICE = "user.created.feed-service";
+    public static final String CONTENT_CREATED_FEED_SERVICE = "content.created.feed-service";
 
     @Bean
     public RabbitTemplate jsonRabbitTemplate(ConnectionFactory connectionFactory) {
@@ -26,11 +26,11 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue userCreatedGraphQueue() {
-        return new Queue(USER_CREATED_GRAPH_SERVICE);
+    public Queue userCreatedGraphQueue(){
+        return new Queue(USER_CREATED_FEED_SERVICE);
     }
     @Bean
-    public Queue userCreatedFeedQueue() {
-        return new Queue(USER_CREATED_FEED_SERVICE);
+    public Queue contentCreatedFeedQueue() {
+        return new Queue(CONTENT_CREATED_FEED_SERVICE);
     }
 }

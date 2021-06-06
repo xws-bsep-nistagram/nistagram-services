@@ -50,7 +50,7 @@ services:
         ports:
             - "${API_GATEWAY_PORT}:${API_GATEWAY_PORT}"
         restart: on-failure
-        depends_on:
+#        depends_on:
 #            - user-service
 #            - user-graph-service
 #            - auth-service
@@ -158,6 +158,30 @@ services:
         networks:
          - backend
          - database
+
+    feed-service:
+        image : nistagram/feed-service
+        container_name : feed-service
+        build :
+            context : ./spring-nistagram-feed-service
+            dockerfile : Dockerfile
+            target : "${STAGE}"
+        ports :
+            - "${FEED_SERVICE_PORT}:${FEED_SERVICE_PORT}"
+        depends_on :
+            - mysql-db
+            - rabbitmq
+        environment :
+            FEED_SERVICE_PORT: "${FEED_SERVICE_PORT}"
+            MYSQL_HOST : "${MYSQL_HOST}"
+            MYSQL_PORT : "${MYSQL_PORT}"
+            FEED_DB_NAME : "${FEED_DB_NAME}"
+            MYSQL_ROOT : "${MYSQL_ROOT}"
+            MYSQL_ROOT_PASSWORD : "${MYSQL_ROOT_PASSWORD}"
+        networks:
+            - backend
+            - database
+
 
 networks:
     backend:
