@@ -1,36 +1,33 @@
 package rs.ac.uns.ftn.nistagram.user.graph.services;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
-import rs.ac.uns.ftn.nistagram.user.graph.repositories.UserRepository;
+import rs.ac.uns.ftn.nistagram.user.graph.repositories.MutedUserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Service
-public class UserMutesService {
+@AllArgsConstructor
+public class MutedUserService {
 
-    private final UserRepository userRepository;
+    private final MutedUserRepository mutedUserRepository;
     private final UserConstraintChecker constraintChecker;
-
-    public UserMutesService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-        this.constraintChecker = new UserConstraintChecker(userRepository);
-    }
 
     @Transactional
     public List<User> findMutedUsers(String username){
         constraintChecker.userPresenceCheck(username);
 
-        if(!userRepository.hasMutedUsers(username)) {
+        if(!mutedUserRepository.hasMutedUsers(username)) {
             log.info("User {} has no muted users", username);
             return new ArrayList<>();
         }
 
-        List<User> mutedUsers = userRepository.findMutedUsers(username);
+        List<User> mutedUsers = mutedUserRepository.findMutedUsers(username);
         log.info("Found {} muted users for user {}", mutedUsers.size(), username);
 
         return mutedUsers;
@@ -45,7 +42,7 @@ public class UserMutesService {
 
         constraintChecker.muteRequestCheck(subject, target);
 
-        userRepository.mute(subject, target);
+        mutedUserRepository.mute(subject, target);
 
         log.info("User {} has muted {}",
                 subject,
@@ -60,7 +57,7 @@ public class UserMutesService {
 
         constraintChecker.unmuteRequestCheck(subject, target);
 
-        userRepository.unmute(subject, target);
+        mutedUserRepository.unmute(subject, target);
 
         log.info("User {} has unmuted {}",
                 subject,

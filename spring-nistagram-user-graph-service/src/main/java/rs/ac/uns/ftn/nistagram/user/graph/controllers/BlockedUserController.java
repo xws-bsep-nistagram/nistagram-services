@@ -5,26 +5,26 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserPayload;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserRelationshipRequest;
-import rs.ac.uns.ftn.nistagram.user.graph.services.UserBlocksService;
+import rs.ac.uns.ftn.nistagram.user.graph.services.BlockedUserService;
 
 import javax.validation.Valid;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/user-graph/")
-public class UserBlocksController {
+public class BlockedUserController {
 
-    private final UserBlocksService userBlocksService;
+    private final BlockedUserService blockedUserService;
     private final ModelMapper modelMapper;
 
-    public UserBlocksController(UserBlocksService userBlocksService) {
-        this.userBlocksService = userBlocksService;
+    public BlockedUserController(BlockedUserService blockedUserService) {
+        this.blockedUserService = blockedUserService;
         this.modelMapper = new ModelMapper();
     }
 
     @GetMapping("/{username}/blocked")
     public ResponseEntity<?> findBlockedUsers(@PathVariable String username) {
-        var users = userBlocksService.findBlocked(username)
+        var users = blockedUserService.findBlocked(username)
                 .stream()
                 .map(e-> modelMapper.map(e, UserPayload.class))
                 .collect(Collectors.toList());
@@ -33,13 +33,13 @@ public class UserBlocksController {
 
     @PostMapping("/block")
     public ResponseEntity<?> block(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest){
-        userBlocksService.block(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
+        blockedUserService.block(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
         return ResponseEntity.ok("Request successfully processed");
     }
 
     @DeleteMapping("/block")
     public ResponseEntity<?> unblock(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest){
-        userBlocksService.unblock(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
+        blockedUserService.unblock(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
         return ResponseEntity.ok("Request successfully processed");
     }
 
