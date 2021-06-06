@@ -29,6 +29,22 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("{postId}")
+    public ResponseEntity<?> delete(@PathVariable String postId) {
+        String username = "nikola"; // TODO Extract username from HTTP
+        postService.delete(username, Long.parseLong(postId));
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("user/{username}")
+    public ResponseEntity<?> getByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(
+                postService.getByUsername(username)
+                .stream().map(mapper::toDto)
+                .collect(Collectors.toList())
+        );
+    }
+
     @GetMapping("{postId}")
     public ResponseEntity<?> getById(@PathVariable String postId) {
         return ResponseEntity.ok(mapper.toDto(postService.getById(Long.parseLong(postId))));

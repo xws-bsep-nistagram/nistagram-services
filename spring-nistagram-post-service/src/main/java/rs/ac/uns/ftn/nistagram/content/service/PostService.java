@@ -46,10 +46,21 @@ public class PostService {
         postRepository.save(post);
     }
 
+    public void delete(String username, long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(RuntimeException::new);
+        if (!post.getAuthor().equals(username))
+            throw new RuntimeException("You are not the owner of this post.");
+        else postRepository.delete(post);
+    }
+
     public Post getById(long postId) {
         return postRepository.findById(postId).orElseThrow(RuntimeException::new);
     }
 
+    // TODO Check whether the user follows the author of this post!
+    public List<Post> getByUsername(String username) {
+        return postRepository.getByUsername(username);
+    }
 
     // TODO Check whether the user follows the author of this post!
     public void like(long postId, String username) {

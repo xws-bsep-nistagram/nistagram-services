@@ -3,6 +3,8 @@ package rs.ac.uns.ftn.nistagram.content.domain.core.post;
 import lombok.Getter;
 import lombok.Setter;
 import rs.ac.uns.ftn.nistagram.content.domain.core.UserContent;
+import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.PostInCollection;
+import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.SavedPost;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.HashTag;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.UserInteraction;
@@ -21,12 +23,17 @@ public class Post extends UserContent {
     private long id;
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Post.MediaLink> mediaUrls;
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<UserInteraction> userInteractions;
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Comment> comments;
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<HashTag> hashTags;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<SavedPost> savedPosts;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<PostInCollection> postsInCollections;
 
     @Override
     public boolean equals(Object obj) {
