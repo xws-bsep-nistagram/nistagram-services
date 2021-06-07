@@ -12,5 +12,5 @@ import java.util.List;
 public class PostOverviewDTO extends UserContent {
     private long id;
 
-    private List<Post.MediaLink> mediaUrls;
+    private List<String> mediaUrls;
 }

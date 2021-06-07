@@ -11,7 +11,7 @@ import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.MediaStory;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.ShareStory;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.Story;
-import rs.ac.uns.ftn.nistagram.content.domain.core.story.StoryHighlights;
+import rs.ac.uns.ftn.nistagram.content.domain.core.story.StoryHighlight;
 
 @Component
 public class DomainDTOMapper {
@@ -31,8 +31,7 @@ public class DomainDTOMapper {
 
     public PostOverviewDTO toDto(Post post) {
         PostOverviewDTO dto =  modelMapper.map(post, PostOverviewDTO.class);
-        // Manual prevention of SO-exception due to circular references
-        dto.getMediaUrls().forEach(url -> url.setPost(null));
+        post.getMediaUrls().forEach(link -> dto.getMediaUrls().add(link.getUrl()));
         return dto;
     }
 
@@ -107,7 +106,7 @@ public class DomainDTOMapper {
 
     // Story highlights
 
-    public StoryHighlightOverviewDTO toDto(StoryHighlights highlight) {
+    public StoryHighlightOverviewDTO toDto(StoryHighlight highlight) {
         return StoryHighlightOverviewDTO.builder().id(highlight.getId()).name(highlight.getName()).build();
     }
 }

@@ -12,12 +12,12 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StoryHighlights {
+public class StoryHighlight {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
     private String owner;
     private String name;
-    @OneToMany(mappedBy = "highlights", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "highlight", cascade = CascadeType.ALL)
     private List<HighlightedStory> stories;
 }

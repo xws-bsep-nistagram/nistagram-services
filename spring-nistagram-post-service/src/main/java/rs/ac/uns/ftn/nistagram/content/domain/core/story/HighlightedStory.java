@@ -18,6 +18,6 @@ public class HighlightedStory {
     @OneToOne
     private Story story;
     @OneToOne
-    private StoryHighlights highlights;
+    private StoryHighlight highlight;
 
 }

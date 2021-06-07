@@ -81,10 +81,10 @@ public class StoryController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("highlights/{highlightsId}/story/{storyId}")
-    public ResponseEntity<?> addStoryToHighlight(@PathVariable String highlightsId, @PathVariable String storyId) {
+    @PostMapping("highlights/{highlightId}/story/{storyId}")
+    public ResponseEntity<?> addStoryToHighlight(@PathVariable String highlightId, @PathVariable String storyId) {
         String username = "nikola"; // TODO Extract username from HTTP
-        storyService.addStoryToHighlights(Long.parseLong(highlightsId), Long.parseLong(storyId), username);
+        storyService.addStoryToHighlights(Long.parseLong(highlightId), Long.parseLong(storyId), username);
         return ResponseEntity.ok().build();
     }
 

@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.HighlightedStory;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.Story;
-import rs.ac.uns.ftn.nistagram.content.domain.core.story.StoryHighlights;
+import rs.ac.uns.ftn.nistagram.content.domain.core.story.StoryHighlight;
 import rs.ac.uns.ftn.nistagram.content.repository.story.StoryHighlightsRepository;
 import rs.ac.uns.ftn.nistagram.content.repository.story.StoryRepository;
 
@@ -58,7 +58,7 @@ public class StoryService {
 
     public void createStoryHighlights(String name, String username) {
         highlightsRepository.save(  // TODO This allows non-unique highlight sections (with the same name)
-                StoryHighlights.builder().owner(username).name(name).build()
+                StoryHighlight.builder().owner(username).name(name).build()
         );
     }
 
@@ -67,24 +67,24 @@ public class StoryService {
         if (!story.getAuthor().equals(username))
             throw new RuntimeException("You are not the author of this story!");
 
-        StoryHighlights highlights = highlightsRepository.findById(highlightsId).orElseThrow();
+        StoryHighlight highlights = highlightsRepository.findById(highlightsId).orElseThrow();
         if (!highlights.getOwner().equals(username))
             throw new RuntimeException("You are not the owner of this highlights section!");
 
         if (highlights.getStories().stream().map(HighlightedStory::getStory).collect(Collectors.toList()).contains(story))
             throw new RuntimeException("This story is already in this highlights section!");
 
-        highlights.getStories().add(HighlightedStory.builder().highlights(highlights).story(story).build());
+        highlights.getStories().add(HighlightedStory.builder().highlight(highlights).story(story).build());
         highlightsRepository.save(highlights);
     }
 
-    public List<StoryHighlights> getHighlightsByUsername(String username, String caller) {
+    public List<StoryHighlight> getHighlightsByUsername(String username, String caller) {
         // TODO Check whether following!
         return highlightsRepository.getByUsername(username);
     }
 
     public List<Story> getStoriesFromHighlight(long highlightId, String caller) {
-        StoryHighlights highlights = highlightsRepository.findById(highlightId).orElseThrow();
+        StoryHighlight highlights = highlightsRepository.findById(highlightId).orElseThrow();
 
         // TODO Check whether following!
         boolean closeFriends = true;
@@ -97,7 +97,7 @@ public class StoryService {
     }
 
     public void deleteHighlight(long highlightId, String username) {
-        StoryHighlights highlight = highlightsRepository.findById(highlightId).orElseThrow();
+        StoryHighlight highlight = highlightsRepository.findById(highlightId).orElseThrow();
         if (!highlight.getOwner().equals(username))
             throw new RuntimeException("You are not the owner of this highlight collection");
         else highlightsRepository.delete(highlight);
