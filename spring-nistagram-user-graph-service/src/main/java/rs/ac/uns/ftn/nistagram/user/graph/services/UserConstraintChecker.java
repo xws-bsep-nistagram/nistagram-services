@@ -5,13 +5,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.nistagram.user.graph.exceptions.EntityAlreadyExistsException;
 import rs.ac.uns.ftn.nistagram.user.graph.exceptions.OperationNotPermittedException;
-import rs.ac.uns.ftn.nistagram.user.graph.repositories.UserRepository;
+import rs.ac.uns.ftn.nistagram.user.graph.repositories.*;
 
 @Service
 @Slf4j
 @AllArgsConstructor
 public class UserConstraintChecker {
     private final UserRepository userRepository;
+    private final BlockedUserRepository blockedUserRepository;
+    private final MutedUserRepository mutedUserRepository;
+    private final CloseFriendRepository closeFriendRepository;
+    private final FollowerRepository followerRepository;
 
     public void pendingRequestCheck(String subject, String target){
         userPresenceCheck(subject);
@@ -57,6 +61,36 @@ public class UserConstraintChecker {
         userPresenceCheck(target);
         unblockConstraintCheck(subject, target);
     }
+    public void closeFriendRequestCheck(String subject, String target){
+        userPresenceCheck(subject);
+        userPresenceCheck(target);
+        blockedConstraintCheck(subject, target);
+        followingConstraintCheck(subject, target);
+        alreadyCloseFriendCheck(subject, target);
+    }
+    public void closeFriendRemovalCheck(String subject, String target){
+        userPresenceCheck(subject);
+        userPresenceCheck(target);
+        closeFriendConstraintCheck(subject, target);
+    }
+
+    private void closeFriendConstraintCheck(String subject, String target) {
+        if(!closeFriendRepository.isCloseFriend(subject, target)){
+            var message = String.format("User %s isn't in users %s close friends list",
+                    subject, target);
+            log.warn(message);
+            throw new OperationNotPermittedException(message);
+        }
+    }
+
+    private void alreadyCloseFriendCheck(String subject, String target) {
+        if(closeFriendRepository.isCloseFriend(subject, target)){
+            var message = String.format("User %s is already in users %s close friends list",
+                    subject, target);
+            log.warn(message);
+            throw new OperationNotPermittedException(message);
+        }
+    }
 
     public void userPresenceCheck(String username){
         if(!userRepository.existsByUsername(username)){
@@ -67,7 +101,7 @@ public class UserConstraintChecker {
     }
 
     private void followRequestExists(String subject, String target) {
-        if(!userRepository.sentFollowRequest(subject,target)){
+        if(!followerRepository.sentFollowRequest(subject,target)){
             var message = String.format("Follow request from %s to %s doesn't exist",
                     subject,
                     target);
@@ -77,7 +111,7 @@ public class UserConstraintChecker {
     }
 
     private void unblockConstraintCheck(String subject, String target) {
-        if(!userRepository.hasBlocked(subject, target)) {
+        if(!blockedUserRepository.hasBlocked(subject, target)) {
             var message = String.format("User %s isn't blocked by user %s",
                     target,
                     subject);
@@ -87,7 +121,7 @@ public class UserConstraintChecker {
     }
 
     private void blockedConstraintCheck(String subject, String target) {
-        if(userRepository.hasBlocked(target, subject)) {
+        if(blockedUserRepository.hasBlocked(target, subject)) {
             var message = String.format("User %s is blocked by user %s",
                     subject,
                     target);
@@ -97,7 +131,7 @@ public class UserConstraintChecker {
     }
 
     private void alreadyBlockedCheck(String subject, String target) {
-        if(userRepository.hasBlocked(subject, target)) {
+        if(blockedUserRepository.hasBlocked(subject, target)) {
             var message = String.format("User %s has already blocked user %s",
                     subject,
                     target);
@@ -107,7 +141,7 @@ public class UserConstraintChecker {
     }
 
     private void alreadyFollowsCheck(String subject, String target){
-        if(userRepository.isFollowing(subject, target)) {
+        if(followerRepository.isFollowing(subject, target)) {
             var message = String.format("User %s already follows user %s",
                     subject,
                     target);
@@ -117,7 +151,7 @@ public class UserConstraintChecker {
     }
 
     private void mutedConstraintCheck(String subject, String target) {
-        if(!userRepository.hasMuted(subject, target)) {
+        if(!mutedUserRepository.hasMuted(subject, target)) {
             var message = String.format("User %s hasn't muted user %s",
                     subject,
                     target);
@@ -127,7 +161,7 @@ public class UserConstraintChecker {
     }
 
     private void alreadyMutedConstraintCheck(String subject, String target) {
-        if(userRepository.mutedUser(subject, target)) {
+        if(mutedUserRepository.mutedUser(subject, target)) {
             var message = String.format("User %s has already muted user %s",
                     subject,
                     target);
@@ -137,7 +171,7 @@ public class UserConstraintChecker {
     }
 
     private void followingConstraintCheck(String subject, String target) {
-        if(!userRepository.isFollowing(subject, target)) {
+        if(!followerRepository.isFollowing(subject, target)) {
             var message = String.format("User %s doesn't follow user %s",
                     subject,
                     target);
