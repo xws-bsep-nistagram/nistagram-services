@@ -3,9 +3,13 @@ package rs.ac.uns.ftn.nistagram.content.domain.core.post;
 import lombok.Getter;
 import lombok.Setter;
 import rs.ac.uns.ftn.nistagram.content.domain.core.UserContent;
+import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.PostInCollection;
+import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.SavedPost;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.HashTag;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.UserInteraction;
+import rs.ac.uns.ftn.nistagram.content.domain.core.report.PostReport;
+import rs.ac.uns.ftn.nistagram.content.domain.core.story.ShareStory;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -21,12 +25,21 @@ public class Post extends UserContent {
     private long id;
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Post.MediaLink> mediaUrls;
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<UserInteraction> userInteractions;
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Comment> comments;
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<HashTag> hashTags;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<SavedPost> savedPosts;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<PostInCollection> postsInCollections;
+    @OneToMany(mappedBy = "sharedPost", cascade = CascadeType.REMOVE)
+    private List<ShareStory> shareStories;
+    @OneToMany(mappedBy = "reportedPost", cascade = CascadeType.REMOVE)
+    private List<PostReport> postReports;
 
     @Override
     public boolean equals(Object obj) {

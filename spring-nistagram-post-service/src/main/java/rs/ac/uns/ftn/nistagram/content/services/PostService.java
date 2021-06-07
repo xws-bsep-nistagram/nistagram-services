@@ -3,6 +3,7 @@ package rs.ac.uns.ftn.nistagram.content.services;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import rs.ac.uns.ftn.nistagram.content.communication.External;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.CustomPostCollection;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.PostInCollection;
@@ -10,7 +11,7 @@ import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.SavedPost;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.UserInteraction;
 import rs.ac.uns.ftn.nistagram.content.messaging.producers.UserContentProducer;
-import rs.ac.uns.ftn.nistagram.content.repository.*;
+import rs.ac.uns.ftn.nistagram.content.repository.post.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,7 +28,7 @@ public class PostService {
     private final CustomPostCollectionRepository collectionRepository;
     private final PostInCollectionRepository postInCollectionRepository;
     private final UserContentProducer userContentProducer;
-
+    private final External.GraphClient graphClient;
 
     public void create(Post post) {
         post.setTime(LocalDateTime.now());
@@ -35,10 +36,23 @@ public class PostService {
         userContentProducer.publishPostCreated(post);
     }
 
+    public void delete(String username, long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(RuntimeException::new);
+        if (!post.getAuthor().equals(username))
+            throw new RuntimeException("You are not the owner of this post.");
+        else postRepository.delete(post);
+    }
+
     public Post getById(long postId) {
         return postRepository.findById(postId).orElseThrow(RuntimeException::new);
     }
 
+    public List<Post> getByUsername(String caller, String username) {
+        boolean followsAuthor = graphClient.checkFollowing(caller, username).getStatus();
+        if (followsAuthor)
+            return postRepository.getByUsername(username);
+        else throw new RuntimeException("You do not follow " + username + "!");
+    }
 
     // TODO Check whether the user follows the author of this post!
     public void like(long postId, String username) {
@@ -129,6 +143,11 @@ public class PostService {
         catch (RuntimeException ignored) {}
 
         postInCollectionRepository.save(PostInCollection.builder().collection(customPostCollection).post(post).build());
+    }
+
+    public void removePostFromCollection(String username, String collectionName, long postId) {
+        CustomPostCollection collection = collectionRepository.getByUserAndName(username, collectionName).orElseThrow(RuntimeException::new);
+        postInCollectionRepository.deletePostFromCollection(postId, collection.getId());
     }
 
     public List<PostInCollection> getAllFromCollection(String username, String collectionName) {

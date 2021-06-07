@@ -29,6 +29,23 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("{postId}")
+    public ResponseEntity<?> delete(@PathVariable String postId) {
+        String username = "nikola"; // TODO Extract username from HTTP
+        postService.delete(username, Long.parseLong(postId));
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("user/{username}")
+    public ResponseEntity<?> getByUsername(@PathVariable String username) {
+        String caller = "nikola";   // TODO Extract username from HTTP
+        return ResponseEntity.ok(
+                postService.getByUsername(caller, username)
+                .stream().map(mapper::toDto)
+                .collect(Collectors.toList())
+        );
+    }
+
     @GetMapping("{postId}")
     public ResponseEntity<?> getById(@PathVariable String postId) {
         return ResponseEntity.ok(mapper.toDto(postService.getById(Long.parseLong(postId))));
@@ -88,6 +105,13 @@ public class PostController {
     public ResponseEntity<?> addPostToCollection(@PathVariable String collectionName, @PathVariable String postId) {
         String username = "nikola"; // TODO Extract username from HTTP
         postService.addPostToCollection(username, collectionName, Long.parseLong(postId));
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("collection/{collectionName}/remove/{postId}")
+    public ResponseEntity<?> removePostFromCollection(@PathVariable String collectionName, @PathVariable String postId) {
+        String username = "nikola"; // TODO Extract username from HTTP
+        postService.removePostFromCollection(username, collectionName, Long.parseLong(postId));
         return ResponseEntity.ok().build();
     }
 

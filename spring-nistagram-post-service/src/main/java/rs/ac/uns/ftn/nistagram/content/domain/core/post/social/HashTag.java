@@ -1,6 +1,5 @@
 package rs.ac.uns.ftn.nistagram.content.domain.core.post.social;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
@@ -13,7 +12,6 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @Setter
 public class HashTag {
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
