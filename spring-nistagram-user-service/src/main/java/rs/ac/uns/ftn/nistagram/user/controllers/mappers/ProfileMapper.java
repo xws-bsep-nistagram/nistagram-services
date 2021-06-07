@@ -81,4 +81,13 @@ public class ProfileMapper {
         newPreferences.setMessage(message);
         return newPreferences;
     }
+
+    public PublicDataDTO mapPersonalData(User found) {
+        return new PublicDataDTO(
+                found.getUsername(),
+                found.getPersonalData().getFullName(),
+                found.getPersonalData().getBio(),
+                found.getPersonalData().getWebsite()
+        );
+    }
 }

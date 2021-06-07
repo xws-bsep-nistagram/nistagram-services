@@ -40,6 +40,12 @@ public class UserController {
         return profileMapper.map(found);
     }
 
+    @GetMapping("public/{username}")
+    public PublicDataDTO getPublicData(@PathVariable String username) {
+        User found = profileService.get(username);
+        return profileMapper.mapPersonalData(found);
+    }
+
     @GetMapping("profile/privacy")
     public PrivacyDataViewDTO getPrivacyData(@RequestHeader("username") String username) {
         User found = profileService.get(username);
