@@ -50,12 +50,12 @@ services:
         ports:
             - "${API_GATEWAY_PORT}:${API_GATEWAY_PORT}"
         restart: on-failure
-#        depends_on:
-#            - user-service
-#            - user-graph-service
-#            - auth-service
-#            - post-service
-#            - media-service
+        depends_on:
+            - user-service
+            - user-graph-service
+            - auth-service
+            - post-service
+            - feed-service
         environment:
             API_GATEWAY_PORT: "${API_GATEWAY_PORT}"
             AUTH_SERVICE_PORT: "${AUTH_SERVICE_PORT}"

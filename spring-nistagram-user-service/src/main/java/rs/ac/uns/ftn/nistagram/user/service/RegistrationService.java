@@ -38,7 +38,7 @@ public class RegistrationService {
 
         User created = repository.save(createNewUser(request));
         String jwt = sendRegistrationRequest(credentials);
-        producer.publishCreatedUser(created);
+        producer.publishUserCreated(created);
         return jwt;
     }
 

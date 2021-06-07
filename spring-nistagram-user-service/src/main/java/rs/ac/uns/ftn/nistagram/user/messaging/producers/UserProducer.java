@@ -15,18 +15,27 @@ public class UserProducer {
 
     private final RabbitTemplate rabbitTemplate;
 
-    public void publishCreatedUser(User user){
+    public void publishUserCreated(User user){
 
         var userTopicPayload = UserTopicPayloadMapper.toPayload(user);
-        log.info("User with an username {} published to a {} ",
+        log.info("User create request for a user {} published to a {} ",
                 user.getUsername(), RabbitMQConfig.USER_CREATED_GRAPH_SERVICE);
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_CREATED_GRAPH_SERVICE,
                 userTopicPayload);
-        log.info("User with an username {} published to a {} ",
+        log.info("User create request for a user {} published to a {} ",
                 user.getUsername(), RabbitMQConfig.USER_CREATED_FEED_SERVICE);
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_CREATED_FEED_SERVICE,
                 userTopicPayload);
     }
+
+    public void publishUserUpdated(User user){
+        var userTopicPayload = UserTopicPayloadMapper.toPayload(user);
+        log.info("User update request for a user {} published to a {} ",
+                user.getUsername(), RabbitMQConfig.USER_UPDATED_GRAPH_SERVICE);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.USER_UPDATED_GRAPH_SERVICE,
+                userTopicPayload);
+    }
+
 
 
 }

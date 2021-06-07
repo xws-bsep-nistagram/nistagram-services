@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
     public static final String USER_CREATED_GRAPH_SERVICE = "user.created.graph-service";
     public static final String USER_CREATED_FEED_SERVICE = "user.created.feed-service";
+    public static final String USER_UPDATED_GRAPH_SERVICE = "user.updated.graph-service";
 
     @Bean
     public RabbitTemplate jsonRabbitTemplate(ConnectionFactory connectionFactory) {
@@ -24,7 +25,6 @@ public class RabbitMQConfig {
     public MessageConverter jsonConverter() {
         return new Jackson2JsonMessageConverter();
     }
-
     @Bean
     public Queue userCreatedGraphQueue() {
         return new Queue(USER_CREATED_GRAPH_SERVICE);
@@ -33,4 +33,6 @@ public class RabbitMQConfig {
     public Queue userCreatedFeedQueue() {
         return new Queue(USER_CREATED_FEED_SERVICE);
     }
+    @Bean
+    public Queue userUpdatedGraphService(){ return new Queue(USER_UPDATED_GRAPH_SERVICE); }
 }

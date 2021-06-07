@@ -1,5 +1,6 @@
 package rs.ac.uns.ftn.nistagram.user.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.domain.user.PersonalData;
@@ -7,16 +8,16 @@ import rs.ac.uns.ftn.nistagram.user.domain.user.PrivacyData;
 import rs.ac.uns.ftn.nistagram.user.domain.user.User;
 import rs.ac.uns.ftn.nistagram.user.domain.user.preferences.NotificationPreferences;
 import rs.ac.uns.ftn.nistagram.user.infrastructure.exceptions.EntityNotFoundException;
+import rs.ac.uns.ftn.nistagram.user.messaging.producers.UserProducer;
 import rs.ac.uns.ftn.nistagram.user.repository.UserRepository;
 
 @Service
+@AllArgsConstructor
 public class ProfileService {
 
     private final UserRepository repository;
+    private final UserProducer userProducer;
 
-    public ProfileService(UserRepository repository) {
-        this.repository = repository;
-    }
 
     @Transactional(readOnly = true)
     public User get(String username) {
@@ -38,6 +39,7 @@ public class ProfileService {
     public User update(String username, PrivacyData privacyData) {
         User found = get(username);
         found.setPrivacyData(privacyData);
+        userProducer.publishUserUpdated(found);
         return repository.save(found);
     }
 
