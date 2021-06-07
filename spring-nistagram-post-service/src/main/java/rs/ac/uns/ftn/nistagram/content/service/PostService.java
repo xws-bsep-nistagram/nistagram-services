@@ -1,7 +1,9 @@
 package rs.ac.uns.ftn.nistagram.content.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import rs.ac.uns.ftn.nistagram.content.communication.External;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.CustomPostCollection;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.PostInCollection;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
@@ -23,22 +26,7 @@ public class PostService {
     private final SavedPostRepository savedPostRepository;
     private final CustomPostCollectionRepository collectionRepository;
     private final PostInCollectionRepository postInCollectionRepository;
-
-    public PostService(
-            PostRepository postRepository,
-            UserInteractionRepository interactionRepository,
-            CommentRepository commentRepository,
-            SavedPostRepository savedPostRepository,
-            CustomPostCollectionRepository collectionRepository,
-            PostInCollectionRepository postInCollectionRepository
-    ) {
-        this.postRepository = postRepository;
-        this.interactionRepository = interactionRepository;
-        this.commentRepository = commentRepository;
-        this.savedPostRepository = savedPostRepository;
-        this.collectionRepository = collectionRepository;
-        this.postInCollectionRepository = postInCollectionRepository;
-    }
+    private final External.GraphClient graphClient;
 
     public void create(Post post) {
         post.setTime(LocalDateTime.now());
@@ -56,9 +44,11 @@ public class PostService {
         return postRepository.findById(postId).orElseThrow(RuntimeException::new);
     }
 
-    // TODO Check whether the user follows the author of this post!
-    public List<Post> getByUsername(String username) {
-        return postRepository.getByUsername(username);
+    public List<Post> getByUsername(String caller, String username) {
+        boolean followsAuthor = graphClient.checkFollowing(caller, username).getStatus();
+        if (followsAuthor)
+            return postRepository.getByUsername(username);
+        else throw new RuntimeException("You do not follow " + username + "!");
     }
 
     // TODO Check whether the user follows the author of this post!

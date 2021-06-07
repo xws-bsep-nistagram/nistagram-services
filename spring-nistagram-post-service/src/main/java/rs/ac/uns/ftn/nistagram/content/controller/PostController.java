@@ -38,8 +38,9 @@ public class PostController {
 
     @GetMapping("user/{username}")
     public ResponseEntity<?> getByUsername(@PathVariable String username) {
+        String caller = "nikola";   // TODO Extract username from HTTP
         return ResponseEntity.ok(
-                postService.getByUsername(username)
+                postService.getByUsername(caller, username)
                 .stream().map(mapper::toDto)
                 .collect(Collectors.toList())
         );
