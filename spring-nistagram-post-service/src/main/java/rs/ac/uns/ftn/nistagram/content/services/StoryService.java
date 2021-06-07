@@ -1,7 +1,9 @@
 package rs.ac.uns.ftn.nistagram.content.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import rs.ac.uns.ftn.nistagram.content.communication.External;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.HighlightedStory;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.Story;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.StoryHighlight;
@@ -14,15 +16,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class StoryService {
 
     private final StoryRepository storyRepository;
     private final StoryHighlightsRepository highlightsRepository;
-
-    public StoryService(StoryRepository storyRepository, StoryHighlightsRepository highlightsRepository) {
-        this.storyRepository = storyRepository;
-        this.highlightsRepository = highlightsRepository;
-    }
+    private final External.GraphClientWrapper graphClient;
 
     public void create(Story story) {
         story.setTime(LocalDateTime.now());
@@ -39,26 +38,31 @@ public class StoryService {
     }
 
     public List<Story> getByUsername(String username, String caller) {
-        // TODO Check whether following or not, if not, reject!
-        boolean closeFriends = true;
+        graphClient.assertFollow(caller, username);
 
-        if (closeFriends) return storyRepository.getAllByUsernameAfterDate(username, twentyFourHoursAgo());
-        else return storyRepository.getNonCloseFriendsByUsernameAfterDate(username, twentyFourHoursAgo());
-    }
+        try {
+            graphClient.assertCloseFriends(caller, username);
+        }
+        catch (RuntimeException ignore) {
+            return storyRepository.getNonCloseFriendsByUsernameAfterDate(username, twentyFourHoursAgo());
+        }
 
-    public List<Story> getOwnActive(String username) {
         return storyRepository.getAllByUsernameAfterDate(username, twentyFourHoursAgo());
     }
 
-    public List<Story> getOwnAll(String username) {
-        return storyRepository.getAllByUsername(username);
+    public List<Story> getOwnActive(String caller) {
+        return storyRepository.getAllByUsernameAfterDate(caller, twentyFourHoursAgo());
+    }
+
+    public List<Story> getOwnAll(String caller) {
+        return storyRepository.getAllByUsername(caller);
     }
 
     private LocalDateTime twentyFourHoursAgo() { return LocalDateTime.now().minus(Duration.ofDays(1));}
 
-    public void createStoryHighlights(String name, String username) {
+    public void createStoryHighlights(String name, String caller) {
         highlightsRepository.save(  // TODO This allows non-unique highlight sections (with the same name)
-                StoryHighlight.builder().owner(username).name(name).build()
+                StoryHighlight.builder().owner(caller).name(name).build()
         );
     }
 
@@ -79,21 +83,25 @@ public class StoryService {
     }
 
     public List<StoryHighlight> getHighlightsByUsername(String username, String caller) {
-        // TODO Check whether following!
+        graphClient.assertFollow(caller, username);
         return highlightsRepository.getByUsername(username);
     }
 
     public List<Story> getStoriesFromHighlight(long highlightId, String caller) {
-        StoryHighlight highlights = highlightsRepository.findById(highlightId).orElseThrow();
+        StoryHighlight highlight = highlightsRepository.findById(highlightId).orElseThrow();
+        List<Story> highlightStories = highlight.getStories().stream().map(HighlightedStory::getStory).collect(Collectors.toList());
 
-        // TODO Check whether following!
-        boolean closeFriends = true;
+        // TODO Maybe modify graph client to respond with a DTO which provides both of these info?
+        graphClient.assertFollow(caller, highlight.getOwner());
 
-        List<Story> highlightStories = highlights.getStories().stream().map(HighlightedStory::getStory).collect(Collectors.toList());
-        if (closeFriends)
-            return highlightStories;
-        else
+        try {
+            graphClient.assertCloseFriends(caller, highlight.getOwner());
+        }
+        catch (RuntimeException ignore) {
             return highlightStories.stream().filter(story -> !story.isCloseFriends()).collect(Collectors.toList());
+        }
+
+        return highlightStories;
     }
 
     public void deleteHighlight(long highlightId, String username) {

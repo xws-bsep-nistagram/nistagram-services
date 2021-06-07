@@ -16,8 +16,8 @@ public class PostInCollection {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
-    @OneToOne
+    @ManyToOne
     private Post post;
-    @OneToOne
+    @ManyToOne
     private CustomPostCollection collection;
 }

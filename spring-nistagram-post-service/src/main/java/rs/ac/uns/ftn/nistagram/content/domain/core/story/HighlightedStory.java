@@ -15,9 +15,9 @@ public class HighlightedStory {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
-    @OneToOne
+    @ManyToOne
     private Story story;
-    @OneToOne
+    @ManyToOne
     private StoryHighlight highlight;
 
 }

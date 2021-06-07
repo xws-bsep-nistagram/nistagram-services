@@ -17,6 +17,6 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
     @Query(value = "select s from Story s where s.author = ?1")
     List<Story> getAllByUsername(String username);
 
-    @Query(value = "select s from Story s where s.author = ?1 and s.time > ?2 and s.closeFriends = true")
+    @Query(value = "select s from Story s where s.author = ?1 and s.time > ?2 and s.closeFriends = false")
     List<Story> getNonCloseFriendsByUsernameAfterDate(String username, LocalDateTime time);
 }
