@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.feed.http.payload;
+package rs.ac.uns.ftn.nistagram.feed.http.payload.user;
 
 import lombok.Data;
 

@@ -25,7 +25,7 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody PostCreationDTO dto) {
-        String caller = "nikola12";
+        String caller = "loremipsum1";
         dto.setAuthor(caller);
         postService.create(mapper.toDomain(dto));   // TODO Extract username from HTTP
         return ResponseEntity.ok().build();
@@ -40,58 +40,68 @@ public class PostController {
 
     @GetMapping("user/{username}")
     public ResponseEntity<?> getByUsername(@PathVariable String username) {
-        String caller = "nikola12";   // TODO Extract username from HTTP
+        String caller = "loremipsum1";   // TODO Extract username from HTTP
         return ResponseEntity.ok(
                 postService.getByUsername(caller, username)
                 .stream().map(mapper::toDto)
                 .collect(Collectors.toList())
         );
     }
+    @GetMapping("user/{username}/restricted")
+    @CrossOrigin("http://feed-service:9001")
+    public ResponseEntity<?> getByUsernameRestricted(@PathVariable String username) {
+        return ResponseEntity.ok(
+                postService.getByUsername(username)
+                        .stream().map(mapper::toDto)
+                        .collect(Collectors.toList())
+        );
+    }
+
 
     @GetMapping("{postId}")
     public ResponseEntity<?> getById(@PathVariable String postId) {
-        String caller = "nikola12";
+        String caller = "loremipsum1";
         return ResponseEntity.ok(mapper.toDto(postService.getById(Long.parseLong(postId), caller)));
     }
 
     @GetMapping("like/{postId}")
     public ResponseEntity<?> like(@PathVariable String postId) {
-        String caller = "nikola12";
+        String caller = "loremipsum1";
         postService.like(Long.parseLong(postId), caller); // TODO Extract username from HTTP
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("dislike/{postId}")
     public ResponseEntity<?> dislike(@PathVariable String postId) {
-        String caller = "nikola12";
+        String caller = "loremipsum1";
         postService.dislike(Long.parseLong(postId), caller); // TODO Extract username from HTTP
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("comment")
     public ResponseEntity<?> comment(@RequestBody CommentCreationDTO dto) {
-        dto.setAuthor("nikola12");    // TODO Extract username from HTTP
+        dto.setAuthor("loremipsum1");    // TODO Extract username from HTTP
         postService.comment(mapper.toDomain(dto), dto.getPostId());
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("save/{postId}")
     public ResponseEntity<?> save(@PathVariable String postId) {
-        String caller = "nikola12"; // TODO Extract username from HTTP
+        String caller = "loremipsum1"; // TODO Extract username from HTTP
         postService.save(caller, Long.parseLong(postId));
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("unsave/{postId}")
     public ResponseEntity<?> unsave(@PathVariable String postId) {
-        String caller = "nikola12"; // TODO Extract username from HTTP
+        String caller = "loremipsum1"; // TODO Extract username from HTTP
         postService.unsave(caller, Long.parseLong(postId));
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("saved")
     public ResponseEntity<?> getSaved() {
-        String caller = "nikola12"; // TODO Extract username from HTTP
+        String caller = "loremipsum1"; // TODO Extract username from HTTP
         return ResponseEntity.ok(
                 postService.getSaved(caller)
                 .stream().map(savedPost -> mapper.toDto(savedPost.getPost()))
@@ -101,28 +111,28 @@ public class PostController {
 
     @PostMapping("collection/{collectionName}")
     public ResponseEntity<?> createCollection(@PathVariable String collectionName) {
-        String caller = "nikola12"; // TODO Extract username from HTTP
+        String caller = "loremipsum1"; // TODO Extract username from HTTP
         postService.createCollection(caller, collectionName);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("collection/{collectionName}/add/{postId}")
     public ResponseEntity<?> addPostToCollection(@PathVariable String collectionName, @PathVariable String postId) {
-        String caller = "nikola12"; // TODO Extract username from HTTP
+        String caller = "loremipsum1"; // TODO Extract username from HTTP
         postService.addPostToCollection(caller, collectionName, Long.parseLong(postId));
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("collection/{collectionName}/remove/{postId}")
     public ResponseEntity<?> removePostFromCollection(@PathVariable String collectionName, @PathVariable String postId) {
-        String caller = "nikola12"; // TODO Extract username from HTTP
+        String caller = "loremipsum1"; // TODO Extract username from HTTP
         postService.removePostFromCollection(caller, collectionName, Long.parseLong(postId));
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("collection/{collectionName}")
     public ResponseEntity<?> getCollectionPosts(@PathVariable String collectionName) {
-        String caller = "nikola12"; // TODO Extract username from HTTP
+        String caller = "loremipsum1"; // TODO Extract username from HTTP
         return ResponseEntity.ok(
                 postService.getAllFromCollection(caller, collectionName)
                         .stream().map(postInCollection -> mapper.toDto(postInCollection.getPost()))
@@ -132,7 +142,7 @@ public class PostController {
 
     @DeleteMapping("collection/{collectionName}")
     public ResponseEntity<?> deleteCollection(@PathVariable String collectionName) {
-        String caller = "nikola12"; // TODO Extract username from HTTP
+        String caller = "loremipsum1"; // TODO Extract username from HTTP
         postService.deleteCollection(caller, collectionName);
         return ResponseEntity.ok().build();
     }

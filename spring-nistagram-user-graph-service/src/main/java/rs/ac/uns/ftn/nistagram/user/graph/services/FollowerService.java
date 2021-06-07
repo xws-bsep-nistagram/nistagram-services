@@ -1,9 +1,11 @@
 package rs.ac.uns.ftn.nistagram.user.graph.services;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
+import rs.ac.uns.ftn.nistagram.user.graph.messaging.producers.UserRelationsProducer;
 import rs.ac.uns.ftn.nistagram.user.graph.repositories.FollowerRepository;
 
 import java.util.ArrayList;
@@ -11,16 +13,14 @@ import java.util.List;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class FollowerService {
 
     private final FollowerRepository followerRepository;
     private final UserConstraintChecker constraintChecker;
+    private final UserRelationsProducer userRelationsProducer;
 
-    public FollowerService(FollowerRepository followerRepository,
-                           UserConstraintChecker constraintChecker) {
-        this.followerRepository = followerRepository;
-        this.constraintChecker = constraintChecker;
-    }
+
 
     @Transactional
     public List<User> findFollowing(String username) {
@@ -77,6 +77,7 @@ public class FollowerService {
 
         followerRepository.follow(subject, target);
         followerRepository.removeFollowRequest(subject, target);
+        userRelationsProducer.publishUserFollowed(subject, target);
 
         log.info("Follow request from user {} to user {} has been accepted",
                 subject,
@@ -128,6 +129,7 @@ public class FollowerService {
         }
         else {
             followerRepository.follow(subject, target);
+            userRelationsProducer.publishUserFollowed(subject, target);
             message = String.format("User %s follows %s", subject, target);
         }
 
@@ -144,6 +146,7 @@ public class FollowerService {
         var subjectUser = followerRepository.findById(subject).get();
 
         followerRepository.unfollow(subjectUser.getUsername(), target);
+        userRelationsProducer.publishUserUnfollowed(subject, target);
         log.info("User {} is no longer following {}",
                 subjectUser.getUsername(),
                 target);

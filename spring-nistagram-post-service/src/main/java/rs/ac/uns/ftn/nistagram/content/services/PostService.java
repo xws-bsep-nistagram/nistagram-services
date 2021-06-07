@@ -59,6 +59,10 @@ public class PostService {
         return postRepository.getByUsername(username);
     }
 
+    public List<Post> getByUsername(String username) {
+        return postRepository.getByUsername(username);
+    }
+
     public void like(long postId, String caller) {
         addInteraction(postId, caller, UserInteraction.Sentiment.LIKE);
     }

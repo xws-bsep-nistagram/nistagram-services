@@ -7,11 +7,13 @@ import rs.ac.uns.ftn.nistagram.content.communication.External;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.HighlightedStory;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.Story;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.StoryHighlight;
+import rs.ac.uns.ftn.nistagram.content.messaging.producers.ContentProducer;
 import rs.ac.uns.ftn.nistagram.content.repository.story.StoryHighlightsRepository;
 import rs.ac.uns.ftn.nistagram.content.repository.story.StoryRepository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,11 +24,13 @@ public class StoryService {
     private final StoryRepository storyRepository;
     private final StoryHighlightsRepository highlightsRepository;
     private final External.GraphClientWrapper graphClient;
+    private final ContentProducer contentProducer;
+
 
     public void create(Story story) {
         story.setTime(LocalDateTime.now());
-        System.out.println("LOKACIJA: [" + story.getLocation() + "]");
         storyRepository.save(story);
+        contentProducer.publishStoryCreated(story);
     }
 
     @Transactional
@@ -34,7 +38,10 @@ public class StoryService {
         Story story = storyRepository.findById(storyId).orElseThrow();
         if (!story.getAuthor().equals(username))
             throw new RuntimeException();
-        else storyRepository.delete(story);
+        else {
+            storyRepository.delete(story);
+            contentProducer.publishStoryDeleted(story);
+        }
     }
 
     public List<Story> getByUsername(String username, String caller) {
@@ -48,6 +55,9 @@ public class StoryService {
         }
 
         return storyRepository.getAllByUsernameAfterDate(username, twentyFourHoursAgo());
+    }
+    public List<Story> getByUsername(String username){
+        return storyRepository.getNonCloseFriendsByUsernameAfterDate(username, twentyFourHoursAgo());
     }
 
     public List<Story> getOwnActive(String caller) {
@@ -110,4 +120,5 @@ public class StoryService {
             throw new RuntimeException("You are not the owner of this highlight collection");
         else highlightsRepository.delete(highlight);
     }
+
 }

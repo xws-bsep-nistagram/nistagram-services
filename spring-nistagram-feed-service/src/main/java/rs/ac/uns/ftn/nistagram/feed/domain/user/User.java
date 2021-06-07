@@ -29,11 +29,20 @@ public class User {
     @ManyToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<StoryCampaignEntry> storyCampaignEntries;
 
-    public void addToFeed(PostFeedEntry postFeedEntry) {
+    public void addToPostFeed(PostFeedEntry postFeedEntry) {
         postFeedEntries.add(postFeedEntry);
     }
 
-    public void removeFromFeed(PostFeedEntry postFeedEntry) {
+    public void removeFromPostFeed(PostFeedEntry postFeedEntry) {
         postFeedEntries.remove(postFeedEntry);
     }
+
+    public void addToStoryFeed(StoryFeedEntry storyFeedEntry){
+        storyFeedEntries.add(storyFeedEntry);
+    }
+
+    public void removeFromStoryFeed(StoryFeedEntry storyFeedEntry){
+        storyFeedEntries.remove(storyFeedEntry);
+    }
+
 }

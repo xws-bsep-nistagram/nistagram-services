@@ -13,6 +13,10 @@ public class RabbitMQConfig {
     public static final String USER_CREATED_FEED_SERVICE = "user.created.feed-service";
     public static final String POST_CREATED_FEED_SERVICE = "post.created.feed-service";
     public static final String POST_DELETED_FEED_SERVICE = "post.deleted.feed-service";
+    public static final String STORY_CREATED_FEED_SERVICE = "story.created.feed-service";
+    public static final String STORY_DELETED_FEED_SERVICE = "story.deleted.feed-service";
+    public static final String USER_FOLLOWED_FEED_SERVICE = "user.followed.feed-service";
+    public static final String USER_UNFOLLOWED_FEED_SERVICE = "user.unfollowed.feed-service";
 
     @Bean
     public RabbitTemplate jsonRabbitTemplate(ConnectionFactory connectionFactory) {
@@ -36,4 +40,14 @@ public class RabbitMQConfig {
     }
     @Bean
     public Queue postDeletedFeedQueue(){ return new Queue(POST_DELETED_FEED_SERVICE); }
+    @Bean
+    public Queue storyCreatedFeedQueue() {
+        return new Queue(STORY_CREATED_FEED_SERVICE);
+    }
+    @Bean
+    public Queue storyDeletedFeedQueue(){ return new Queue(STORY_DELETED_FEED_SERVICE); }
+    @Bean
+    public Queue userFollowedFeedQueue(){ return new Queue(USER_FOLLOWED_FEED_SERVICE); }
+    @Bean
+    public Queue userUnfollowedFeedQueue(){ return new Queue(USER_UNFOLLOWED_FEED_SERVICE); }
 }

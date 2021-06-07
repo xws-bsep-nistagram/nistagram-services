@@ -26,7 +26,7 @@ public class StoryController {
 
     @PostMapping("share")
     public ResponseEntity<?> createShareStory(@Valid @RequestBody ShareStoryCreationDTO dto) {
-        String caller = "nikola12";
+        String caller = "loremipsum1";
         dto.setAuthor(caller);
         storyService.create(mapper.toDomain(dto, true));
         return ResponseEntity.ok().build();
@@ -34,7 +34,7 @@ public class StoryController {
 
     @PostMapping("media")
     public ResponseEntity<?> createMediaStory(@Valid @RequestBody MediaStoryCreationDTO dto) {
-        String caller = "nikola12";
+        String caller = "loremipsum1";
         dto.setAuthor(caller);
         storyService.create(mapper.toDomain(dto, false));
         return ResponseEntity.ok().build();
@@ -42,16 +42,25 @@ public class StoryController {
 
     @GetMapping("user/{username}")
     public ResponseEntity<?> getByUsername(@PathVariable String username) {
-        String caller = "nikola12"; // TODO Extract username from HTTP
+        String caller = "loremipsum1"; // TODO Extract username from HTTP
         return ResponseEntity.ok(
                 storyService.getByUsername(username, caller)
                 .stream().map(mapper::toDto).collect(Collectors.toList())
         );
     }
 
+    @GetMapping("user/{username}/restricted")
+    @CrossOrigin("http://feed-service:9001")
+    public ResponseEntity<?> getByUsernameRestricted(@PathVariable String username) {
+        return ResponseEntity.ok(
+                storyService.getByUsername(username)
+                        .stream().map(mapper::toDto).collect(Collectors.toList())
+        );
+    }
+
     @GetMapping("me")
     public ResponseEntity<?> getOwnActive() {
-        String caller = "nikola12";
+        String caller = "loremipsum1";
         return ResponseEntity.ok(
                 storyService.getOwnActive(caller)
                 .stream().map(mapper::toDto).collect(Collectors.toList())
@@ -60,7 +69,7 @@ public class StoryController {
 
     @GetMapping("me/all")
     public ResponseEntity<?> getOwnAll() {
-        String caller = "nikola12";
+        String caller = "loremipsum1";
         return ResponseEntity.ok(
                 storyService.getOwnAll(caller)
                 .stream().map(mapper::toDto).collect(Collectors.toList())
@@ -69,28 +78,28 @@ public class StoryController {
 
     @DeleteMapping("{storyId}")
     public ResponseEntity<?> delete(@PathVariable String storyId) {
-        String caller = "nikola12"; // TODO Extract username from HTTP
-        storyService.delete(Long.parseLong(storyId), caller);
+        String username = "loremipsum1"; // TODO Extract username from HTTP
+        storyService.delete(Long.parseLong(storyId), username);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("highlights/{name}")
     public ResponseEntity<?> createStoryHighlights(@PathVariable String name) {
-        String caller = "nikola12"; // TODO Extract username from HTTP
-        storyService.createStoryHighlights(name, caller);
+        String username = "loremipsum1"; // TODO Extract username from HTTP
+        storyService.createStoryHighlights(name, username);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("highlights/{highlightId}/story/{storyId}")
     public ResponseEntity<?> addStoryToHighlight(@PathVariable String highlightId, @PathVariable String storyId) {
-        String caller = "nikola12"; // TODO Extract username from HTTP
-        storyService.addStoryToHighlights(Long.parseLong(highlightId), Long.parseLong(storyId), caller);
+        String username = "loremipsum1"; // TODO Extract username from HTTP
+        storyService.addStoryToHighlights(Long.parseLong(highlightId), Long.parseLong(storyId), username);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("highlights/user/{username}")
     public ResponseEntity<?> getHighlightsByUsername(@PathVariable String username) {
-        String caller = "nikola12"; // TODO Extract username from HTTP
+        String caller = "loremipsum1"; // TODO Extract username from HTTP
         return ResponseEntity.ok(
                 storyService.getHighlightsByUsername(username, caller)
                 .stream().map(mapper::toDto).collect(Collectors.toList())
@@ -99,7 +108,7 @@ public class StoryController {
 
     @GetMapping("highlights/{highlightId}")
     public ResponseEntity<?> getStoriesFromHighlight(@PathVariable String highlightId) {
-        String caller = "nikola12"; // TODO Extract username from HTTP
+        String caller = "loremipsum1"; // TODO Extract username from HTTP
         return ResponseEntity.ok(
                 storyService.getStoriesFromHighlight(Long.parseLong(highlightId), caller)
                 .stream().map(mapper::toDto).collect(Collectors.toList())
@@ -108,7 +117,7 @@ public class StoryController {
 
     @DeleteMapping("highlights/{highlightId}")
     public ResponseEntity<?> deleteHighlight(@PathVariable String highlightId) {
-        String caller = "nikola12"; // TODO Extract username from HTTP
+        String caller = "loremipsum1"; // TODO Extract username from HTTP
         storyService.deleteHighlight(Long.parseLong(highlightId), caller);
         return ResponseEntity.ok().build();
     }

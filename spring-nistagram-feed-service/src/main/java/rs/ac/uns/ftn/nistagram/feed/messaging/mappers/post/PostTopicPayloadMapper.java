@@ -1,8 +1,8 @@
-package rs.ac.uns.ftn.nistagram.feed.messaging.mappers.content;
+package rs.ac.uns.ftn.nistagram.feed.messaging.mappers.post;
 
 import rs.ac.uns.ftn.nistagram.feed.domain.entry.feed.PostFeedEntry;
 import rs.ac.uns.ftn.nistagram.feed.domain.entry.feed.StoryFeedEntry;
-import rs.ac.uns.ftn.nistagram.feed.messaging.payload.content.PostTopicPayload;
+import rs.ac.uns.ftn.nistagram.feed.messaging.payload.post.PostTopicPayload;
 
 public class PostTopicPayloadMapper {
 
@@ -11,10 +11,4 @@ public class PostTopicPayloadMapper {
                                 postTopicPayload.getTime(),
                                 postTopicPayload.getContentId());
     }
-    public static StoryFeedEntry toStoryFeedEntry(PostTopicPayload postTopicPayload){
-        return new StoryFeedEntry(postTopicPayload.getAuthor(),
-                                postTopicPayload.getTime(),
-                                postTopicPayload.getContentId());
-    }
-
 }
