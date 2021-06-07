@@ -10,7 +10,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-    public static final String USER_QUEUE = "userQueue";
+    public static final String USER_CREATED_GRAPH_SERVICE = "user.created.graph-service";
+    public static final String USER_FOLLOWED_FEED_SERVICE = "user.followed.feed-service";
+    public static final String USER_UNFOLLOWED_FEED_SERVICE = "user.unfollowed.feed-service";
 
     @Bean
     public RabbitTemplate jsonRabbitTemplate(ConnectionFactory connectionFactory) {
@@ -23,9 +25,12 @@ public class RabbitMQConfig {
     public MessageConverter jsonConverter() {
         return new Jackson2JsonMessageConverter();
     }
-
     @Bean
-    public Queue userQueue() {
-        return new Queue(USER_QUEUE);
+    public Queue userCreatedGraphQueue() {
+        return new Queue(USER_CREATED_GRAPH_SERVICE);
     }
+    @Bean
+    public Queue userFollowedFeedQueue(){ return new Queue(USER_FOLLOWED_FEED_SERVICE); }
+    @Bean
+    public Queue userUnfollowedFeedQueue(){ return new Queue(USER_UNFOLLOWED_FEED_SERVICE); }
 }

@@ -50,10 +50,10 @@ services:
         ports:
             - "${API_GATEWAY_PORT}:${API_GATEWAY_PORT}"
         restart: on-failure
-        depends_on:
-            - user-service
+#        depends_on:
+#            - user-service
 #            - user-graph-service
-            - auth-service
+#            - auth-service
 #            - post-service
 #            - media-service
         environment:
@@ -89,43 +89,28 @@ services:
             - backend
             - database
 
-#    media-service:
-#        image: nistagram/media-service
-#        container_name: media-service
-#        build:
-#            context: ./spring-nistagram-media-service
-#            dockerfile: Dockerfile
-#            target: "${STAGE}"
-#        ports:
-#            - "${MEDIA_SERVICE_PORT}:${MEDIA_SERVICE_PORT}"
-#        restart: on-failure
-#        environment:
-#            MEDIA_SERVICE_PORT: "${MEDIA_SERVICE_PORT}"
-#        networks:
-#            - backend
-
-#    post-service:
-#        image: nistagram/post-service
-#        container_name: post-service
-#        build:
-#            context: ./spring-nistagram-post-service
-#            dockerfile: Dockerfile
-#            target: "${STAGE}"
-#        ports:
-#            - "${POST_SERVICE_PORT}:${POST_SERVICE_PORT}"
-#        depends_on:
-#            - mysql-db
-#        restart: on-failure
-#        environment :
-#            POST_SERVICE_PORT : "${POST_SERVICE_PORT}"
-#            MYSQL_HOST : "${MYSQL_HOST}"
-#            MYSQL_PORT : "${MYSQL_PORT}"
-#            POST_DB_NAME : "${POST_DB_NAME}"
-#            MYSQL_ROOT : "${MYSQL_ROOT}"
-#            MYSQL_ROOT_PASSWORD : "${MYSQL_ROOT_PASSWORD}"
-#        networks:
-#            - backend
-#            - database
+    post-service:
+        image: nistagram/post-service
+        container_name: post-service
+        build:
+            context: ./spring-nistagram-post-service
+            dockerfile: Dockerfile
+            target: "${STAGE}"
+        ports:
+            - "${POST_SERVICE_PORT}:${POST_SERVICE_PORT}"
+        depends_on:
+            - mysql-db
+        restart: on-failure
+        environment :
+            POST_SERVICE_PORT : "${POST_SERVICE_PORT}"
+            MYSQL_HOST : "${MYSQL_HOST}"
+            MYSQL_PORT : "${MYSQL_PORT}"
+            POST_DB_NAME : "${POST_DB_NAME}"
+            MYSQL_ROOT : "${MYSQL_ROOT}"
+            MYSQL_ROOT_PASSWORD : "${MYSQL_ROOT_PASSWORD}"
+        networks:
+            - backend
+            - database
 
     user-service:
         image: nistagram/user-service
@@ -173,6 +158,30 @@ services:
         networks:
          - backend
          - database
+
+    feed-service:
+        image : nistagram/feed-service
+        container_name : feed-service
+        build :
+            context : ./spring-nistagram-feed-service
+            dockerfile : Dockerfile
+            target : "${STAGE}"
+        ports :
+            - "${FEED_SERVICE_PORT}:${FEED_SERVICE_PORT}"
+        depends_on :
+            - mysql-db
+            - rabbitmq
+        environment :
+            FEED_SERVICE_PORT: "${FEED_SERVICE_PORT}"
+            MYSQL_HOST : "${MYSQL_HOST}"
+            MYSQL_PORT : "${MYSQL_PORT}"
+            FEED_DB_NAME : "${FEED_DB_NAME}"
+            MYSQL_ROOT : "${MYSQL_ROOT}"
+            MYSQL_ROOT_PASSWORD : "${MYSQL_ROOT_PASSWORD}"
+        networks:
+            - backend
+            - database
+
 
 networks:
     backend:

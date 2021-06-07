@@ -8,7 +8,7 @@ import rs.ac.uns.ftn.nistagram.user.domain.user.User;
 import rs.ac.uns.ftn.nistagram.user.http.auth.AuthClient;
 import rs.ac.uns.ftn.nistagram.user.http.auth.Credentials;
 import rs.ac.uns.ftn.nistagram.user.infrastructure.exceptions.RegistrationException;
-import rs.ac.uns.ftn.nistagram.user.messaging.UserProducer;
+import rs.ac.uns.ftn.nistagram.user.messaging.producers.UserProducer;
 import rs.ac.uns.ftn.nistagram.user.repository.UserRepository;
 
 import java.nio.charset.StandardCharsets;
