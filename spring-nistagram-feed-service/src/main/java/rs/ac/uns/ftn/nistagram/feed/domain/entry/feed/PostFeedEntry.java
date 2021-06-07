@@ -17,11 +17,6 @@ public class PostFeedEntry extends FeedEntry {
 
     private Long postId;
 
-    public PostFeedEntry(PostFeedEntry feedEntry){
-        super(feedEntry.getPublisher(), feedEntry.getCreatedAt());
-        this.postId = feedEntry.postId;
-    }
-
     public PostFeedEntry(String publisher, LocalDateTime createdAt, Long postId){
         super(publisher, createdAt);
         this.postId = postId;

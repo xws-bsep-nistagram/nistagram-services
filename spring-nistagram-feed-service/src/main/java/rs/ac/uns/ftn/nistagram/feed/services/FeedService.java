@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import rs.ac.uns.ftn.nistagram.feed.domain.entry.feed.FeedEntry;
 import rs.ac.uns.ftn.nistagram.feed.domain.entry.feed.PostFeedEntry;
 import rs.ac.uns.ftn.nistagram.feed.domain.entry.feed.StoryFeedEntry;
 import rs.ac.uns.ftn.nistagram.feed.domain.user.User;
@@ -17,6 +18,7 @@ import rs.ac.uns.ftn.nistagram.feed.repositories.PostFeedRepository;
 import rs.ac.uns.ftn.nistagram.feed.repositories.StoryFeedRepository;
 import rs.ac.uns.ftn.nistagram.feed.repositories.UserRepository;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,51 @@ public class FeedService {
     private final ContentClient contentClient;
     private final PostFeedRepository postFeedRepository;
     private final StoryFeedRepository storyFeedRepository;
+
+    public List<PostFeedEntry> getPostFeedByUsername(String username){
+        log.info("Request for getting all the post feed entries for {} received", username);
+
+        var postFeedEntries = postFeedRepository.findAllByUsername(username);
+
+        log.info("Found {} post entries for an user {}", postFeedEntries.size(), username);
+
+        if(postFeedEntries.size() != 0)
+            postFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt));
+
+
+        return postFeedEntries;
+    }
+
+    public List<StoryFeedEntry> getStoryFeedByUsername(String username){
+        log.info("Request for getting all the story feed entries for an user {} received", username);
+
+        var storyFeedEntries = storyFeedRepository.findAllByUsername(username);
+
+        log.info("Found {} story feed entries for an user {}", storyFeedEntries.size(), username);
+
+        if(storyFeedEntries.size() != 0)
+            storyFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt));
+
+        return storyFeedEntries;
+    }
+
+    public List<StoryFeedEntry> getCloseFriendStoryFeedByUsername(String username){
+
+        log.info("Request for getting all the close friend story feed entries for an user {} received",
+                username);
+
+        var storyFeedEntries = storyFeedRepository
+                .findAllByUsername(username)
+                .stream().filter(StoryFeedEntry::getCloseFriends)
+                .collect(Collectors.toList());
+
+        log.info("Found {} story feed entries for an user {}", storyFeedEntries.size(), username);
+
+        if(storyFeedEntries.size() != 0)
+            storyFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt));
+
+        return storyFeedEntries;
+    }
 
     @Transactional
     public void addToPostFeeds(PostFeedEntry postFeedEntry) {
