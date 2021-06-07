@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
     public static final String USER_CREATED_GRAPH_SERVICE = "user.created.graph-service";
+    public static final String USER_UPDATED_GRAPH_SERVICE = "user.updated.graph-service";
     public static final String USER_FOLLOWED_FEED_SERVICE = "user.followed.feed-service";
     public static final String USER_UNFOLLOWED_FEED_SERVICE = "user.unfollowed.feed-service";
 
@@ -33,4 +34,7 @@ public class RabbitMQConfig {
     public Queue userFollowedFeedQueue(){ return new Queue(USER_FOLLOWED_FEED_SERVICE); }
     @Bean
     public Queue userUnfollowedFeedQueue(){ return new Queue(USER_UNFOLLOWED_FEED_SERVICE); }
+    @Bean
+    public Queue userUpdatedGraphService(){ return new Queue(USER_UPDATED_GRAPH_SERVICE); }
+
 }

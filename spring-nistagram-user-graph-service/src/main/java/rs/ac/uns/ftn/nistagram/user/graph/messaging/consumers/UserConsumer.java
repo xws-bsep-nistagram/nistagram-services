@@ -18,19 +18,25 @@ import java.io.IOException;
 @Slf4j
 @AllArgsConstructor
 public class UserConsumer {
-    
+
     private final UserService userService;
 
     @RabbitListener(queues = RabbitMQConfig.USER_CREATED_GRAPH_SERVICE)
-    public void consume(UserTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
+    public void consumeUserCreated(UserTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
         acknowledgeMessage(channel, tag);
         userService.create(UserTopicPayloadMapper.toDomain(payload));
     }
 
+    @RabbitListener(queues = RabbitMQConfig.USER_UPDATED_GRAPH_SERVICE)
+    public void consumeUserUpdated(UserTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
+        acknowledgeMessage(channel, tag);
+        userService.update(UserTopicPayloadMapper.toDomain(payload));
+    }
+
     private void acknowledgeMessage(Channel channel, long tag) throws IOException {
-        try{
+        try {
             channel.basicAck(tag, false);
-        }catch (Exception e) {
+        } catch (Exception e) {
             channel.basicNack(tag, false, true);
         }
     }
