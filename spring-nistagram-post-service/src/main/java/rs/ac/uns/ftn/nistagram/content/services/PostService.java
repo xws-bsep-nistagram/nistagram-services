@@ -28,7 +28,7 @@ public class PostService {
     private final CustomPostCollectionRepository collectionRepository;
     private final PostInCollectionRepository postInCollectionRepository;
     private final ContentProducer contentProducer;
-    private final External.GraphClient graphClient;
+    private final External.GraphClientWrapper graphClient;
 
 
 
