@@ -36,10 +36,10 @@ public class RegistrationService {
                 request.getEmail()
         );
 
-        var user = repository.save(createNewUser(request));
-        var response = sendRegistrationRequest(credentials);
-        producer.publishCreatedUser(user);
-        return response;
+        User created = repository.save(createNewUser(request));
+        String jwt = sendRegistrationRequest(credentials);
+        producer.publishCreatedUser(created);
+        return jwt;
     }
 
     private String sendRegistrationRequest(Credentials credentials) {
@@ -49,8 +49,9 @@ public class RegistrationService {
             if (e.status() == 403) {
                 String message = StandardCharsets.UTF_8.decode(e.responseBody().get()).toString();
                 throw new RegistrationException(message);
-            }else
+            } else {
                 throw new RegistrationException("Unsuccessful registration!");
+            }
         }
     }
 

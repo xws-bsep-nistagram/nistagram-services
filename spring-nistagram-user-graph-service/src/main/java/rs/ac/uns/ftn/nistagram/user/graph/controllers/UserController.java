@@ -5,12 +5,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
-import rs.ac.uns.ftn.nistagram.user.graph.payload.UserRelationshipRequest;
-import rs.ac.uns.ftn.nistagram.user.graph.payload.UserPayload;
+import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserPayload;
 import rs.ac.uns.ftn.nistagram.user.graph.services.UserService;
 
 import javax.validation.Valid;
-import java.util.stream.Collectors;
 
 @RestController
 @Slf4j

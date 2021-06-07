@@ -1,20 +1,16 @@
-package rs.ac.uns.ftn.nistagram.user.domain.user;
+package rs.ac.uns.ftn.nistagram.user.controllers.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import rs.ac.uns.ftn.nistagram.user.domain.user.Gender;
 
-import javax.persistence.Embeddable;
 import java.time.LocalDate;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
-@Setter
-@Embeddable
-public class PersonalData {
+@AllArgsConstructor
+public class ProfileViewDTO {
 
+    private String username;
     private String fullName;
     private String email;
     private String phoneNumber;

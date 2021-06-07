@@ -29,6 +29,8 @@ public class User {
     private Set<User> mutedUsers;
     @Relationship(type = "HAS_BLOCKED")
     private Set<User> blockedUsers;
+    @Relationship(type = "IS_CLOSE_FRIEND")
+    private Set<User> closeFriends;
 
 
     public void addFollowing(User following) {

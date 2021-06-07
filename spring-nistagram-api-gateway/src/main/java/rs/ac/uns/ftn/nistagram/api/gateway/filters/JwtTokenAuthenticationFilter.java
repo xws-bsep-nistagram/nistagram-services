@@ -1,5 +1,6 @@
 package rs.ac.uns.ftn.nistagram.api.gateway.filters;
 
+import com.netflix.zuul.context.RequestContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
