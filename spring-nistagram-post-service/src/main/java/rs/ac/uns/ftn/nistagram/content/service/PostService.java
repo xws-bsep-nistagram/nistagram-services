@@ -26,48 +26,49 @@ public class PostService {
     private final SavedPostRepository savedPostRepository;
     private final CustomPostCollectionRepository collectionRepository;
     private final PostInCollectionRepository postInCollectionRepository;
-    private final External.GraphClient graphClient;
+    private final External.GraphClientWrapper graphClient;
+
+
 
     public void create(Post post) {
         post.setTime(LocalDateTime.now());
         postRepository.save(post);
     }
 
-    public void delete(String username, long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(RuntimeException::new);
-        if (!post.getAuthor().equals(username))
+    public void delete(String caller, long postId) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        if (!post.getAuthor().equals(caller))
             throw new RuntimeException("You are not the owner of this post.");
         else postRepository.delete(post);
     }
 
-    public Post getById(long postId) {
-        return postRepository.findById(postId).orElseThrow(RuntimeException::new);
+    public Post getById(long postId, String caller) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        graphClient.assertFollow(caller, post.getAuthor());
+        return post;
     }
 
     public List<Post> getByUsername(String caller, String username) {
-        boolean followsAuthor = graphClient.checkFollowing(caller, username).getStatus();
-        if (followsAuthor)
-            return postRepository.getByUsername(username);
-        else throw new RuntimeException("You do not follow " + username + "!");
+        graphClient.assertFollow(caller, username);
+        return postRepository.getByUsername(username);
     }
 
-    // TODO Check whether the user follows the author of this post!
-    public void like(long postId, String username) {
-        addInteraction(postId, username, UserInteraction.Sentiment.LIKE);
+    public void like(long postId, String caller) {
+        addInteraction(postId, caller, UserInteraction.Sentiment.LIKE);
     }
 
-    // TODO Check whether the user follows the author of this post!
-    public void dislike(long postId, String username) {
-        addInteraction(postId, username, UserInteraction.Sentiment.DISLIKE);
+    public void dislike(long postId, String caller) {
+        addInteraction(postId, caller, UserInteraction.Sentiment.DISLIKE);
     }
 
-    private void addInteraction(long postId, String username, UserInteraction.Sentiment sentiment) {
-        Optional<UserInteraction> optionalInteraction = interactionRepository.findByPostAndUser(postId, username);
+    private void addInteraction(long postId, String caller, UserInteraction.Sentiment sentiment) {
+        Optional<UserInteraction> optionalInteraction = interactionRepository.findByPostAndUser(postId, caller);
         if (optionalInteraction.isEmpty()) {
-            Post post = postRepository.findById(postId).orElseThrow(RuntimeException::new);
+            Post post = postRepository.findById(postId).orElseThrow();
+            graphClient.assertFollow(caller, post.getAuthor());
             interactionRepository.save(
                     UserInteraction.builder()
-                            .username(username)
+                            .username(caller)
                             .post(post)
                             .sentiment(sentiment)
                         .build()
@@ -82,79 +83,84 @@ public class PostService {
         }
     }
 
-    // TODO Check whether the user follows the author of this post
     public void comment(Comment comment, long postId) {
-        comment.setPost(postRepository.findById(postId).orElseThrow(RuntimeException::new));
+        Post commentedPost = postRepository.findById(postId).orElseThrow();
+        graphClient.assertFollow(comment.getAuthor(), commentedPost.getAuthor());
+
+        comment.setPost(commentedPost);
         comment.setTime(LocalDateTime.now());
+
         commentRepository.save(comment);
     }
 
-    // TODO Check whether the user follows the author of this post
-    public void save(String username, long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(RuntimeException::new);
-        Optional<SavedPost> savedPost = savedPostRepository.findByUserAndPost(username, postId);
+    public void save(String caller, long postId) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        graphClient.assertFollow(caller, post.getAuthor());
+
+        Optional<SavedPost> savedPost = savedPostRepository.findByUserAndPost(caller, postId);
         if (savedPost.isPresent())
             throw new RuntimeException("Post already saved");
+
         savedPostRepository.save(
-                SavedPost.builder().post(post).username(username).build()
+                SavedPost.builder().post(post).username(caller).build()
         );
     }
 
     @Transactional
-    public void unsave(String username, long postId) {
-        SavedPost savedPost = savedPostRepository.findByUserAndPost(username, postId).orElseThrow(RuntimeException::new);
+    public void unsave(String caller, long postId) {
+        SavedPost savedPost = savedPostRepository.findByUserAndPost(caller, postId).orElseThrow();
         savedPostRepository.delete(savedPost);
 
         // Fetch collection IDs from this user
-        List<Long> collectionIds = collectionRepository.getIdsByUser(username);
+        List<Long> collectionIds = collectionRepository.getIdsByUser(caller);
         if (collectionIds.isEmpty()) return;
 
         postInCollectionRepository.deletePostFromUserCollections(postId, collectionIds);
     }
 
-    public List<SavedPost> getSaved(String username) {
-        return savedPostRepository.findByUser(username);
+    public List<SavedPost> getSaved(String caller) {
+        return savedPostRepository.findByUser(caller);
     }
 
-    public void createCollection(String username, String collectionName) {
-        if (collectionRepository.getByUserAndName(username, collectionName).isPresent())
+    public void createCollection(String caller, String collectionName) {
+        if (collectionRepository.getByUserAndName(caller, collectionName).isPresent())
             throw new RuntimeException("Collection '" + collectionName + "' already exists.");
 
         collectionRepository.save(
-            CustomPostCollection.builder().name(collectionName).owner(username).build()
+            CustomPostCollection.builder().name(collectionName).owner(caller).build()
         );
     }
 
-    public void addPostToCollection(String username, String collectionName, long postId) {
+    public void addPostToCollection(String caller, String collectionName, long postId) {
         CustomPostCollection customPostCollection =
-                collectionRepository.getByUserAndName(username, collectionName)
-                        .orElseThrow(RuntimeException::new);
+                collectionRepository.getByUserAndName(caller, collectionName)
+                        .orElseThrow();
 
-        Post post = postRepository.findById(postId).orElseThrow(RuntimeException::new);
+        Post post = postRepository.findById(postId).orElseThrow();
         if (postInCollectionRepository.postFromCollection(post.getId(), customPostCollection.getId()).isPresent())
             throw new RuntimeException("Post already present in this collection");
 
         try {
-            save(username, postId); // This will throw if the post is already saved
+            save(caller, postId); // This will throw if the post is already saved
         }
         catch (RuntimeException ignored) {}
 
         postInCollectionRepository.save(PostInCollection.builder().collection(customPostCollection).post(post).build());
     }
 
-    public void removePostFromCollection(String username, String collectionName, long postId) {
-        CustomPostCollection collection = collectionRepository.getByUserAndName(username, collectionName).orElseThrow(RuntimeException::new);
+    public void removePostFromCollection(String caller, String collectionName, long postId) {
+        CustomPostCollection collection = collectionRepository.getByUserAndName(caller, collectionName).orElseThrow();
         postInCollectionRepository.deletePostFromCollection(postId, collection.getId());
     }
 
-    public List<PostInCollection> getAllFromCollection(String username, String collectionName) {
+    public List<PostInCollection> getAllFromCollection(String caller, String collectionName) {
         long collectionId =
-                collectionRepository.getByUserAndName(username, collectionName).orElseThrow(RuntimeException::new).getId();
+                collectionRepository.getByUserAndName(caller, collectionName).orElseThrow().getId();
         return postInCollectionRepository.allPostsFromCollection(collectionId);
     }
 
-    public void deleteCollection(String username, String collectionName) {
-        CustomPostCollection collection = collectionRepository.getByUserAndName(username, collectionName).orElseThrow(RuntimeException::new);
+    public void deleteCollection(String caller, String collectionName) {
+        CustomPostCollection collection = collectionRepository.getByUserAndName(caller, collectionName).orElseThrow();
 
         postInCollectionRepository.deleteAllFromCollection(collection.getId());
         collectionRepository.delete(collection);
