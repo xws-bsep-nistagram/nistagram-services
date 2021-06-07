@@ -38,6 +38,8 @@ public class StoryService {
     }
 
     public List<Story> getByUsername(String username, String caller) {
+        graphClient.assertFollow(caller, username);
+
         try {
             graphClient.assertCloseFriends(caller, username);
         }

@@ -17,6 +17,6 @@ public class SavedPost {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
     private String username;
-    @OneToOne
+    @ManyToOne
     private Post post;
 }

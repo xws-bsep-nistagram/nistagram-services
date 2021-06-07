@@ -57,7 +57,7 @@ public class Post extends UserContent {
         private long id;
         @NotEmpty
         private String url;
-        @OneToOne
+        @ManyToOne
         private Post post;
     }
 }

@@ -34,11 +34,13 @@ public class External {
         private final GraphClient graphClient;
 
         public void assertFollow(String follower, String followed) {
+            if (follower.equals(followed)) return;
             boolean follows = graphClient.checkFollowing(follower, followed).getStatus();
             if (!follows) throw new RuntimeException(follower + " does not follow " + followed);
         }
 
         public void assertCloseFriends(String follower, String followed) {
+            if (follower.equals(followed)) return;
             boolean closeFriends = graphClient.checkCloseFriends(follower, followed).getStatus();
             if (!closeFriends) throw new RuntimeException(follower + " and " + followed + " are not close friends");
         }
