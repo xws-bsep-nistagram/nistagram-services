@@ -31,4 +31,13 @@ public class PostFeedEntry extends FeedEntry {
     public void addUser(User user) {
         super.addUser(user);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    public void removeUser(User user) {
+        super.removeUser(user);
+    }
 }

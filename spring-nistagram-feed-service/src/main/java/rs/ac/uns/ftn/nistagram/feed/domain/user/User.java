@@ -14,9 +14,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
 
     @Id
+    @EqualsAndHashCode.Include
     private String username;
     @ManyToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<PostFeedEntry> postFeedEntries;
@@ -29,5 +31,9 @@ public class User {
 
     public void addToFeed(PostFeedEntry postFeedEntry) {
         postFeedEntries.add(postFeedEntry);
+    }
+
+    public void removeFromFeed(PostFeedEntry postFeedEntry) {
+        postFeedEntries.remove(postFeedEntry);
     }
 }

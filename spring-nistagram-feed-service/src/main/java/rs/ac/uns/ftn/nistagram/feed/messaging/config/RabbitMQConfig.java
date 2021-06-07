@@ -11,7 +11,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
     public static final String USER_CREATED_FEED_SERVICE = "user.created.feed-service";
-    public static final String CONTENT_CREATED_FEED_SERVICE = "content.created.feed-service";
+    public static final String POST_CREATED_FEED_SERVICE = "post.created.feed-service";
+    public static final String POST_DELETED_FEED_SERVICE = "post.deleted.feed-service";
 
     @Bean
     public RabbitTemplate jsonRabbitTemplate(ConnectionFactory connectionFactory) {
@@ -26,11 +27,13 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue userCreatedGraphQueue(){
+    public Queue userCreatedFeedQueue(){
         return new Queue(USER_CREATED_FEED_SERVICE);
     }
     @Bean
-    public Queue contentCreatedFeedQueue() {
-        return new Queue(CONTENT_CREATED_FEED_SERVICE);
+    public Queue postCreatedFeedQueue() {
+        return new Queue(POST_CREATED_FEED_SERVICE);
     }
+    @Bean
+    public Queue postDeletedFeedQueue(){ return new Queue(POST_DELETED_FEED_SERVICE); }
 }

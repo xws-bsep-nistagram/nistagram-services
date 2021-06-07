@@ -23,8 +23,8 @@ public class UserConsumer {
 
     @RabbitListener(queues = RabbitMQConfig.USER_CREATED_GRAPH_SERVICE)
     public void consume(UserTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
-        userService.create(UserTopicPayloadMapper.toDomain(payload));
         acknowledgeMessage(channel, tag);
+        userService.create(UserTopicPayloadMapper.toDomain(payload));
     }
 
     private void acknowledgeMessage(Channel channel, long tag) throws IOException {

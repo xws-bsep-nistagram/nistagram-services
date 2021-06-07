@@ -6,14 +6,14 @@
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/exceptions/EntityNotFoundException.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/consumers/UserConsumer.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/services/UserService.java
-/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/payload/content/PayloadType.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/mappers/content/PostTopicPayloadMapper.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/payload/content/PostPayloadType.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/http/UserGraphClient.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/payload/user/PrivacyData.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/mappers/user/UserTopicPayloadMapper.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/domain/entry/feed/PostFeedEntry.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/domain/entry/campaign/PostCampaignEntry.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/http/payload/UserPayload.java
-/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/payload/content/ContentTopicPayload.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/exceptions/OperationNotPermittedException.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/repositories/PostFeedRepository.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/domain/entry/feed/StoryFeedEntry.java
@@ -21,8 +21,8 @@
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/SpringNistagramFeedServiceApplication.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/domain/user/User.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/exceptions/BusinessExceptionExceptionHandler.java
-/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/mappers/content/ContentTopicPayloadMapper.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/domain/entry/feed/FeedEntry.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/payload/content/PostTopicPayload.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/http/payload/ProfileType.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/exceptions/EntityAlreadyExistsException.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/services/FeedService.java

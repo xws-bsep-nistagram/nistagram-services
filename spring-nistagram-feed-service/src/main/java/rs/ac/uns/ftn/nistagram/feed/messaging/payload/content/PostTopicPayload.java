@@ -14,13 +14,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ContentTopicPayload {
+public class PostTopicPayload {
 
     private String author;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime time;
     private Long contentId;
-    private PayloadType payloadType;
+    private PostPayloadType postPayloadType;
 
 }

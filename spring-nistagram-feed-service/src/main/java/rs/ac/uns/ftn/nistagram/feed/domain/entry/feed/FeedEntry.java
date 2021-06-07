@@ -1,5 +1,6 @@
 package rs.ac.uns.ftn.nistagram.feed.domain.entry.feed;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,10 +15,12 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class FeedEntry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @EqualsAndHashCode.Include
     private Long id;
     @ManyToMany
     @JoinColumn(name = "username")
@@ -34,5 +37,9 @@ public class FeedEntry {
         if(this.users == null)
             this.users = new ArrayList<>();
         this.users.add(user);
+    }
+
+    protected void removeUser(User user) {
+        users.remove(user);
     }
 }

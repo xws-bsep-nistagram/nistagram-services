@@ -10,7 +10,7 @@ import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.PostInCollect
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.SavedPost;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.UserInteraction;
-import rs.ac.uns.ftn.nistagram.content.messaging.producers.UserContentProducer;
+import rs.ac.uns.ftn.nistagram.content.messaging.producers.ContentProducer;
 import rs.ac.uns.ftn.nistagram.content.repository.post.*;
 
 import java.time.LocalDateTime;
@@ -27,20 +27,23 @@ public class PostService {
     private final SavedPostRepository savedPostRepository;
     private final CustomPostCollectionRepository collectionRepository;
     private final PostInCollectionRepository postInCollectionRepository;
-    private final UserContentProducer userContentProducer;
+    private final ContentProducer contentProducer;
     private final External.GraphClient graphClient;
 
     public void create(Post post) {
         post.setTime(LocalDateTime.now());
         postRepository.save(post);
-        userContentProducer.publishPostCreated(post);
+        contentProducer.publishPostCreated(post);
     }
 
     public void delete(String username, long postId) {
         Post post = postRepository.findById(postId).orElseThrow(RuntimeException::new);
         if (!post.getAuthor().equals(username))
             throw new RuntimeException("You are not the owner of this post.");
-        else postRepository.delete(post);
+        else {
+            postRepository.delete(post);
+            contentProducer.publishPostDeleted(post);
+        }
     }
 
     public Post getById(long postId) {

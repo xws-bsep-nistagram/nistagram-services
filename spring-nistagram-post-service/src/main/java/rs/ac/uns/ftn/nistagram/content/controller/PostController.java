@@ -31,7 +31,7 @@ public class PostController {
 
     @DeleteMapping("{postId}")
     public ResponseEntity<?> delete(@PathVariable String postId) {
-        String username = "nikola"; // TODO Extract username from HTTP
+        String username = "loremipsum1"; // TODO Extract username from HTTP
         postService.delete(username, Long.parseLong(postId));
         return ResponseEntity.ok().build();
     }
