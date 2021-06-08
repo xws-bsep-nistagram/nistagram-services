@@ -14,6 +14,8 @@ import java.util.List;
 @Setter
 public class PostCreationDTO {
     @NotNull
+    private String author;
+    @NotNull
     private String caption;
     @NotNull
     private Location location;

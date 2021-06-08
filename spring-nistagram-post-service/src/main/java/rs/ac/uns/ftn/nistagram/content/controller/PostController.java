@@ -26,7 +26,8 @@ public class PostController {
     @PostMapping
     public ResponseEntity<?> create(@RequestHeader("username") String username,
                                     @Valid @RequestBody PostCreationDTO dto) {
-        postService.create(username, mapper.toDomain(dto));
+        dto.setAuthor(username);
+        postService.create(mapper.toDomain(dto));
         return ResponseEntity.ok().build();
     }
 
