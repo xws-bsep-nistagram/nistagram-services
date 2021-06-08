@@ -1,6 +1,7 @@
 package rs.ac.uns.ftn.nistagram.auth.service;
 
 import com.auth0.jwt.interfaces.Claim;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class AuthService {
 
@@ -39,12 +41,16 @@ public class AuthService {
 
         UserDetails userDetails = credentialsService.loadUserByUsername(authRequest.getUsername());
 
+        log.info("Successfully authenticated user '{}' with roles: {}", userDetails.getUsername(), userDetails.getAuthorities());
+
         return encryptDetails(userDetails);
     }
 
     public String register(RegistrationRequest registrationRequest) {
+        log.info("New registration request with username '{}'", registrationRequest.getUsername());
         registrationRequest.hashPassword(passwordEncoder::encode);
         UserDetails userDetails = credentialsService.registerUser(registrationRequest);
+        log.debug("User with username '{}' created", registrationRequest.getUsername());
         return encryptDetails(userDetails);
     }
 
@@ -67,6 +73,7 @@ public class AuthService {
         }
         String username = getUsernameFromJwt(jwt);
         UserDetails found = credentialsService.loadUserByUsername(username);
+        log.info("Retrieved user '{}' from jwt token", found.getUsername());
         return new AuthToken(
                 found.getUsername(),
                 found.getAuthorities().stream()
