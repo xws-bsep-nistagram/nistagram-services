@@ -38,4 +38,8 @@ public class User {
         this.notificationPreferences = new NotificationPreferences();
     }
 
+    public boolean isTaggable(){
+        return privacyData.isTaggable();
+    }
+
 }

@@ -49,6 +49,14 @@ public class UserController {
                 .map(profileMapper::mapPersonalData)
                 .collect(Collectors.toList());
     }
+    @GetMapping("taggable/{usernameQuery}")
+    public List<PublicDataDTO> findTaggable(@PathVariable String usernameQuery){
+        List<User> foundUsers = profileService.findTaggable(usernameQuery);
+        return foundUsers
+                .stream()
+                .map(profileMapper::mapPersonalData)
+                .collect(Collectors.toList());
+    }
 
     @GetMapping("public/{username}")
     public PublicDataDTO getPublicData(@PathVariable String username) {

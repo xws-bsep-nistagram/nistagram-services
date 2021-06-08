@@ -12,6 +12,7 @@ import rs.ac.uns.ftn.nistagram.user.messaging.producers.UserProducer;
 import rs.ac.uns.ftn.nistagram.user.repository.UserRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -32,6 +33,15 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public List<User> find(String usernameQuery) {
         return repository.findAllByUsernameContains(usernameQuery);
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> findTaggable(String usernameQuery) {
+        return repository
+                .findAllByUsernameContains(usernameQuery)
+                .stream()
+                .filter(User::isTaggable)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -55,6 +65,7 @@ public class ProfileService {
         found.setNotificationPreferences(preferences);
         return repository.save(found);
     }
+
 
 
 }
