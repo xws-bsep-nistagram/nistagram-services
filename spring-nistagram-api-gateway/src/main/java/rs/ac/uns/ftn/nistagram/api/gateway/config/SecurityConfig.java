@@ -7,6 +7,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import rs.ac.uns.ftn.nistagram.api.gateway.filters.GatewayRequestLoggingFilter;
 import rs.ac.uns.ftn.nistagram.api.gateway.filters.JwtTokenAuthenticationFilter;
 
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .and()
                 .addFilterAfter(authFilter,
                         UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new GatewayRequestLoggingFilter(), JwtTokenAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/users/**").permitAll()

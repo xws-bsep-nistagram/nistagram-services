@@ -1,6 +1,6 @@
 package rs.ac.uns.ftn.nistagram.api.gateway.filters;
 
-import com.netflix.zuul.context.RequestContext;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Slf4j
 @Service
 public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
@@ -32,6 +33,9 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
         if (jwt != null) {
             AuthToken authToken = requestAuthToken(jwt);
+
+            log.info("auth-service returned user '{}' with roles: {}", authToken.getUsername(), authToken.getAuthorities());
+
             SecurityContextHolder.getContext().setAuthentication(authToken.getAuthentication());
         }
         filterChain.doFilter(request, response);
