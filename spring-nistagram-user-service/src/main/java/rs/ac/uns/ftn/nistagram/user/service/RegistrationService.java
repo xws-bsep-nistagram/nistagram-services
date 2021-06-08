@@ -1,6 +1,7 @@
 package rs.ac.uns.ftn.nistagram.user.service;
 
 import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.domain.user.RegistrationRequest;
@@ -13,6 +14,7 @@ import rs.ac.uns.ftn.nistagram.user.repository.UserRepository;
 
 import java.nio.charset.StandardCharsets;
 
+@Slf4j
 @Service
 public class RegistrationService {
 
@@ -37,6 +39,7 @@ public class RegistrationService {
         );
 
         User created = repository.save(createNewUser(request));
+        log.debug("Created user new user profile for username '{}'", created.getUsername());
         String jwt = sendRegistrationRequest(credentials);
         producer.publishUserCreated(created);
         return jwt;
@@ -44,6 +47,7 @@ public class RegistrationService {
 
     private String sendRegistrationRequest(Credentials credentials) {
         try {
+            log.info("Sending registration request from user-service to auth-service for username '{}'", credentials.getUsername());
             return authClient.register(credentials);
         } catch (FeignException e) {
             if (e.status() == 403) {
