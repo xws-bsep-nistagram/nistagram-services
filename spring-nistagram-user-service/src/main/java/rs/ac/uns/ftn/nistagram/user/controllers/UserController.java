@@ -11,6 +11,8 @@ import rs.ac.uns.ftn.nistagram.user.service.ProfileService;
 import rs.ac.uns.ftn.nistagram.user.service.RegistrationService;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/users")
@@ -38,6 +40,14 @@ public class UserController {
     public ProfileViewDTO getProfile(@RequestHeader("username") String username) {
         User found = profileService.get(username);
         return profileMapper.map(found);
+    }
+    @GetMapping("{usernameQuery}")
+    public List<PublicDataDTO> find(@PathVariable String usernameQuery){
+        List<User> foundUsers = profileService.find(usernameQuery);
+        return foundUsers
+                .stream()
+                .map(profileMapper::mapPersonalData)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("public/{username}")

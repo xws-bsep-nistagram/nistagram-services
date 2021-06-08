@@ -11,6 +11,8 @@ import rs.ac.uns.ftn.nistagram.user.infrastructure.exceptions.EntityNotFoundExce
 import rs.ac.uns.ftn.nistagram.user.messaging.producers.UserProducer;
 import rs.ac.uns.ftn.nistagram.user.repository.UserRepository;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class ProfileService {
@@ -26,6 +28,10 @@ public class ProfileService {
                     String.format("Profile for username '%s' doesn't exist!", username)
             )
         );
+    }
+    @Transactional(readOnly = true)
+    public List<User> find(String usernameQuery) {
+        return repository.findAllByUsernameContains(usernameQuery);
     }
 
     @Transactional
@@ -49,5 +55,6 @@ public class ProfileService {
         found.setNotificationPreferences(preferences);
         return repository.save(found);
     }
+
 
 }
