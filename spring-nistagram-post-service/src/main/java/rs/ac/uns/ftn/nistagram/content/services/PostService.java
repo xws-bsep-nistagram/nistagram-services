@@ -32,7 +32,8 @@ public class PostService {
 
 
 
-    public void create(Post post) {
+    public void create(String caller, Post post) {
+        post.setAuthor(caller);
         post.setTime(LocalDateTime.now());
         postRepository.save(post);
         contentProducer.publishPostCreated(post);

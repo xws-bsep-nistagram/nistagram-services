@@ -24,23 +24,22 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@Valid @RequestBody PostCreationDTO dto) {
-        String caller = "loremipsum1";
-        dto.setAuthor(caller);
-        postService.create(mapper.toDomain(dto));   // TODO Extract username from HTTP
+    public ResponseEntity<?> create(@RequestHeader("username") String username,
+                                    @Valid @RequestBody PostCreationDTO dto) {
+        postService.create(username, mapper.toDomain(dto));
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("{postId}")
-    public ResponseEntity<?> delete(@PathVariable String postId) {
-        String username = "loremipsum1"; // TODO Extract username from HTTP
+    public ResponseEntity<?> delete( @RequestHeader("username") String username,
+                                     @PathVariable String postId) {
         postService.delete(username, Long.parseLong(postId));
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("user/{username}")
-    public ResponseEntity<?> getByUsername(@PathVariable String username) {
-        String caller = "loremipsum1";   // TODO Extract username from HTTP
+    public ResponseEntity<?> getByUsername(@RequestHeader("username") String caller,
+                                            @PathVariable String username) {
         return ResponseEntity.ok(
                 postService.getByUsername(caller, username)
                 .stream().map(mapper::toDto)
@@ -59,49 +58,49 @@ public class PostController {
 
 
     @GetMapping("{postId}")
-    public ResponseEntity<?> getById(@PathVariable String postId) {
-        String caller = "loremipsum1";
+    public ResponseEntity<?> getById(@RequestHeader("username") String caller,
+                                     @PathVariable String postId) {
         return ResponseEntity.ok(mapper.toDto(postService.getById(Long.parseLong(postId), caller)));
     }
 
     @GetMapping("like/{postId}")
-    public ResponseEntity<?> like(@PathVariable String postId) {
-        String caller = "loremipsum1";
+    public ResponseEntity<?> like(@RequestHeader("username") String caller,
+                                  @PathVariable String postId) {
         postService.like(Long.parseLong(postId), caller); // TODO Extract username from HTTP
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("dislike/{postId}")
-    public ResponseEntity<?> dislike(@PathVariable String postId) {
-        String caller = "loremipsum1";
+    public ResponseEntity<?> dislike(@RequestHeader("username") String caller,
+                                     @PathVariable String postId) {
         postService.dislike(Long.parseLong(postId), caller); // TODO Extract username from HTTP
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("comment")
-    public ResponseEntity<?> comment(@RequestBody CommentCreationDTO dto) {
-        dto.setAuthor("loremipsum1");    // TODO Extract username from HTTP
+    public ResponseEntity<?> comment(@RequestHeader("username") String caller,
+                                     @RequestBody CommentCreationDTO dto) {
+        dto.setAuthor(caller);
         postService.comment(mapper.toDomain(dto), dto.getPostId());
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("save/{postId}")
-    public ResponseEntity<?> save(@PathVariable String postId) {
-        String caller = "loremipsum1"; // TODO Extract username from HTTP
+    public ResponseEntity<?> save(@RequestHeader("username") String caller,
+                                  @PathVariable String postId) {
         postService.save(caller, Long.parseLong(postId));
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("unsave/{postId}")
-    public ResponseEntity<?> unsave(@PathVariable String postId) {
-        String caller = "loremipsum1"; // TODO Extract username from HTTP
+    public ResponseEntity<?> unsave(@RequestHeader("username") String caller,
+                                    @PathVariable String postId) {
         postService.unsave(caller, Long.parseLong(postId));
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("saved")
-    public ResponseEntity<?> getSaved() {
-        String caller = "loremipsum1"; // TODO Extract username from HTTP
+    public ResponseEntity<?> getSaved(@RequestHeader("username") String caller) {
         return ResponseEntity.ok(
                 postService.getSaved(caller)
                 .stream().map(savedPost -> mapper.toDto(savedPost.getPost()))
@@ -110,29 +109,31 @@ public class PostController {
     }
 
     @PostMapping("collection/{collectionName}")
-    public ResponseEntity<?> createCollection(@PathVariable String collectionName) {
-        String caller = "loremipsum1"; // TODO Extract username from HTTP
+    public ResponseEntity<?> createCollection(@RequestHeader("username") String caller,
+                                              @PathVariable String collectionName) {
         postService.createCollection(caller, collectionName);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("collection/{collectionName}/add/{postId}")
-    public ResponseEntity<?> addPostToCollection(@PathVariable String collectionName, @PathVariable String postId) {
-        String caller = "loremipsum1"; // TODO Extract username from HTTP
+    public ResponseEntity<?> addPostToCollection(@RequestHeader("username") String caller,
+                                                 @PathVariable String collectionName,
+                                                 @PathVariable String postId) {
         postService.addPostToCollection(caller, collectionName, Long.parseLong(postId));
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("collection/{collectionName}/remove/{postId}")
-    public ResponseEntity<?> removePostFromCollection(@PathVariable String collectionName, @PathVariable String postId) {
-        String caller = "loremipsum1"; // TODO Extract username from HTTP
+    public ResponseEntity<?> removePostFromCollection(@RequestHeader("username") String caller,
+                                                      @PathVariable String collectionName,
+                                                      @PathVariable String postId) {
         postService.removePostFromCollection(caller, collectionName, Long.parseLong(postId));
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("collection/{collectionName}")
-    public ResponseEntity<?> getCollectionPosts(@PathVariable String collectionName) {
-        String caller = "loremipsum1"; // TODO Extract username from HTTP
+    public ResponseEntity<?> getCollectionPosts(@RequestHeader("username") String caller,
+                                                @PathVariable String collectionName) {
         return ResponseEntity.ok(
                 postService.getAllFromCollection(caller, collectionName)
                         .stream().map(postInCollection -> mapper.toDto(postInCollection.getPost()))
@@ -141,8 +142,8 @@ public class PostController {
     }
 
     @DeleteMapping("collection/{collectionName}")
-    public ResponseEntity<?> deleteCollection(@PathVariable String collectionName) {
-        String caller = "loremipsum1"; // TODO Extract username from HTTP
+    public ResponseEntity<?> deleteCollection(@RequestHeader("username") String caller,
+                                              @PathVariable String collectionName) {
         postService.deleteCollection(caller, collectionName);
         return ResponseEntity.ok().build();
     }
