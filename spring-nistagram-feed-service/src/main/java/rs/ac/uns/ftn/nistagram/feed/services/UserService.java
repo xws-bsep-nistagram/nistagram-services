@@ -17,21 +17,21 @@ public class UserService {
 
     public void create(User user){
         userPresenceCheck(user);
-        log.info("User creation request for a user {} received", user.getUsername());
+        log.info("User creation request for an user '{}' received", user.getUsername());
         userRepository.save(user);
-        log.info("User {} has been successfully created", user.getUsername());
+        log.info("User '{}' has been successfully created", user.getUsername());
     }
 
     private void userPresenceCheck(User user) {
         if(userRepository.existsById(user.getUsername())) {
-            var message = String.format("User %s already exist", user.getUsername());
+            var message = String.format("User '%s' already exist", user.getUsername());
             log.warn(message);
             throw new EntityAlreadyExistsException(message);
         }
     }
     private void userAbscenceCheck(User user) {
         if(!userRepository.existsById(user.getUsername())) {
-            var message = String.format("User %s doesn't exist", user.getUsername());
+            var message = String.format("User '%s' doesn't exist", user.getUsername());
             log.warn(message);
             throw new EntityNotFoundException(message);
         }
