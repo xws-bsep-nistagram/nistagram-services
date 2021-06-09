@@ -65,6 +65,7 @@ services:
             JWT_SECRET: "${JWT_SECRET}"
         networks:
             - backend
+
     
     auth-service:
         image: nistagram/auth-service
@@ -89,6 +90,8 @@ services:
         networks:
             - backend
             - database
+        volumes :
+            - ${LOG_PATH}/auth-service:/app/logs/
 
     post-service:
         image: nistagram/post-service
@@ -112,6 +115,8 @@ services:
         networks:
             - backend
             - database
+        volumes :
+            - ${LOG_PATH}/post-service:/app/logs/
 
     user-service:
         image: nistagram/user-service
@@ -136,6 +141,8 @@ services:
         networks:
             - backend
             - database
+        volumes :
+            - ${LOG_PATH}/user-service:/app/logs/
 
     user-graph-service:
         image: nistagram/user-graph-service
@@ -159,6 +166,8 @@ services:
         networks:
          - backend
          - database
+        volumes :
+            - ${LOG_PATH}/user-graph-service:/app/logs/
 
     feed-service:
         image : nistagram/feed-service
@@ -182,7 +191,8 @@ services:
         networks:
             - backend
             - database
-
+        volumes :
+            - ${LOG_PATH}/feed-service:/app/logs/
 
 networks:
     backend:
