@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.content.services;
+package rs.ac.uns.ftn.nistagram.content.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

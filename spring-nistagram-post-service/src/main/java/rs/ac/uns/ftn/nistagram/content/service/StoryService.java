@@ -56,6 +56,18 @@ public class StoryService {
 
         return storyRepository.getAllByUsernameAfterDate(username, twentyFourHoursAgo());
     }
+    public Story getById(Long storyId, String caller) {
+        Story story = storyRepository.findById(storyId).orElseThrow();
+
+        graphClient.assertFollow(caller, story.getAuthor());
+
+        if(story.isCloseFriends())
+            graphClient.assertCloseFriends(caller, story.getAuthor());
+
+        return story;
+    }
+
+
     public List<Story> getByUsername(String username){
         return storyRepository.getNonCloseFriendsByUsernameAfterDate(username, twentyFourHoursAgo());
     }
@@ -120,5 +132,6 @@ public class StoryService {
             throw new RuntimeException("You are not the owner of this highlight collection");
         else highlightsRepository.delete(highlight);
     }
+
 
 }

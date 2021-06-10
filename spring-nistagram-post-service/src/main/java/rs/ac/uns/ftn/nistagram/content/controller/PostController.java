@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.CommentCreationDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.PostCreationDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.mapper.DomainDTOMapper;
-import rs.ac.uns.ftn.nistagram.content.services.PostService;
+import rs.ac.uns.ftn.nistagram.content.service.PostService;
 
 import javax.validation.Valid;
 import java.util.stream.Collectors;
