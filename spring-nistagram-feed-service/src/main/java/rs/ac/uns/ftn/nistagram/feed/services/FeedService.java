@@ -41,7 +41,7 @@ public class FeedService {
         log.info("Found '{}' post entries for an user '{}'", postFeedEntries.size(), username);
 
         if(postFeedEntries.size() != 0)
-            postFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt));
+            postFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt).reversed());
 
 
         return postFeedEntries;
@@ -55,7 +55,7 @@ public class FeedService {
         log.info("Found '{}' story feed entries for an user '{}'", storyFeedEntries.size(), username);
 
         if(storyFeedEntries.size() != 0)
-            storyFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt));
+            storyFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt).reversed());
 
         return storyFeedEntries;
     }
@@ -73,7 +73,7 @@ public class FeedService {
         log.info("Found '{}' story feed entries for an user '{}'", storyFeedEntries.size(), username);
 
         if(storyFeedEntries.size() != 0)
-            storyFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt));
+            storyFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt).reversed());
 
         return storyFeedEntries;
     }

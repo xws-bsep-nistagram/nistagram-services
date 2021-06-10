@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import rs.ac.uns.ftn.nistagram.feed.controllers.mappers.FeedPayloadMapper;
 import rs.ac.uns.ftn.nistagram.feed.controllers.payload.FeedResponse;
+import rs.ac.uns.ftn.nistagram.feed.controllers.payload.FeedResponseGroup;
 import rs.ac.uns.ftn.nistagram.feed.services.FeedService;
 
 import java.util.List;
@@ -30,25 +31,29 @@ public class FeedController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("stories/{username}")
+    @GetMapping("stories/grouped/{username}")
     public ResponseEntity<?> getStoryFeed(@PathVariable String username){
-        List<FeedResponse> response = feedService
+        List<FeedResponseGroup> response = FeedPayloadMapper.group(
+                feedService
                 .getStoryFeedByUsername(username)
                 .stream()
                 .map(FeedPayloadMapper::toDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("stories/close/{username}")
+    @GetMapping("stories/close/grouped/{username}")
     public ResponseEntity<?> getAllStoriesForCloseFriends(@PathVariable String username){
-        List<FeedResponse> response = feedService
+        List<FeedResponseGroup> response = FeedPayloadMapper.group(
+                feedService
                 .getCloseFriendStoryFeedByUsername(username)
                 .stream()
                 .map(FeedPayloadMapper::toDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+
         return ResponseEntity.ok(response);
     }
+
 
 
 }
