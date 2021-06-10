@@ -3,7 +3,7 @@ package rs.ac.uns.ftn.nistagram.content.controller.dto.input;
 import lombok.Getter;
 import lombok.Setter;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
-import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.HashTag;
+import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Tag;
 import rs.ac.uns.ftn.nistagram.content.domain.locale.Location;
 
 import javax.validation.constraints.NotEmpty;
@@ -13,7 +13,6 @@ import java.util.List;
 @Getter
 @Setter
 public class PostCreationDTO {
-    @NotNull
     private String author;
     @NotNull
     private String caption;
@@ -22,5 +21,5 @@ public class PostCreationDTO {
     @NotEmpty
     private List<Post.MediaLink> mediaUrls;
     @NotNull
-    private List<HashTag> hashTags;
+    private List<Tag> tags;
 }

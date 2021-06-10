@@ -25,7 +25,7 @@ public class DomainDTOMapper {
     public Post toDomain(PostCreationDTO dto) {
         Post post =  modelMapper.map(dto, Post.class);
         post.getMediaUrls().forEach(url -> url.setPost(post));
-        post.getHashTags().forEach(hashTag -> hashTag.setPost(post));
+        post.getTags().forEach(hashTag -> hashTag.setPost(post));
         return post;
     }
 

@@ -11,7 +11,7 @@ import javax.validation.constraints.NotEmpty;
 @Table(name = "hashtags")
 @Getter
 @Setter
-public class HashTag {
+public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
