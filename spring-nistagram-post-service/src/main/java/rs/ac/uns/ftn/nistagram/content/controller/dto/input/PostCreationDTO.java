@@ -16,7 +16,6 @@ public class PostCreationDTO {
     private String author;
     @NotNull
     private String caption;
-    @NotNull
     private Location location;
     @NotEmpty
     private List<Post.MediaLink> mediaUrls;
