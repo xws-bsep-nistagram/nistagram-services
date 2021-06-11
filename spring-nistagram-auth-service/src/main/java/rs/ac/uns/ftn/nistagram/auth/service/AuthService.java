@@ -51,12 +51,13 @@ public class AuthService {
         return encryptDetails(userDetails);
     }
 
+    @Transactional
     public String register(RegistrationRequest registrationRequest) {
         log.info("New registration request with username '{}'", registrationRequest.getUsername());
         registrationRequest.hashPassword(passwordEncoder::encode);
         Credentials credentials = credentialsService.registerUser(registrationRequest);
 
-        log.debug("Sending activation mail to '{}'", registrationRequest.getEmail());
+        log.info("Sending activation mail to '{}'", registrationRequest.getEmail());
         mailService.sendActivationMessage(credentials);
 
         log.debug("User with username '{}' created", registrationRequest.getUsername());
