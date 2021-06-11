@@ -5,6 +5,7 @@
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/repositories/StoryFeedRepository.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/exceptions/BusinessException.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/http/ContentClient.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/controllers/payload/FeedResponseGroup.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/consumers/ContentConsumer.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/exceptions/EntityNotFoundException.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/consumers/UserConsumer.java
@@ -37,6 +38,7 @@
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/payload/user/relations/UserRelationshipRequest.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/http/payload/user/UserPayload.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/exceptions/EntityAlreadyExistsException.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/controllers/payload/FeedResponseGroupEntry.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/services/FeedService.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/payload/post/PostPayloadType.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/domain/entry/campaign/StoryCampaignEntry.java

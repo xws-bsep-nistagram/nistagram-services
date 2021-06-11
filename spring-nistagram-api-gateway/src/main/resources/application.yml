@@ -24,6 +24,11 @@ zuul :
       serviceId : user-graph-service
       stripPrefix: false
       sensitive-headers : Cookie,Set-Cookie
+    feed-service:
+      path : /api/feed/**
+      serviceId: feed-service
+      stripPrefix: false
+      sensitive-headers: Cookie,Set-Cookie
 
 ribbon:
   eureka:
@@ -44,6 +49,10 @@ user-service:
 user-graph-service:
   ribbon:
     listOfServers: user-graph-service:${USER_GRAPH_SERVICE_PORT}
+
+feed-service:
+  ribbon:
+    listOfServers: feed-service:${FEED_SERVICE_PORT}
 
 
 nistagram.security.jwt.secret: ${JWT_SECRET:test_secret}
