@@ -34,4 +34,16 @@ public class PostOverviewDTO extends UserContent {
             mediaUrls = new ArrayList<>();
         mediaUrls.add(url);
     }
+
+    public void addComment(CommentOverviewDTO dto) {
+        if (this.comments == null)
+            this.comments = new ArrayList<>();
+        this.comments.add(dto);
+    }
+
+    public void addInteraction(UserInteractionOverviewDTO dto) {
+        if (this.userInteractions == null)
+            this.userInteractions = new ArrayList<>();
+        this.userInteractions.add(dto);
+    }
 }
