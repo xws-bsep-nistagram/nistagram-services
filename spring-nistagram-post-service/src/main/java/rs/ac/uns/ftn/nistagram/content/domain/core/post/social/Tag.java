@@ -8,7 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 
 @Entity
-@Table(name = "hashtags")
+@Table(name = "tags")
 @Getter
 @Setter
 public class Tag {
