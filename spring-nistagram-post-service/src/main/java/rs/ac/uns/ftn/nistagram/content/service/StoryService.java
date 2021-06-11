@@ -7,6 +7,8 @@ import rs.ac.uns.ftn.nistagram.content.communication.External;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.HighlightedStory;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.Story;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.StoryHighlight;
+import rs.ac.uns.ftn.nistagram.content.exception.NistagramException;
+import rs.ac.uns.ftn.nistagram.content.exception.OwnershipException;
 import rs.ac.uns.ftn.nistagram.content.messaging.producers.ContentProducer;
 import rs.ac.uns.ftn.nistagram.content.repository.story.StoryHighlightsRepository;
 import rs.ac.uns.ftn.nistagram.content.repository.story.StoryRepository;
@@ -28,6 +30,7 @@ public class StoryService {
 
 
     public void create(Story story) {
+        // TODO For a reshare story, check whether the author of the share, follows the person who created the post!
         story.setTime(LocalDateTime.now());
         storyRepository.save(story);
         contentProducer.publishStoryCreated(story);
@@ -37,7 +40,7 @@ public class StoryService {
     public void delete(long storyId, String username) {
         Story story = storyRepository.findById(storyId).orElseThrow();
         if (!story.getAuthor().equals(username))
-            throw new RuntimeException();
+            throw new OwnershipException();
         else {
             storyRepository.delete(story);
             contentProducer.publishStoryDeleted(story);
@@ -91,14 +94,14 @@ public class StoryService {
     public void addStoryToHighlights(long highlightsId, long storyId, String username) {
         Story story = storyRepository.findById(storyId).orElseThrow();
         if (!story.getAuthor().equals(username))
-            throw new RuntimeException("You are not the author of this story!");
+            throw new OwnershipException();
 
         StoryHighlight highlights = highlightsRepository.findById(highlightsId).orElseThrow();
         if (!highlights.getOwner().equals(username))
-            throw new RuntimeException("You are not the owner of this highlights section!");
+            throw new OwnershipException();
 
         if (highlights.getStories().stream().map(HighlightedStory::getStory).collect(Collectors.toList()).contains(story))
-            throw new RuntimeException("This story is already in this highlights section!");
+            throw new NistagramException("This story is already in this highlights section!");
 
         highlights.getStories().add(HighlightedStory.builder().highlight(highlights).story(story).build());
         highlightsRepository.save(highlights);
@@ -129,7 +132,7 @@ public class StoryService {
     public void deleteHighlight(long highlightId, String username) {
         StoryHighlight highlight = highlightsRepository.findById(highlightId).orElseThrow();
         if (!highlight.getOwner().equals(username))
-            throw new RuntimeException("You are not the owner of this highlight collection");
+            throw new OwnershipException();
         else highlightsRepository.delete(highlight);
     }
 

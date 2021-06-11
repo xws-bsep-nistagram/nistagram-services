@@ -38,5 +38,4 @@ public class ContentProducer {
         rabbitTemplate.convertAndSend(RabbitMQConfig.STORY_DELETED_FEED_SERVICE,
                 StoryTopicPayloadMapper.toPayload(story, StoryPayloadType.STORY_DELETED));
     }
-
 }

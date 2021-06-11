@@ -5,6 +5,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import rs.ac.uns.ftn.nistagram.content.exception.NotCloseFriendsException;
+import rs.ac.uns.ftn.nistagram.content.exception.NotFollowException;
 
 public class External {
 
@@ -36,13 +38,13 @@ public class External {
         public void assertFollow(String follower, String followed) {
             if (follower.equals(followed)) return;
             boolean follows = graphClient.checkFollowing(follower, followed).getStatus();
-            if (!follows) throw new RuntimeException(follower + " does not follow " + followed);
+            if (!follows) throw new NotFollowException(follower, followed);
         }
 
         public void assertCloseFriends(String follower, String followed) {
             if (follower.equals(followed)) return;
             boolean closeFriends = graphClient.checkCloseFriends(follower, followed).getStatus();
-            if (!closeFriends) throw new RuntimeException(follower + " and " + followed + " are not close friends");
+            if (!closeFriends) throw new NotCloseFriendsException(follower, followed);
         }
     }
 }

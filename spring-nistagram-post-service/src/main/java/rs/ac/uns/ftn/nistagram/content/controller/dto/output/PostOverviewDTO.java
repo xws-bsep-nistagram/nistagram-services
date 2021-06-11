@@ -15,6 +15,10 @@ import java.util.List;
 @AllArgsConstructor
 public class PostOverviewDTO extends UserContent {
     private long id;
+
+    private List<UserInteractionOverviewDTO> userInteractions;
+    private List<CommentOverviewDTO> comments;
+
     private List<String> mediaUrls;
 
     @Builder
@@ -29,5 +33,17 @@ public class PostOverviewDTO extends UserContent {
         if(mediaUrls == null)
             mediaUrls = new ArrayList<>();
         mediaUrls.add(url);
+    }
+
+    public void addComment(CommentOverviewDTO dto) {
+        if (this.comments == null)
+            this.comments = new ArrayList<>();
+        this.comments.add(dto);
+    }
+
+    public void addInteraction(UserInteractionOverviewDTO dto) {
+        if (this.userInteractions == null)
+            this.userInteractions = new ArrayList<>();
+        this.userInteractions.add(dto);
     }
 }

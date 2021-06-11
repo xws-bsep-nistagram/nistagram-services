@@ -18,16 +18,19 @@ public class BusinessExceptionExceptionHandler extends ResponseEntityExceptionHa
                                                                        WebRequest request){
         return new ResponseEntity<>(ex.getMessage(), new HttpHeaders(), HttpStatus.METHOD_NOT_ALLOWED);
     }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Object> handleEntityNotFoundException(Exception ex,
                                                                        WebRequest request){
         return new ResponseEntity<>(ex.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
+
     @ExceptionHandler(EntityAlreadyExistsException.class)
     public ResponseEntity<Object> handleEntityAlreadyExistsException(Exception ex,
                                                                 WebRequest request){
         return new ResponseEntity<>(ex.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT);
     }
+
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<Object> handleValidationException(Exception ex,
                                                                      WebRequest request){

@@ -10,6 +10,9 @@ import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.PostInCollect
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.SavedPost;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.UserInteraction;
+import rs.ac.uns.ftn.nistagram.content.exception.ExistingEntityException;
+import rs.ac.uns.ftn.nistagram.content.exception.NistagramException;
+import rs.ac.uns.ftn.nistagram.content.exception.OwnershipException;
 import rs.ac.uns.ftn.nistagram.content.messaging.producers.ContentProducer;
 import rs.ac.uns.ftn.nistagram.content.repository.post.*;
 
@@ -31,7 +34,6 @@ public class PostService {
     private final External.GraphClientWrapper graphClient;
 
 
-
     public void create(Post post) {
         post.setTime(LocalDateTime.now());
         postRepository.save(post);
@@ -41,7 +43,7 @@ public class PostService {
     public void delete(String caller, long postId) {
         Post post = postRepository.findById(postId).orElseThrow();
         if (!post.getAuthor().equals(caller))
-            throw new RuntimeException("You are not the owner of this post.");
+            throw new OwnershipException();
         else {
             postRepository.delete(post);
             contentProducer.publishPostDeleted(post);
@@ -109,7 +111,7 @@ public class PostService {
 
         Optional<SavedPost> savedPost = savedPostRepository.findByUserAndPost(caller, postId);
         if (savedPost.isPresent())
-            throw new RuntimeException("Post already saved");
+            throw new NistagramException("Post already saved");
 
         savedPostRepository.save(
                 SavedPost.builder().post(post).username(caller).build()
@@ -134,7 +136,7 @@ public class PostService {
 
     public void createCollection(String caller, String collectionName) {
         if (collectionRepository.getByUserAndName(caller, collectionName).isPresent())
-            throw new RuntimeException("Collection '" + collectionName + "' already exists.");
+            throw new ExistingEntityException("Collection", collectionName);
 
         collectionRepository.save(
             CustomPostCollection.builder().name(collectionName).owner(caller).build()
@@ -148,7 +150,7 @@ public class PostService {
 
         Post post = postRepository.findById(postId).orElseThrow();
         if (postInCollectionRepository.postFromCollection(post.getId(), customPostCollection.getId()).isPresent())
-            throw new RuntimeException("Post already present in this collection");
+            throw new NistagramException("Post already present in this collection");
 
         try {
             save(caller, postId); // This will throw if the post is already saved
