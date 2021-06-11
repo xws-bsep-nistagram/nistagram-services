@@ -50,7 +50,11 @@ public class FeedService {
     public List<StoryFeedEntry> getStoryFeedByUsername(String username){
         log.info("Request for getting all the story feed entries for an user '{}' received", username);
 
-        var storyFeedEntries = storyFeedRepository.findAllByUsername(username);
+        var storyFeedEntries = storyFeedRepository
+                .findAllByUsername(username)
+                .stream()
+                .filter(e -> !e.getCloseFriends())
+                .collect(Collectors.toList());
 
         log.info("Found '{}' story feed entries for an user '{}'", storyFeedEntries.size(), username);
 
