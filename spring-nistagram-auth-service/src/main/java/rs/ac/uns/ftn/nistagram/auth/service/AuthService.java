@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.auth.domain.AuthRequest;
 import rs.ac.uns.ftn.nistagram.auth.domain.AuthToken;
 import rs.ac.uns.ftn.nistagram.auth.domain.Credentials;
+import rs.ac.uns.ftn.nistagram.auth.domain.PasswordResetRequest;
 import rs.ac.uns.ftn.nistagram.auth.domain.RegistrationRequest;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.JwtEncoder;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.JwtEncryptionException;
@@ -27,17 +28,20 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final CredentialsService credentialsService;
     private final MailService mailService;
+    private final PasswordResetService passwordResetService;
     private final PasswordEncoder passwordEncoder;
     private final JwtEncoder encoder;
 
     public AuthService(AuthenticationManager authenticationManager,
                        CredentialsService credentialsService,
                        MailService mailService,
+                       PasswordResetService passwordResetService,
                        PasswordEncoder passwordEncoder,
                        JwtEncoder encoder) {
         this.authenticationManager = authenticationManager;
         this.credentialsService = credentialsService;
         this.mailService = mailService;
+        this.passwordResetService = passwordResetService;
         this.passwordEncoder = passwordEncoder;
         this.encoder = encoder;
     }
@@ -99,5 +103,11 @@ public class AuthService {
 
     public void activate(String uuid) {
         credentialsService.activate(uuid);
+    }
+
+    public void requestPasswordReset(PasswordResetRequest resetRequest) {
+        log.info("Requesting password reset for e-mail {}", resetRequest.getEmail());
+
+        passwordResetService.requestPasswordReset(resetRequest);
     }
 }

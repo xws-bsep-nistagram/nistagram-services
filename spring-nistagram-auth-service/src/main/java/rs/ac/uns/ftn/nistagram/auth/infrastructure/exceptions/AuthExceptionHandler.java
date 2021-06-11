@@ -37,6 +37,14 @@ public class AuthExceptionHandler {
         return "Cannot authenticate user!";
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(PasswordResetException.class)
+    String handleE(PasswordResetException e) {
+        log.info(e.getMessage());
+        log.trace(e.getMessage(), e);
+        return e.getMessage();
+    }
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
     String handleExceptionDefault(RuntimeException e) {

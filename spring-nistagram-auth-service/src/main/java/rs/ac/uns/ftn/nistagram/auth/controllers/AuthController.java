@@ -5,10 +5,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.AuthRequestDTO;
 import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.AuthTokenDTO;
+import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.PasswordResetRequestDTO;
 import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.RegistrationRequestDTO;
 import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.TokenRequestDTO;
 import rs.ac.uns.ftn.nistagram.auth.controllers.mappers.AuthRequestMapper;
 import rs.ac.uns.ftn.nistagram.auth.controllers.mappers.AuthTokenMapper;
+import rs.ac.uns.ftn.nistagram.auth.controllers.mappers.PasswordResetRequestMapper;
 import rs.ac.uns.ftn.nistagram.auth.controllers.mappers.RegistrationRequestMapper;
 import rs.ac.uns.ftn.nistagram.auth.domain.AuthToken;
 import rs.ac.uns.ftn.nistagram.auth.service.AuthService;
@@ -22,15 +24,18 @@ public class AuthController {
     private final AuthService service;
     private final AuthRequestMapper authMapper;
     private final RegistrationRequestMapper registrationMapper;
+    private final PasswordResetRequestMapper passwordResetRequestMapper;
     private final AuthTokenMapper tokenMapper;
 
     public AuthController(AuthService service,
                           AuthRequestMapper mapper,
                           RegistrationRequestMapper registrationMapper,
+                          PasswordResetRequestMapper passwordResetRequestMapper,
                           AuthTokenMapper tokenMapper) {
         this.service = service;
         this.authMapper = mapper;
         this.registrationMapper = registrationMapper;
+        this.passwordResetRequestMapper = passwordResetRequestMapper;
         this.tokenMapper = tokenMapper;
     }
 
@@ -51,10 +56,16 @@ public class AuthController {
         return tokenMapper.toDTO(token);
     }
 
-    @GetMapping("/activate/{uuid}")
+    @GetMapping("activate/{uuid}")
     public ResponseEntity<?> activateUser(@PathVariable String uuid) {
         service.activate(uuid);
         return ResponseEntity.ok("Account successfully activated");
+    }
+
+    @PostMapping("reset-password")
+    public String resetPassword(@RequestBody PasswordResetRequestDTO request) {
+        service.requestPasswordReset(passwordResetRequestMapper.map(request));
+        return "Password reset request successfully sent. Check your e-mail.";
     }
 
 }
