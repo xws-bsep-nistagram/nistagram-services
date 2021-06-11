@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.auth.domain.Credentials;
 import rs.ac.uns.ftn.nistagram.auth.domain.RegistrationRequest;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.AuthException;
 import rs.ac.uns.ftn.nistagram.auth.repository.CredentialsRepository;
 
 @Service
@@ -27,7 +28,7 @@ public class CredentialsService implements UserDetailsService {
     }
 
     @Transactional
-    public UserDetails registerUser(RegistrationRequest request) {
+    public Credentials registerUser(RegistrationRequest request) {
         return repository.save(generateCredentials(request));
     }
 
@@ -43,6 +44,14 @@ public class CredentialsService implements UserDetailsService {
         } else if (repository.existsByEmail(credentials.getEmail())) {
             throw new BadCredentialsException("E-mail already taken!");
         }
+    }
+
+    @Transactional
+    public void activate(String uuid) {
+        Credentials found = repository.findByUuid(uuid)
+                .orElseThrow(() -> new AuthException("User with given UUID not found!"));
+        found.activate();
+        repository.save(found);
     }
 
 }

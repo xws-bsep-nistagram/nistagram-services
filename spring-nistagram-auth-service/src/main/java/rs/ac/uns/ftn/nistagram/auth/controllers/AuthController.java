@@ -2,10 +2,7 @@ package rs.ac.uns.ftn.nistagram.auth.controllers;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.AuthRequestDTO;
 import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.AuthTokenDTO;
 import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.RegistrationRequestDTO;
@@ -52,6 +49,12 @@ public class AuthController {
     public AuthTokenDTO getAuthToken(@RequestBody TokenRequestDTO tokenRequest) {
         AuthToken token = service.getAuthToken(tokenRequest.getJwt());
         return tokenMapper.toDTO(token);
+    }
+
+    @GetMapping("/activate/{uuid}")
+    public ResponseEntity<?> activateUser(@PathVariable String uuid) {
+        service.activate(uuid);
+        return ResponseEntity.ok("Account successfully activated");
     }
 
 }

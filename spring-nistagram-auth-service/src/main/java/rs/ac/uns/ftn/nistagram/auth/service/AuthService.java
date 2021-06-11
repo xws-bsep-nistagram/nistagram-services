@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.auth.domain.AuthRequest;
 import rs.ac.uns.ftn.nistagram.auth.domain.AuthToken;
+import rs.ac.uns.ftn.nistagram.auth.domain.Credentials;
 import rs.ac.uns.ftn.nistagram.auth.domain.RegistrationRequest;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.JwtEncoder;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.JwtEncryptionException;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.JwtException;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -26,19 +26,24 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final CredentialsService credentialsService;
+    private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
     private final JwtEncoder encoder;
 
-    public AuthService(AuthenticationManager authenticationManager, CredentialsService credentialsService, PasswordEncoder passwordEncoder, JwtEncoder encoder) {
+    public AuthService(AuthenticationManager authenticationManager,
+                       CredentialsService credentialsService,
+                       MailService mailService,
+                       PasswordEncoder passwordEncoder,
+                       JwtEncoder encoder) {
         this.authenticationManager = authenticationManager;
         this.credentialsService = credentialsService;
+        this.mailService = mailService;
         this.passwordEncoder = passwordEncoder;
         this.encoder = encoder;
     }
 
     public String authenticate(AuthRequest authRequest) {
         authenticationManager.authenticate(authRequest.convert());
-
         UserDetails userDetails = credentialsService.loadUserByUsername(authRequest.getUsername());
 
         log.info("Successfully authenticated user '{}' with roles: {}", userDetails.getUsername(), userDetails.getAuthorities());
@@ -49,9 +54,13 @@ public class AuthService {
     public String register(RegistrationRequest registrationRequest) {
         log.info("New registration request with username '{}'", registrationRequest.getUsername());
         registrationRequest.hashPassword(passwordEncoder::encode);
-        UserDetails userDetails = credentialsService.registerUser(registrationRequest);
+        Credentials credentials = credentialsService.registerUser(registrationRequest);
+
+        log.debug("Sending activation mail to '{}'", registrationRequest.getEmail());
+        mailService.sendActivationMessage(credentials);
+
         log.debug("User with username '{}' created", registrationRequest.getUsername());
-        return encryptDetails(userDetails);
+        return encryptDetails(credentials);
     }
 
     private String encryptDetails(UserDetails userDetails) {
@@ -85,5 +94,9 @@ public class AuthService {
     private String getUsernameFromJwt(String jwt) {
         Map<String, Claim> claims = this.encoder.decode(jwt);
         return claims.get("username").asString();
+    }
+
+    public void activate(String uuid) {
+        credentialsService.activate(uuid);
     }
 }
