@@ -16,5 +16,4 @@ public class UserPayload {
 
     @EnumNamePattern(regexp = "PRIVATE|PUBLIC")
     private ProfileType profileType;
-
 }
