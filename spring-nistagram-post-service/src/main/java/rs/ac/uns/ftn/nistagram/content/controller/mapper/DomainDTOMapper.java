@@ -30,8 +30,16 @@ public class DomainDTOMapper {
     }
 
     public PostOverviewDTO toDto(Post post) {
-        PostOverviewDTO dto =  modelMapper.map(post, PostOverviewDTO.class);
-        post.getMediaUrls().forEach(link -> dto.getMediaUrls().add(link.getUrl()));
+
+        PostOverviewDTO dto =  PostOverviewDTO
+                                .builder()
+                                .author(post.getAuthor())
+                                .id(post.getId())
+                                .location(post.getLocation())
+                                .caption(post.getCaption())
+                                .time(post.getTime())
+                                .build();
+        post.getMediaUrls().forEach(link -> dto.addMediaUrl(link.getUrl()));
         return dto;
     }
 
