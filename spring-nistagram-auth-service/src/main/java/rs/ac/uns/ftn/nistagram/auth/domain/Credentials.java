@@ -28,7 +28,7 @@ public class Credentials implements UserDetails {
     @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable
     private List<Role> roles;
-    private UUID uuid;
+    private String uuid;
 
     public Credentials(String username, String passwordHash, String email) {
         this.username = username;
@@ -36,7 +36,7 @@ public class Credentials implements UserDetails {
         this.email = email;
         this.activated = false;
         this.roles = List.of(new Role("ROLE_USER"));
-        this.uuid = UUID.randomUUID();
+        this.uuid = UUID.randomUUID().toString();
     }
 
     @Override
@@ -77,7 +77,7 @@ public class Credentials implements UserDetails {
         return activated;
     }
 
-    public UUID getUuid() {
+    public String getUuid() {
         return uuid;
     }
 

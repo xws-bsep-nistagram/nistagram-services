@@ -1,12 +1,10 @@
 package rs.ac.uns.ftn.nistagram.auth.domain;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 
 public class ActivationMailMessage extends MailMessage<Credentials> {
 
-    @Value("api.gateway.host")
-    private String API_HOST;
+    private static final String API_HOST = "http://localhost:9090";
 
     public ActivationMailMessage(JavaMailSender mailSender, Credentials credentials) {
         super(mailSender, credentials);
