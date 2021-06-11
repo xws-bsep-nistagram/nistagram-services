@@ -173,7 +173,7 @@ public class PostService {
     }
 
     public List<SavedPost> getSaved(String caller) {
-        log.info("[SAVED][G][R][CALL={}]", caller);
+        log.info("[SAVE][G][R][CALL={}]", caller);
         return savedPostRepository.findByUser(caller);
     }
 

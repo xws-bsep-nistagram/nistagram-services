@@ -91,17 +91,17 @@ public class StoryService {
 
 
     public List<Story> getByUsername(String username){
-        log.info("[STORY][G][R][TGT={}]", username);
+        log.info("[STORY][G][RC][TGT={}]", username);
         return storyRepository.getNonCloseFriendsByUsernameAfterDate(username, twentyFourHoursAgo());
     }
 
     public List<Story> getOwnActive(String caller) {
-        log.info("[STORY][G][R][CALL={}][TGT={}]", caller, caller);
+        log.info("[STORY][G][RC][CALL={}][TGT={}]", caller, caller);
         return storyRepository.getAllByUsernameAfterDate(caller, twentyFourHoursAgo());
     }
 
     public List<Story> getOwnAll(String caller) {
-        log.info("[STORY][G][R][CALL={}][TGT={}]", caller, caller);
+        log.info("[STORY][G][RC][CALL={}][TGT={}]", caller, caller);
         return storyRepository.getAllByUsername(caller);
     }
 
@@ -116,6 +116,7 @@ public class StoryService {
     }
 
     public void addStoryToHighlights(long highlightsId, long storyId, String username) {
+        log.info("[HIGH-STORY][C][R][IDS={}][IDH={}]", storyId, highlightsId);
 
         Story story = storyRepository.findById(storyId).orElseThrow();
         if (!story.getAuthor().equals(username))
@@ -156,17 +157,16 @@ public class StoryService {
             graphClient.assertCloseFriends(caller, highlight.getOwner());
         }
         catch (RuntimeException ignore) {
-            log.info("[HIGH-STORY][G][C][CALL={}][ID={}]", caller, highlightId);
+            log.info("[HIGH-STORY-PUBLIC][G][C][CALL={}][ID={}]", caller, highlightId);
             return highlightStories.stream().filter(story -> !story.isCloseFriends()).collect(Collectors.toList());
         }
 
-        log.info("[HIGH-STORY][G][C][CALL={}][ID={}]", caller, highlightId);
+        log.info("[HIGH-STORY-CF][G][C][CALL={}][ID={}]", caller, highlightId);
         return highlightStories;
     }
 
     public void deleteHighlight(long highlightId, String caller) {
         log.info("[HIGH][D][R][CALL={}][ID={}]", caller, highlightId);
-
         StoryHighlight highlight = highlightsRepository.findById(highlightId).orElseThrow();
         if (!highlight.getOwner().equals(caller))
             throw new OwnershipException();
