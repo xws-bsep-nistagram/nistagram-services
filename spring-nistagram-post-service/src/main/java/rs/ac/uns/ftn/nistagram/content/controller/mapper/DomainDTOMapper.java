@@ -3,11 +3,10 @@ package rs.ac.uns.ftn.nistagram.content.controller.mapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.*;
-import rs.ac.uns.ftn.nistagram.content.controller.dto.output.PostOverviewDTO;
-import rs.ac.uns.ftn.nistagram.content.controller.dto.output.StoryHighlightOverviewDTO;
-import rs.ac.uns.ftn.nistagram.content.controller.dto.output.StoryOverviewDTO;
+import rs.ac.uns.ftn.nistagram.content.controller.dto.output.*;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
+import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.UserInteraction;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.MediaStory;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.ShareStory;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.Story;
@@ -30,9 +29,31 @@ public class DomainDTOMapper {
     }
 
     public PostOverviewDTO toDto(Post post) {
-        PostOverviewDTO dto =  modelMapper.map(post, PostOverviewDTO.class);
-        post.getMediaUrls().forEach(link -> dto.getMediaUrls().add(link.getUrl()));
+
+        PostOverviewDTO dto =  PostOverviewDTO
+                                .builder()
+                                .author(post.getAuthor())
+                                .id(post.getId())
+                                .location(post.getLocation())
+                                .caption(post.getCaption())
+                                .time(post.getTime())
+                                .build();
+
+        post.getMediaUrls().forEach(link -> dto.addMediaUrl(link.getUrl()));
+        post.getComments().forEach(comment -> dto.addComment(toDto(comment)));
+        post.getUserInteractions().forEach(interaction -> dto.addInteraction(toDto(interaction)));
+
         return dto;
+    }
+
+    public CommentOverviewDTO toDto(Comment comment) {
+        return CommentOverviewDTO.builder().author(comment.getAuthor()).text(comment.getText()).build();
+    }
+
+    public UserInteractionOverviewDTO toDto(UserInteraction interaction) {
+        return UserInteractionOverviewDTO.builder()
+                .author(interaction.getUsername()).sentiment(interaction.getSentiment())
+                .build();
     }
 
     public Comment toDomain(CommentCreationDTO dto) {
