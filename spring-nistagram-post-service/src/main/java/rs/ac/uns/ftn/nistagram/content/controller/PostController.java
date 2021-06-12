@@ -63,6 +63,12 @@ public class PostController {
         return ResponseEntity.ok(mapper.toDto(postService.getById(Long.parseLong(postId), caller)));
     }
 
+    @GetMapping("/public/{postId}")
+    public ResponseEntity<?> getById(@PathVariable String postId) {
+        return ResponseEntity.ok(mapper.toDto(postService.getById(Long.parseLong(postId))));
+    }
+
+
     @GetMapping("like/{postId}")
     public ResponseEntity<?> like(@RequestHeader("username") String caller,
                                   @PathVariable String postId) {
