@@ -52,7 +52,14 @@ public class PostService {
 
     public Post getById(long postId, String caller) {
         Post post = postRepository.findById(postId).orElseThrow();
+        //TODO: Check if publishers profile is public
         graphClient.assertFollow(caller, post.getAuthor());
+        return post;
+    }
+
+    public Post getById(long postId) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        //TODO: Check if publishers profile is public
         return post;
     }
 
@@ -177,4 +184,6 @@ public class PostService {
         postInCollectionRepository.deleteAllFromCollection(collection.getId());
         collectionRepository.delete(collection);
     }
+
+
 }

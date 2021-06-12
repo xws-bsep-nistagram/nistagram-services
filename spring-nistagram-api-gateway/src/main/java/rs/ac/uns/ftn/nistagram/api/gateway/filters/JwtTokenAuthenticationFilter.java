@@ -8,7 +8,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import rs.ac.uns.ftn.nistagram.api.gateway.domain.AuthToken;
 import rs.ac.uns.ftn.nistagram.api.gateway.domain.AuthoritiesRequest;
 import rs.ac.uns.ftn.nistagram.api.gateway.http.AuthClient;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +41,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private AuthToken requestAuthToken(String jwt) {
-        return authClient.getAuthToken(new AuthoritiesRequest(jwt));
+            return authClient.getAuthToken(new AuthoritiesRequest(jwt));
     }
 
     private String getJwtFromHeader(String authHeader) {

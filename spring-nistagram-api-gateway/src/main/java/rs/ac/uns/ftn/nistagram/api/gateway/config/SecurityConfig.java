@@ -1,5 +1,6 @@
 package rs.ac.uns.ftn.nistagram.api.gateway.config;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -40,9 +41,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .addFilterBefore(new GatewayRequestLoggingFilter(), JwtTokenAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/users/**").permitAll()
-                .antMatchers("/api/posts/**").permitAll()
-                .antMatchers("/api/user-graph/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/users/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/users/taggable/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/users/public/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/content/post/public/**").permitAll()
+                .antMatchers("/api/**").hasRole("USER")
                 .anyRequest().permitAll();
     }
 
