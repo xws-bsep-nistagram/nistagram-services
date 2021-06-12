@@ -3,6 +3,7 @@ services:
     rabbitmq :
         image : rabbitmq:3-management-alpine
         container_name : 'rabbitmq'
+        restart: on-failure
         ports :
             - 5672:5672
             - 15672:15672
@@ -28,7 +29,7 @@ services:
     mysql-db:
         image: mysql:latest
         container_name: mysql-db
-        restart: always
+        restart: on-failure
         ports:
             - "${MYSQL_PORT_EXTERNAL}:3306"
         networks: 
@@ -49,7 +50,7 @@ services:
             target: "${STAGE}"
         ports:
             - "${API_GATEWAY_PORT}:${API_GATEWAY_PORT}"
-        restart: on-failure
+        restart: unless-stopped
         depends_on:
             - user-service
             - user-graph-service
@@ -62,6 +63,7 @@ services:
             POST_SERVICE_PORT: "${POST_SERVICE_PORT}"
             USER_SERVICE_PORT: "${USER_SERVICE_PORT}"
             USER_GRAPH_SERVICE_PORT: "${USER_GRAPH_SERVICE_PORT}"
+            FEED_SERVICE_PORT: "${FEED_SERVICE_PORT}"
             KEYSTORE_PASSWORD: "${KEYSTORE_PASSWORD}"
             KEY_PASSWORD: "${KEY_PASSWORD}"
             CERTIFICATE_ALIAS: "${CERTIFICATE_ALIAS}"
@@ -80,9 +82,9 @@ services:
             target: "${STAGE}"
         ports:
             - "${AUTH_SERVICE_PORT}:${AUTH_SERVICE_PORT}"
+        restart: unless-stopped
         depends_on: 
             - mysql-db
-        restart: on-failure
         environment:
             AUTH_SERVICE_PORT: "${AUTH_SERVICE_PORT}"
             MYSQL_HOST: "${MYSQL_HOST}"
@@ -94,6 +96,8 @@ services:
         networks:
             - backend
             - database
+        volumes :
+            - ${LOG_PATH}/auth-service:/app/logs/
 
     post-service:
         image: nistagram/post-service
@@ -104,9 +108,9 @@ services:
             target: "${STAGE}"
         ports:
             - "${POST_SERVICE_PORT}:${POST_SERVICE_PORT}"
+        restart: unless-stopped
         depends_on:
             - mysql-db
-        restart: on-failure
         environment :
             POST_SERVICE_PORT : "${POST_SERVICE_PORT}"
             MYSQL_HOST : "${MYSQL_HOST}"
@@ -117,6 +121,8 @@ services:
         networks:
             - backend
             - database
+        volumes :
+            - ${LOG_PATH}/post-service:/app/logs/
 
     user-service:
         image: nistagram/user-service
@@ -127,10 +133,10 @@ services:
             target: "${STAGE}"
         ports:
             - "${USER_SERVICE_PORT}:${USER_SERVICE_PORT}"
+        restart: unless-stopped
         depends_on :
             - mysql-db
             - rabbitmq
-        restart : on-failure
         environment :
             USER_SERVICE_PORT : "${USER_SERVICE_PORT}"
             MYSQL_HOST : "${MYSQL_HOST}"
@@ -141,6 +147,8 @@ services:
         networks:
             - backend
             - database
+        volumes :
+            - ${LOG_PATH}/user-service:/app/logs/
 
     user-graph-service:
         image: nistagram/user-graph-service
@@ -151,10 +159,10 @@ services:
          target: "${STAGE}"
         ports:
          - "${USER_GRAPH_SERVICE_PORT}:${USER_GRAPH_SERVICE_PORT}"
+        restart: unless-stopped
         depends_on :
             - neo4j-db
             - rabbitmq
-        restart : on-failure
         environment :
             USER_GRAPH_SERVICE_PORT : "${USER_GRAPH_SERVICE_PORT}"
             NEO4J_HOST: "${NEO4J_HOST}"
@@ -164,6 +172,8 @@ services:
         networks:
          - backend
          - database
+        volumes :
+            - ${LOG_PATH}/user-graph-service:/app/logs/
 
     feed-service:
         image : nistagram/feed-service
@@ -174,6 +184,7 @@ services:
             target : "${STAGE}"
         ports :
             - "${FEED_SERVICE_PORT}:${FEED_SERVICE_PORT}"
+        restart: unless-stopped
         depends_on :
             - mysql-db
             - rabbitmq
@@ -187,7 +198,8 @@ services:
         networks:
             - backend
             - database
-
+        volumes :
+            - ${LOG_PATH}/feed-service:/app/logs/
 
 networks:
     backend:

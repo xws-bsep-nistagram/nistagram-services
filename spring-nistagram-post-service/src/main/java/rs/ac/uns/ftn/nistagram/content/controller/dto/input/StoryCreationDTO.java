@@ -9,6 +9,6 @@ import rs.ac.uns.ftn.nistagram.content.domain.locale.Location;
 public class StoryCreationDTO {
     protected Location location;
     protected String author;
-    protected boolean isCloseFriends;
+    protected boolean closeFriends;
     protected String caption;
 }

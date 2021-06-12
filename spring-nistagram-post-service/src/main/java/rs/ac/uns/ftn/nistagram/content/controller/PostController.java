@@ -1,27 +1,26 @@
 package rs.ac.uns.ftn.nistagram.content.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.CommentCreationDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.PostCreationDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.mapper.DomainDTOMapper;
-import rs.ac.uns.ftn.nistagram.content.services.PostService;
+import rs.ac.uns.ftn.nistagram.content.service.PostService;
 
 import javax.validation.Valid;
 import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("api/content/post")
+@AllArgsConstructor
 public class PostController {
 
     private final PostService postService;
     private final DomainDTOMapper mapper;
 
-    public PostController(PostService postService, DomainDTOMapper mapper) {
-        this.postService = postService;
-        this.mapper = mapper;
-    }
+    // TODO Search by location and hashtag
 
     @PostMapping
     public ResponseEntity<?> create(@RequestHeader("username") String username,

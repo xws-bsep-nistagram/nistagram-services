@@ -10,8 +10,7 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @Setter
 public class Location {
-    @NotEmpty
-    private String address;
+    private String name;
     private Float latitude;
     private Float longitude;
 }

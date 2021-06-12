@@ -6,7 +6,7 @@ import rs.ac.uns.ftn.nistagram.content.domain.core.UserContent;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.PostInCollection;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.SavedPost;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
-import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.HashTag;
+import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Tag;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.UserInteraction;
 import rs.ac.uns.ftn.nistagram.content.domain.core.report.PostReport;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.ShareStory;
@@ -30,7 +30,7 @@ public class Post extends UserContent {
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Comment> comments;
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<HashTag> hashTags;
+    private List<Tag> tags;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<SavedPost> savedPosts;

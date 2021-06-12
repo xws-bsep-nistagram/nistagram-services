@@ -38,31 +38,35 @@ public class FeedService {
 
         var postFeedEntries = postFeedRepository.findAllByUsername(username);
 
-        log.info("Found {} post entries for an user {}", postFeedEntries.size(), username);
+        log.info("Found '{}' post entries for an user '{}'", postFeedEntries.size(), username);
 
         if(postFeedEntries.size() != 0)
-            postFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt));
+            postFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt).reversed());
 
 
         return postFeedEntries;
     }
 
     public List<StoryFeedEntry> getStoryFeedByUsername(String username){
-        log.info("Request for getting all the story feed entries for an user {} received", username);
+        log.info("Request for getting all the story feed entries for an user '{}' received", username);
 
-        var storyFeedEntries = storyFeedRepository.findAllByUsername(username);
+        var storyFeedEntries = storyFeedRepository
+                .findAllByUsername(username)
+                .stream()
+                .filter(e -> !e.getCloseFriends())
+                .collect(Collectors.toList());
 
-        log.info("Found {} story feed entries for an user {}", storyFeedEntries.size(), username);
+        log.info("Found '{}' story feed entries for an user '{}'", storyFeedEntries.size(), username);
 
         if(storyFeedEntries.size() != 0)
-            storyFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt));
+            storyFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt).reversed());
 
         return storyFeedEntries;
     }
 
     public List<StoryFeedEntry> getCloseFriendStoryFeedByUsername(String username){
 
-        log.info("Request for getting all the close friend story feed entries for an user {} received",
+        log.info("Request for getting all the close friend story feed entries for an user '{}' received",
                 username);
 
         var storyFeedEntries = storyFeedRepository
@@ -70,17 +74,17 @@ public class FeedService {
                 .stream().filter(StoryFeedEntry::getCloseFriends)
                 .collect(Collectors.toList());
 
-        log.info("Found {} story feed entries for an user {}", storyFeedEntries.size(), username);
+        log.info("Found '{}' story feed entries for an user '{}'", storyFeedEntries.size(), username);
 
         if(storyFeedEntries.size() != 0)
-            storyFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt));
+            storyFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt).reversed());
 
         return storyFeedEntries;
     }
 
     @Transactional
     public void addToPostFeeds(PostFeedEntry postFeedEntry) {
-        log.info("Post by {} are being added to the all of his follower feeds",
+        log.info("Post by '{}' are being added to the all of his follower feeds",
                 postFeedEntry.getPublisher());
 
         var followers = userGraphClient
@@ -91,7 +95,7 @@ public class FeedService {
 
     @Transactional
     public void addToStoryFeeds(StoryFeedEntry storyFeedEntry) {
-        log.info("Story by {} are being added to the all of his follower feeds",
+        log.info("Story by '{}' are being added to the all of his follower feeds",
                 storyFeedEntry.getPublisher());
 
         List<UserPayload> followers;
@@ -105,7 +109,7 @@ public class FeedService {
 
     @Transactional
     public void removeFromPostFeeds(PostFeedEntry postFeedEntry) {
-        log.info("Post by {} is being removed from all of his follower feeds",
+        log.info("Post by '{}' is being removed from all of his follower feeds",
                 postFeedEntry.getPublisher());
 
         var followers = userGraphClient.getFollowers(postFeedEntry.getPublisher());
@@ -115,7 +119,7 @@ public class FeedService {
 
     @Transactional
     public void removeFromStoryFeeds(StoryFeedEntry storyFeedEntry) {
-        log.info("Story by {} is being removed from all of his follower feeds",
+        log.info("Story by '{}' is being removed from all of his follower feeds",
                 storyFeedEntry.getPublisher());
 
         List<UserPayload> followers;
@@ -129,14 +133,14 @@ public class FeedService {
 
     @Transactional
     public void addTargetsContent(String subject, String target) {
-        log.info("All the {} available post and stories are being added to a {} feed", target, subject);
+        log.info("All the '{}' available post and stories are being added to a '{}' feed", target, subject);
 
         var foundSubject = userRepository.getOne(subject);
 
         appendTargetPostCollection(foundSubject, getUsersPosts(target));
         appendTargetStoryCollection(foundSubject, getUsersStories(target));
 
-        log.info("All the {} available post and stories successfully added to a {} feed", target, subject);
+        log.info("All the '{}' available post and stories successfully added to a '{}' feed", target, subject);
 
     }
 
@@ -187,13 +191,13 @@ public class FeedService {
 
     @Transactional
     public void removeTargetsContent(String subject, String target) {
-        log.info("All the {} post and stories are being removed from a {} feed", target, subject);
+        log.info("All the '{}' post and stories are being removed from a '{}' feed", target, subject);
 
         User foundSubject = userRepository.getOne(subject);
         removeTargetsPostFromSubjectsFeed(target, foundSubject);
         removeTargetsStoriesFromSubjectsFeed(target, foundSubject);
 
-        log.info("All the {} post and stories successfully removed from a {} feed", target, subject);
+        log.info("All the '{}' post and stories successfully removed from a '{}' feed", target, subject);
     }
 
     private void removeTargetsStoriesFromSubjectsFeed(String target, User foundSubject) {
@@ -220,7 +224,7 @@ public class FeedService {
 
     private void clearPostFeeds(List<UserPayload> followers, PostFeedEntry postFeedEntry) {
         if(followers.isEmpty()){
-            log.warn("User {} has no followers", postFeedEntry.getPublisher());
+            log.warn("User '{}' has no followers", postFeedEntry.getPublisher());
             return;
         }
 
@@ -233,13 +237,13 @@ public class FeedService {
         });
         postFeedRepository.delete(foundEntry);
 
-        log.info("Post by {} is successfully removed from all of his follower feeds",
+        log.info("Post by '{}' is successfully removed from all of his follower feeds",
                 postFeedEntry.getPublisher());
 
     }
     private void clearStoryFeeds(List<UserPayload> followers, StoryFeedEntry storyFeedEntry) {
         if(followers.isEmpty()){
-            log.warn("User {} has no followers", storyFeedEntry.getPublisher());
+            log.warn("User '{}' has no followers", storyFeedEntry.getPublisher());
             return;
         }
 
@@ -252,7 +256,7 @@ public class FeedService {
         });
 
         storyFeedRepository.delete(foundEntry);
-        log.info("Story by {} is successfully removed from all of his follower feeds",
+        log.info("Story by '{}' is successfully removed from all of his follower feeds",
                 storyFeedEntry.getPublisher());
     }
 
@@ -281,7 +285,7 @@ public class FeedService {
 
     private void populatePostFeeds(List<UserPayload> followers, PostFeedEntry postFeedEntry) {
         if(followers.isEmpty()){
-            log.warn("User {} has no followers", postFeedEntry.getPublisher());
+            log.warn("User '{}' has no followers", postFeedEntry.getPublisher());
             return;
         }
 
@@ -296,7 +300,7 @@ public class FeedService {
     }
     private void populateStoryFeeds(List<UserPayload> followers, StoryFeedEntry storyFeedEntry) {
         if(followers.isEmpty()){
-            log.warn("User {} has no followers", storyFeedEntry.getPublisher());
+            log.warn("User '{}' has no followers", storyFeedEntry.getPublisher());
             return;
         }
 
@@ -306,8 +310,8 @@ public class FeedService {
             foundFollower.addToStoryFeed(storyFeedEntry);
         });
 
-        log.info("{} by {} is successfully added to all of his follower feeds",
-                storyFeedEntry.getCloseFriends() ? "Close friends story" : "Story",
+        log.info("'{}' by '{}' are successfully added to all of his follower feeds",
+                storyFeedEntry.getCloseFriends() ? "Close friend stories" : "Stories",
                 storyFeedEntry.getPublisher());
 
     }

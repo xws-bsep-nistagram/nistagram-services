@@ -8,10 +8,10 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 
 @Entity
-@Table(name = "hashtags")
+@Table(name = "tags")
 @Getter
 @Setter
-public class HashTag {
+public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
