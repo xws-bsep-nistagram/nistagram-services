@@ -1,9 +1,11 @@
 package rs.ac.uns.ftn.nistagram.user.controllers.constraints;
 
 import rs.ac.uns.ftn.nistagram.user.controllers.validators.EmailValidator;
+
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
+
 
 @Documented
 @Constraint(validatedBy = EmailValidator.class)
