@@ -90,8 +90,6 @@ public class AuthService {
     }
 
     public void requestPasswordReset(PasswordResetRequest resetRequest) {
-        log.info("Requesting password reset for e-mail {}", resetRequest.getEmail());
-
         passwordResetService.requestPasswordReset(resetRequest);
     }
 

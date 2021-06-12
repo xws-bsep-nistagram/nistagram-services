@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface PasswordResetRequestRepository extends JpaRepository<PasswordResetRequest, String> {
 
-    @Query(value = "select R from PasswordResetRequest R where R.uuid = uuid")
+    @Query(value = "select R from PasswordResetRequest R where R.uuid = :uuid")
     Optional<PasswordResetRequest> findByUUID(@Param("uuid") String uuid);
 }

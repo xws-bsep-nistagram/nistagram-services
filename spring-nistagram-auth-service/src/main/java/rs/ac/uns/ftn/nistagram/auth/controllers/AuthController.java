@@ -53,16 +53,14 @@ public class AuthController {
         return ResponseEntity.ok("Account successfully activated");
     }
 
-    @PostMapping("reset-password")
-    public String resetPassword(@RequestBody PasswordResetRequestDTO request) {
+    @PostMapping("request-password-reset")
+    public String requestPasswordReset(@RequestBody PasswordResetRequestDTO request) {
         authService.requestPasswordReset(passwordResetRequestMapper.map(request));
         return "Password reset request successfully sent. Check your e-mail.";
     }
 
-    // TODO Change names!
-
-    @PostMapping("do-reset-password")
-    public String doResetPassword(@RequestBody @Valid PasswordResetBundle bundle) {
+    @PostMapping("reset-password")
+    public String resetPassword(@RequestBody @Valid PasswordResetBundle bundle) {
         authService.resetPassword(bundle);
         return "Password has been successfully reset.";
     }
