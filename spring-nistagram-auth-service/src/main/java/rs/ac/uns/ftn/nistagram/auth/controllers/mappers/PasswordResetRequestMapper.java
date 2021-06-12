@@ -10,5 +10,4 @@ public class PasswordResetRequestMapper {
     public PasswordResetRequest map(PasswordResetRequestDTO dto) {
         return new PasswordResetRequest(dto.getEmail());
     }
-
 }

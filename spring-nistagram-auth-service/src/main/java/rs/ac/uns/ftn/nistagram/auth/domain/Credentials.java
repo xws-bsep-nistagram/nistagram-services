@@ -6,11 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.AuthException;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
@@ -42,7 +44,7 @@ public class Credentials implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
-                .map(role -> role.getPermissions())
+                .map(Role::getPermissions)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
     }
