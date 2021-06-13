@@ -4,7 +4,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 public class ActivationMailMessage extends MailMessage<Credentials> {
 
-    private static final String API_HOST = "http://localhost:9090/#/";
+    private static final String API_HOST = "http://localhost:8080/#/";
 
     public ActivationMailMessage(JavaMailSender mailSender, Credentials credentials) {
         super(mailSender, credentials);
