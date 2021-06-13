@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
@@ -27,6 +28,7 @@ public class Credentials implements UserDetails {
     @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable
     private List<Role> roles;
+    private String uuid;
 
     public Credentials(String username, String passwordHash, String email) {
         this.username = username;
@@ -34,6 +36,7 @@ public class Credentials implements UserDetails {
         this.email = email;
         this.activated = false;
         this.roles = List.of(new Role("ROLE_USER"));
+        this.uuid = UUID.randomUUID().toString();
     }
 
     @Override
@@ -70,4 +73,13 @@ public class Credentials implements UserDetails {
     public boolean isEnabled() {
         return activated;
     }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void activate() {
+        this.activated = true;
+    }
+
 }

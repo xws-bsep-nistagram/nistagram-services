@@ -39,6 +39,13 @@ public class AuthExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(PasswordResetException.class)
+    String handleE(PasswordResetException e) {
+        log.info(e.getMessage());
+        log.trace(e.getMessage(), e);
+        return e.getMessage();
+    }
+    
     @ExceptionHandler(JWTDecodeException.class)
     String handleJwtDecodeException(JWTDecodeException e){
         log.info(e.getMessage());

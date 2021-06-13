@@ -27,7 +27,6 @@ public class CloseFriendService {
         log.info("User {} is successfully added to {} close friends list ",
                 subject,
                 target);
-
     }
 
     public void removeCloseFriend(String subject, String target){

@@ -12,4 +12,7 @@ public interface CredentialsRepository extends JpaRepository<Credentials, String
     boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);
+
+    Optional<Credentials> findByUuid(String uuid);
+
 }
