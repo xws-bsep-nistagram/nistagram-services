@@ -64,11 +64,15 @@ services:
             USER_SERVICE_PORT: "${USER_SERVICE_PORT}"
             USER_GRAPH_SERVICE_PORT: "${USER_GRAPH_SERVICE_PORT}"
             FEED_SERVICE_PORT: "${FEED_SERVICE_PORT}"
+            KEYSTORE_PASSWORD: "${KEYSTORE_PASSWORD}"
+            KEY_PASSWORD: "${KEY_PASSWORD}"
+            CERTIFICATE_ALIAS: "${CERTIFICATE_ALIAS}"
             JWT_SECRET: "${JWT_SECRET}"
         networks:
             - backend
+        volumes :
+            - ${KEYSTORE_PATH}:/app/keystores/nistagram-keystore.p12
 
-    
     auth-service:
         image: nistagram/auth-service
         container_name: auth-service
@@ -81,7 +85,6 @@ services:
         restart: unless-stopped
         depends_on: 
             - mysql-db
-        restart: on-failure
         environment:
             AUTH_SERVICE_PORT: "${AUTH_SERVICE_PORT}"
             MYSQL_HOST: "${MYSQL_HOST}"
@@ -110,7 +113,6 @@ services:
         restart: unless-stopped
         depends_on:
             - mysql-db
-        restart: on-failure
         environment :
             POST_SERVICE_PORT : "${POST_SERVICE_PORT}"
             MYSQL_HOST : "${MYSQL_HOST}"
@@ -137,7 +139,6 @@ services:
         depends_on :
             - mysql-db
             - rabbitmq
-        restart : on-failure
         environment :
             USER_SERVICE_PORT : "${USER_SERVICE_PORT}"
             MYSQL_HOST : "${MYSQL_HOST}"
@@ -164,7 +165,6 @@ services:
         depends_on :
             - neo4j-db
             - rabbitmq
-        restart : on-failure
         environment :
             USER_GRAPH_SERVICE_PORT : "${USER_GRAPH_SERVICE_PORT}"
             NEO4J_HOST: "${NEO4J_HOST}"

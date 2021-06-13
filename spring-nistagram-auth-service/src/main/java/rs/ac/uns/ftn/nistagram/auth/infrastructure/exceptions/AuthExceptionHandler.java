@@ -1,5 +1,6 @@
 package rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions;
 
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -43,6 +44,13 @@ public class AuthExceptionHandler {
         log.info(e.getMessage());
         log.trace(e.getMessage(), e);
         return e.getMessage();
+    }
+    
+    @ExceptionHandler(JWTDecodeException.class)
+    String handleJwtDecodeException(JWTDecodeException e){
+        log.info(e.getMessage());
+        log.trace(e.getMessage(), e);
+        return "Jwt token invalid!";
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

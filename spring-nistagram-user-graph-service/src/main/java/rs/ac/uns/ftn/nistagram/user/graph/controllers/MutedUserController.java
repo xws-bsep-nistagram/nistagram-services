@@ -37,7 +37,7 @@ public class MutedUserController {
         return ResponseEntity.ok("Request successfully processed");
     }
 
-    @DeleteMapping("/mute")
+    @DeleteMapping("/unmute")
     public ResponseEntity<?> unmute(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest){
         mutedUserService.unmute(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
         return ResponseEntity.ok("Request successfully processed");

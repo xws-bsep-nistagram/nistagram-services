@@ -28,7 +28,7 @@ public class UserExceptionHandler {
         log.trace(e.getMessage(), e);
 
         return e.getFieldErrors().stream()
-                .map(error -> error.getField() + " " + error.getDefaultMessage())
+                .map(error -> error.getField() + ":" + error.getDefaultMessage())
                 .collect(Collectors.joining(", "));
     }
 
