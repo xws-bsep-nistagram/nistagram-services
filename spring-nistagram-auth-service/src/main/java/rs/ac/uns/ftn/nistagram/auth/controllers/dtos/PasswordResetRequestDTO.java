@@ -4,7 +4,5 @@ import lombok.Getter;
 
 @Getter
 public class PasswordResetRequestDTO {
-
     private String email;
-
 }

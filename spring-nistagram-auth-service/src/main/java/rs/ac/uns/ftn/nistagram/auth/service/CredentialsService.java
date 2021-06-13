@@ -50,6 +50,7 @@ public class CredentialsService implements UserDetailsService {
     public void activate(String uuid) {
         Credentials found = repository.findByUuid(uuid)
                 .orElseThrow(() -> new AuthException("User with given UUID not found!"));
+        if (found.getActivated()) throw new RuntimeException("Account already activated!");
         found.activate();
         repository.save(found);
     }

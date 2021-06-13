@@ -1,6 +1,7 @@
 package rs.ac.uns.ftn.nistagram.user.service;
 
 import feign.FeignException;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,19 +17,12 @@ import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class RegistrationService {
 
     private final AuthClient authClient;
     private final UserRepository repository;
     private final UserProducer producer;
-
-    public RegistrationService(AuthClient authClient,
-                               UserRepository repository,
-                               UserProducer producer) {
-        this.authClient = authClient;
-        this.repository = repository;
-        this.producer = producer;
-    }
 
     @Transactional
     public String register(RegistrationRequest request) {

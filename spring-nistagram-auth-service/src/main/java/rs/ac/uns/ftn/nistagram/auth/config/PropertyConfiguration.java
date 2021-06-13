@@ -10,5 +10,4 @@ public class PropertyConfiguration {
 
     @Value("${auth.jwt.secret}")
     private String jwtSecret;
-
 }
