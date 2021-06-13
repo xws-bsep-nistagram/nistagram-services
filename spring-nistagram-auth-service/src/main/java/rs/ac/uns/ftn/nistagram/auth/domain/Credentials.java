@@ -41,10 +41,7 @@ public class Credentials implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream()
-                .map(role -> role.getPermissions())
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
+        return roles;
     }
 
     @Override

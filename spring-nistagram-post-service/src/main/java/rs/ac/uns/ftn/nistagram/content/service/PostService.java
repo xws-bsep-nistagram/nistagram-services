@@ -75,9 +75,16 @@ public class PostService {
         log.info("[POST][G][R][CALL={}][ID={}]", caller, postId);
 
         Post post = postRepository.findById(postId).orElseThrow();
+        //TODO: Check if publishers profile is public
         graphClient.assertFollow(caller, post.getAuthor());
 
         log.info("[POST][G][C][CALL={}][ID={}]", caller, postId);
+        return post;
+    }
+
+    public Post getById(long postId) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        //TODO: Check if publishers profile is public
         return post;
     }
 
@@ -236,4 +243,6 @@ public class PostService {
 
         log.info("[COLLECTION][D][C][CALL={}][ID={}]", caller, collectionName);
     }
+
+
 }
