@@ -18,7 +18,6 @@ rs/ac/uns/ftn/nistagram/feed/repositories/UserRepository.class
 rs/ac/uns/ftn/nistagram/feed/repositories/StoryFeedRepository.class
 rs/ac/uns/ftn/nistagram/feed/domain/entry/feed/PostFeedEntry.class
 rs/ac/uns/ftn/nistagram/feed/http/mappers/UserContentMapper.class
-rs/ac/uns/ftn/nistagram/feed/config/WebConfig.class
 rs/ac/uns/ftn/nistagram/feed/domain/entry/campaign/StoryCampaignEntry.class
 rs/ac/uns/ftn/nistagram/feed/http/UserGraphClient.class
 rs/ac/uns/ftn/nistagram/feed/domain/user/User.class
