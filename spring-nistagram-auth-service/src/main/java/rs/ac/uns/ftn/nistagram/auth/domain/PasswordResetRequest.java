@@ -15,6 +15,7 @@ import java.util.UUID;
 public class PasswordResetRequest {
 
     private static final Duration ACTIVE_DURATION = Duration.ofHours(6);
+
     @Id
     private String email;
     private String uuid;
@@ -28,6 +29,7 @@ public class PasswordResetRequest {
         this.reset = false;
     }
 
-
-
+    public void triggerExpiration() {
+        this.reset = true;
+    }
 }

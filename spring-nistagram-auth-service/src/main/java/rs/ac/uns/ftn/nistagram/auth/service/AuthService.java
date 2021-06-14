@@ -1,6 +1,7 @@
 package rs.ac.uns.ftn.nistagram.auth.service;
 
 import com.auth0.jwt.interfaces.Claim;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,11 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import rs.ac.uns.ftn.nistagram.auth.domain.AuthRequest;
-import rs.ac.uns.ftn.nistagram.auth.domain.AuthToken;
-import rs.ac.uns.ftn.nistagram.auth.domain.Credentials;
-import rs.ac.uns.ftn.nistagram.auth.domain.PasswordResetRequest;
-import rs.ac.uns.ftn.nistagram.auth.domain.RegistrationRequest;
+import rs.ac.uns.ftn.nistagram.auth.domain.*;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.JwtEncoder;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.JwtEncryptionException;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.JwtException;
@@ -23,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
@@ -31,20 +29,6 @@ public class AuthService {
     private final PasswordResetService passwordResetService;
     private final PasswordEncoder passwordEncoder;
     private final JwtEncoder encoder;
-
-    public AuthService(AuthenticationManager authenticationManager,
-                       CredentialsService credentialsService,
-                       MailService mailService,
-                       PasswordResetService passwordResetService,
-                       PasswordEncoder passwordEncoder,
-                       JwtEncoder encoder) {
-        this.authenticationManager = authenticationManager;
-        this.credentialsService = credentialsService;
-        this.mailService = mailService;
-        this.passwordResetService = passwordResetService;
-        this.passwordEncoder = passwordEncoder;
-        this.encoder = encoder;
-    }
 
     public String authenticate(AuthRequest authRequest) {
         authenticationManager.authenticate(authRequest.convert());
@@ -58,7 +42,7 @@ public class AuthService {
     @Transactional
     public String register(RegistrationRequest registrationRequest) {
         log.info("New registration request with username '{}'", registrationRequest.getUsername());
-        registrationRequest.hashPassword(passwordEncoder::encode);
+        registrationRequest.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
         Credentials credentials = credentialsService.registerUser(registrationRequest);
 
         log.info("Sending activation mail to '{}'", registrationRequest.getEmail());
@@ -106,8 +90,12 @@ public class AuthService {
     }
 
     public void requestPasswordReset(PasswordResetRequest resetRequest) {
-        log.info("Requesting password reset for e-mail {}", resetRequest.getEmail());
-
         passwordResetService.requestPasswordReset(resetRequest);
+    }
+
+    public void resetPassword(PasswordResetBundle bundle) {
+        // TODO This is a pretty bad place to hash a password
+        bundle.setPassword(passwordEncoder.encode(bundle.getPassword()));
+        passwordResetService.resetPassword(bundle);
     }
 }

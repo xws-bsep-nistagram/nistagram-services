@@ -93,6 +93,8 @@ services:
             MYSQL_ROOT: "${MYSQL_ROOT}"
             MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
             JWT_SECRET: "${JWT_SECRET}"
+            MAIL_USERNAME: "${MAIL_USERNAME}"
+            MAIL_PASSWORD: "${MAIL_PASSWORD}"
         networks:
             - backend
             - database
