@@ -38,6 +38,16 @@ public class ProfileService {
         return repository.findAllByUsernameContains(usernameQuery);
     }
 
+    public boolean isPrivate(String username){
+        log.info("Getting user profile visibility for an user: '{}'",username);
+        User user = repository.findById(username).orElseThrow(() ->
+                new EntityNotFoundException(
+                        String.format("Profile for username '%s' doesn't exist!", username)
+                )
+        );
+        return user.isPrivate();
+    }
+
     @Transactional(readOnly = true)
     public List<User> findTaggable(String usernameQuery) {
         log.info("Finding taggable users by username search query: '{}'", usernameQuery);

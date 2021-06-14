@@ -42,4 +42,6 @@ public class User {
         return privacyData.isTaggable();
     }
 
+    public boolean isPrivate() {return privacyData.isProfilePrivate();}
+
 }

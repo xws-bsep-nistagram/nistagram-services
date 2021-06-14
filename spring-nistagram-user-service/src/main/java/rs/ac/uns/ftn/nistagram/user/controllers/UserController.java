@@ -41,6 +41,7 @@ public class UserController {
         User found = profileService.get(username);
         return profileMapper.map(found);
     }
+
     @GetMapping("{usernameQuery}")
     public List<PublicDataDTO> find(@PathVariable String usernameQuery){
         List<User> foundUsers = profileService.find(usernameQuery);
@@ -49,6 +50,12 @@ public class UserController {
                 .map(profileMapper::mapPersonalData)
                 .collect(Collectors.toList());
     }
+    
+    @GetMapping("/visibility/{username}")
+    public ProfileVisibilityDTO isPrivate(@PathVariable String username){
+        return new ProfileVisibilityDTO(profileService.isPrivate(username));
+    }
+
     @GetMapping("taggable/{usernameQuery}")
     public List<PublicDataDTO> findTaggable(@PathVariable String usernameQuery){
         List<User> foundUsers = profileService.findTaggable(usernameQuery);
