@@ -4,29 +4,40 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
+import javax.persistence.EntityNotFoundException;
 
 @ControllerAdvice
 public class ContentExceptionHandler {
 
     @ExceptionHandler(OwnershipException.class)
-    public ResponseEntity<?> handleOwnershipError(Exception e, WebRequest req){
+    public ResponseEntity<?> handleOwnershipError(Exception e){
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
 
     @ExceptionHandler(ExistingEntityException.class)
-    public ResponseEntity<?> handleExistingEntityErrors(Exception e, WebRequest req) {
+    public ResponseEntity<?> handleExistingEntityErrors(Exception e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 
+    @ExceptionHandler(ProfileNotPublicException.class)
+    public ResponseEntity<?> handleProfileNotPublicException(Exception e){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<?> handleEntityNotFoundException(Exception e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
     @ExceptionHandler(NistagramException.class)
-    public ResponseEntity<?> handleApplicationErrors(Exception e, WebRequest req) {
+    public ResponseEntity<?> handleApplicationErrors(Exception e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<?> handleOtherRuntimeErrors(Exception e, WebRequest req) {
+    public ResponseEntity<?> handleOtherRuntimeErrors(Exception e) {
         e.printStackTrace();
         return ResponseEntity.badRequest().body("An error occurred.");
     }
+
 }

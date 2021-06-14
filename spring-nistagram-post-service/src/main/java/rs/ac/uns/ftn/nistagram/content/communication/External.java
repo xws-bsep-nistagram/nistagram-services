@@ -17,8 +17,23 @@ public class External {
         public boolean getStatus() { return following; }
     }
 
+    public static class ProfileVisibility {
+
+        private boolean profilePrivate;
+
+        public void setProfilePrivate(boolean profilePrivate) {
+            this.profilePrivate = profilePrivate;
+        }
+
+        public boolean isProfilePrivate(){
+            return profilePrivate;
+        }
+    }
+
     private static final String graphService = "user-graph-service";
+    private static final String userService = "user-service";
     private static final String graphServiceDomain = "http://" + graphService + ":9004/";
+    private static final String userServiceDomain = "http://" + userService + ":9003/";
 
     @FeignClient(name = graphService, url = graphServiceDomain + "api/user-graph/" )
     public interface GraphClient {
@@ -29,6 +44,16 @@ public class External {
         @GetMapping("{caller}/follows/{author}")
         BinaryQueryResponse checkCloseFriends(@PathVariable String caller, @PathVariable  String author);
     }
+
+    @FeignClient(name = userService, url = userServiceDomain + "api/users/")
+    public interface UserClient {
+
+        @GetMapping("/visibility/{username}")
+        ProfileVisibility isPrivate(@PathVariable String username);
+
+
+    }
+
 
     @Component
     @AllArgsConstructor
@@ -47,4 +72,17 @@ public class External {
             if (!closeFriends) throw new NotCloseFriendsException(follower, followed);
         }
     }
+
+    @Component
+    @AllArgsConstructor
+    public static class UserClientWrapper {
+
+        private UserClient userClient;
+
+        public boolean isPrivate(String username){
+            return userClient.isPrivate(username).isProfilePrivate();
+        }
+
+    }
+
 }

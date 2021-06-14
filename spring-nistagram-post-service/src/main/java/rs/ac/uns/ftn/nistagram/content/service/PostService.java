@@ -14,9 +14,11 @@ import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.UserInteraction;
 import rs.ac.uns.ftn.nistagram.content.exception.ExistingEntityException;
 import rs.ac.uns.ftn.nistagram.content.exception.NistagramException;
 import rs.ac.uns.ftn.nistagram.content.exception.OwnershipException;
+import rs.ac.uns.ftn.nistagram.content.exception.ProfileNotPublicException;
 import rs.ac.uns.ftn.nistagram.content.messaging.producers.ContentProducer;
 import rs.ac.uns.ftn.nistagram.content.repository.post.*;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +36,7 @@ public class PostService {
     private final PostInCollectionRepository postInCollectionRepository;
     private final ContentProducer contentProducer;
     private final External.GraphClientWrapper graphClient;
+    private final External.UserClientWrapper userClient;
 
     // Logging rules:
     // [CLASS][CRUD][STATUS][CALLER][TARGET][ID]
@@ -75,8 +78,8 @@ public class PostService {
         log.info("[POST][G][R][CALL={}][ID={}]", caller, postId);
 
         Post post = postRepository.findById(postId).orElseThrow();
-        //TODO: Check if publishers profile is public
-        graphClient.assertFollow(caller, post.getAuthor());
+        if(userClient.isPrivate(post.getAuthor()))
+            graphClient.assertFollow(caller, post.getAuthor());
 
         log.info("[POST][G][C][CALL={}][ID={}]", caller, postId);
         return post;
@@ -84,7 +87,10 @@ public class PostService {
 
     public Post getById(long postId) {
         Post post = postRepository.findById(postId).orElseThrow();
-        //TODO: Check if publishers profile is public
+
+        if(userClient.isPrivate(post.getAuthor()))
+            throw new ProfileNotPublicException(post.getAuthor());
+
         return post;
     }
 
@@ -105,17 +111,26 @@ public class PostService {
         log.info("[LIKE][C][R][CALL={}][ID={}]", caller, postId);
         addInteraction(postId, caller, UserInteraction.Sentiment.LIKE);
     }
+    public void deleteLike(long postId, String caller) {
+        removeInteraction(postId, caller, UserInteraction.Sentiment.LIKE);
+    }
 
     public void dislike(long postId, String caller) {
         log.info("[DISLIKE][C][R][CALL={}][ID={}]", caller, postId);
         addInteraction(postId, caller, UserInteraction.Sentiment.DISLIKE);
     }
 
+    public void deleteDislike(long postId, String caller) {
+        removeInteraction(postId, caller, UserInteraction.Sentiment.DISLIKE);
+    }
+
     private void addInteraction(long postId, String caller, UserInteraction.Sentiment sentiment) {
-        Optional<UserInteraction> optionalInteraction = interactionRepository.findByPostAndUser(postId, caller);
+        Optional<UserInteraction> optionalInteraction = interactionRepository
+                .findByPostAndUser(postId, caller);
         if (optionalInteraction.isEmpty()) {
             Post post = postRepository.findById(postId).orElseThrow();
-            graphClient.assertFollow(caller, post.getAuthor());
+            if(userClient.isPrivate(post.getAuthor()))
+                graphClient.assertFollow(caller, post.getAuthor());
             log.info("[{}][C][C][CALL={}][ID={}]", sentiment, caller, postId);
             interactionRepository.save(
                     UserInteraction.builder()
@@ -134,12 +149,26 @@ public class PostService {
             log.info("[{}][C][C][CALL={}][ID={}]", sentiment, caller, postId);
         }
     }
+    private void removeInteraction(long postId, String caller, UserInteraction.Sentiment sentiment) {
+        Optional<UserInteraction> optionalInteraction = interactionRepository.findByPostAndUser(postId, caller);
+
+        if (optionalInteraction.isPresent()) {
+            UserInteraction interaction = optionalInteraction.get();
+            if(interaction.getSentiment() == sentiment)
+                interactionRepository.delete(interaction);
+
+        }
+        else
+            throw new EntityNotFoundException("Interaction doesn't exist");
+
+    }
 
     public void comment(Comment comment, long postId) {
         log.info("[COMMENT][C][R][ID={}][CALL={}]", postId, comment.getAuthor());
 
         Post commentedPost = postRepository.findById(postId).orElseThrow();
-        graphClient.assertFollow(comment.getAuthor(), commentedPost.getAuthor());
+        if(userClient.isPrivate(commentedPost.getAuthor()))
+            graphClient.assertFollow(comment.getAuthor(), commentedPost.getAuthor());
 
         comment.setPost(commentedPost);
         comment.setTime(LocalDateTime.now());
@@ -152,7 +181,8 @@ public class PostService {
         log.info("[SAVE][C][R][ID={}][CALL={}]", postId, caller);
 
         Post post = postRepository.findById(postId).orElseThrow();
-        graphClient.assertFollow(caller, post.getAuthor());
+        if(userClient.isPrivate(post.getAuthor()))
+            graphClient.assertFollow(caller, post.getAuthor());
 
         Optional<SavedPost> savedPost = savedPostRepository.findByUserAndPost(caller, postId);
         if (savedPost.isPresent())
@@ -243,6 +273,5 @@ public class PostService {
 
         log.info("[COLLECTION][D][C][CALL={}][ID={}]", caller, collectionName);
     }
-
 
 }
