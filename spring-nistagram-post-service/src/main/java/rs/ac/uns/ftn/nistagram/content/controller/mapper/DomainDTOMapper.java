@@ -42,6 +42,7 @@ public class DomainDTOMapper {
         post.getMediaUrls().forEach(link -> dto.addMediaUrl(link.getUrl()));
         post.getComments().forEach(comment -> dto.addComment(toDto(comment)));
         post.getUserInteractions().forEach(interaction -> dto.addInteraction(toDto(interaction)));
+        post.getTags().forEach(tag -> dto.addTag(tag.getTag()));
 
         return dto;
     }

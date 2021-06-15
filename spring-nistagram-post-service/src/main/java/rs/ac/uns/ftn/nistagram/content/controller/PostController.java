@@ -79,14 +79,21 @@ public class PostController {
     @DeleteMapping("like/{postId}")
     public ResponseEntity<?> deleteLike(@RequestHeader("username") String caller,
                                   @PathVariable String postId) {
-        postService.deleteLike(Long.parseLong(postId), caller); // TODO Extract username from HTTP
+        postService.deleteLike(Long.parseLong(postId), caller);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("dislike/{postId}")
     public ResponseEntity<?> dislike(@RequestHeader("username") String caller,
                                      @PathVariable String postId) {
-        postService.dislike(Long.parseLong(postId), caller); // TODO Extract username from HTTP
+        postService.dislike(Long.parseLong(postId), caller);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("dislike/{postId}")
+    public ResponseEntity<?> deleteDislike(@RequestHeader("username") String caller,
+                                     @PathVariable String postId) {
+        postService.deleteDislike(Long.parseLong(postId), caller);
         return ResponseEntity.ok().build();
     }
 

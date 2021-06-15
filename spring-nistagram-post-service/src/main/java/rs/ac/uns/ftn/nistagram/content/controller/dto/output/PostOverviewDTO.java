@@ -18,7 +18,7 @@ public class PostOverviewDTO extends UserContent {
 
     private List<UserInteractionOverviewDTO> userInteractions;
     private List<CommentOverviewDTO> comments;
-
+    private List<String> tags;
     private List<String> mediaUrls;
 
     @Builder
@@ -45,5 +45,11 @@ public class PostOverviewDTO extends UserContent {
         if (this.userInteractions == null)
             this.userInteractions = new ArrayList<>();
         this.userInteractions.add(dto);
+    }
+
+    public void addTag(String tag) {
+        if(this.tags == null)
+            this.tags = new ArrayList<>();
+        this.tags.add(tag);
     }
 }
