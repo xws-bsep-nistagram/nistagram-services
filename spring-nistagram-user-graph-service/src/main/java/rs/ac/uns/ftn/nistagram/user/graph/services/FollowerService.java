@@ -159,4 +159,10 @@ public class FollowerService {
         return followerRepository.isFollowing(subject, target);
 
     }
+
+    public boolean checkPending(String subject, String target) {
+        constraintChecker.userPresenceCheck(subject);
+        constraintChecker.userPresenceCheck(target);
+        return followerRepository.sentFollowRequest(subject, target);
+    }
 }

@@ -4,7 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.web.bind.annotation.*;
-import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserFollowingResponse;
+import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserRelationshipResponse;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserPayload;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserRelationshipRequest;
 import rs.ac.uns.ftn.nistagram.user.graph.services.FollowerService;
@@ -52,7 +52,13 @@ public class FollowerController {
 
     @GetMapping("follows/{target}")
     public ResponseEntity<?> checkFollowing(@Header("username") String subject, @PathVariable String target){
-        var response = new UserFollowingResponse(userFollowerService.checkFollowing(subject, target));
+        var response = new UserRelationshipResponse(userFollowerService.checkFollowing(subject, target));
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("pending/{target}")
+    public ResponseEntity<?> checkPending(@Header("username") String subject, @PathVariable String target){
+        var response = new UserRelationshipResponse(userFollowerService.checkPending(subject, target));
         return ResponseEntity.ok(response);
     }
 

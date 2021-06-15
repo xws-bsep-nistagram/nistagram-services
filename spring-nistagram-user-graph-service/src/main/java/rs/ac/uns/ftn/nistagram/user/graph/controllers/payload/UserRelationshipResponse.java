@@ -5,10 +5,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserFollowingResponse {
+public class UserRelationshipResponse {
     private boolean following;
 
-    public UserFollowingResponse(boolean following){
+    public UserRelationshipResponse(boolean following){
         this.following = following;
     }
 }
