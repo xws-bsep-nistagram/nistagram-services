@@ -20,6 +20,7 @@ import rs.ac.uns.ftn.nistagram.content.repository.post.*;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -274,4 +275,12 @@ public class PostService {
         log.info("[COLLECTION][D][C][CALL={}][ID={}]", caller, collectionName);
     }
 
+    public List<CustomPostCollection> getCollections(String caller) {
+        List<CustomPostCollection> postCollections = collectionRepository.getByUser(caller);
+
+        if(postCollections == null)
+            return new ArrayList<CustomPostCollection>();
+
+        return postCollections;
+    }
 }

@@ -123,9 +123,18 @@ public class PostController {
     public ResponseEntity<?> getSaved(@RequestHeader("username") String caller) {
         return ResponseEntity.ok(
                 postService.getSaved(caller)
-                .stream().map(savedPost -> mapper.toDto(savedPost.getPost()))
-                .collect(Collectors.toList())
+                            .stream()
+                            .map(savedPost -> mapper.toDto(savedPost.getPost()))
+                            .collect(Collectors.toList())
         );
+    }
+
+    @GetMapping("collection")
+    public ResponseEntity<?> getCollections(@RequestHeader("username") String caller){
+        return ResponseEntity.ok(postService.getCollections(caller)
+                                            .stream()
+                                            .map(mapper::toDto)
+                                            .collect(Collectors.toList()));
     }
 
     @PostMapping("collection/{collectionName}")
