@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.*;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.output.*;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
+import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.CustomPostCollection;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.UserInteraction;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.MediaStory;
@@ -26,6 +27,14 @@ public class DomainDTOMapper {
         post.getMediaUrls().forEach(url -> url.setPost(post));
         post.getTags().forEach(hashTag -> hashTag.setPost(post));
         return post;
+    }
+
+    public PostCollectionDTO toDto(CustomPostCollection postCollection){
+        return PostCollectionDTO
+                .builder()
+                .name(postCollection.getName())
+                .id(postCollection.getId())
+                .build();
     }
 
     public PostOverviewDTO toDto(Post post) {
