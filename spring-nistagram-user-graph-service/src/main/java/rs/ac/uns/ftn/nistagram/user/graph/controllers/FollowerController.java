@@ -3,7 +3,7 @@ package rs.ac.uns.ftn.nistagram.user.graph.controllers;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserFollowingResponse;
+import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserRelationshipResponse;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserPayload;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserRelationshipRequest;
 import rs.ac.uns.ftn.nistagram.user.graph.services.FollowerService;
@@ -22,8 +22,8 @@ public class FollowerController {
         this.modelMapper = new ModelMapper();
     }
 
-    @GetMapping("/{username}/followers")
-    public ResponseEntity<?> findFollowers(@PathVariable String username) {
+    @GetMapping("/followers")
+    public ResponseEntity<?> findFollowers(@RequestHeader("username") String username) {
         var users = userFollowerService.findFollowers(username)
                 .stream()
                 .map(e-> modelMapper.map(e, UserPayload.class))
@@ -49,9 +49,15 @@ public class FollowerController {
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("{subject}/follows/{target}")
-    public ResponseEntity<?> checkFollowing(@PathVariable String subject, @PathVariable String target){
-        var response = new UserFollowingResponse(userFollowerService.checkFollowing(subject, target));
+    @GetMapping("follows/{target}")
+    public ResponseEntity<?> checkFollowing(@RequestHeader("username") String subject, @PathVariable String target){
+        var response = new UserRelationshipResponse(userFollowerService.checkFollowing(subject, target));
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("pending/{target}")
+    public ResponseEntity<?> checkPending(@RequestHeader("username") String subject, @PathVariable String target){
+        var response = new UserRelationshipResponse(userFollowerService.checkPending(subject, target));
         return ResponseEntity.ok(response);
     }
 
@@ -74,15 +80,15 @@ public class FollowerController {
         return ResponseEntity.ok("Request successfully processed");
     }
 
-    @PostMapping("/followers")
-    public ResponseEntity<?> follow(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest){
-        userFollowerService.follow(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
+    @GetMapping("/followers/{target}")
+    public ResponseEntity<?> follow(@RequestHeader("username") String subject, @PathVariable String target){
+        userFollowerService.follow(subject, target);
         return ResponseEntity.ok("Request successfully processed");
     }
 
-    @DeleteMapping("/followers")
-    public ResponseEntity<?> unfollow(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest){
-        userFollowerService.unfollow(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
+    @DeleteMapping("/followers/{target}")
+    public ResponseEntity<?> unfollow(@RequestHeader("username") String subject, @PathVariable String target){
+        userFollowerService.unfollow(subject, target);
         return ResponseEntity.ok("Request successfully processed");
     }
 

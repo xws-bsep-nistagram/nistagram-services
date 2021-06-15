@@ -3,7 +3,7 @@ package rs.ac.uns.ftn.nistagram.user.graph.controllers;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserFollowingResponse;
+import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserRelationshipResponse;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserPayload;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserRelationshipRequest;
 import rs.ac.uns.ftn.nistagram.user.graph.services.CloseFriendService;
@@ -41,7 +41,7 @@ public class CloseFriendController {
 
     @GetMapping("{subject}/close-friends/{target}")
     public ResponseEntity<?> checkCloseFriends(@PathVariable String subject, @PathVariable String target){
-        var response = new UserFollowingResponse(closeFriendService.checkIfCloseFriends(subject, target));
+        var response = new UserRelationshipResponse(closeFriendService.checkIfCloseFriends(subject, target));
         return ResponseEntity.ok(response);
     }
 
