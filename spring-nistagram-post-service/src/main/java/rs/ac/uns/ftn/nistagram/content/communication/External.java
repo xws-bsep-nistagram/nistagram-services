@@ -5,6 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import rs.ac.uns.ftn.nistagram.content.exception.NotCloseFriendsException;
 import rs.ac.uns.ftn.nistagram.content.exception.NotFollowException;
 
@@ -23,10 +24,11 @@ public class External {
     @FeignClient(name = graphService, url = graphServiceDomain + "api/user-graph/" )
     public interface GraphClient {
 
-        @GetMapping("{caller}/follows/{author}")
-        BinaryQueryResponse checkFollowing(@PathVariable String caller, @PathVariable  String author);
+        @GetMapping("follows/{author}")
+        BinaryQueryResponse checkFollowing(@RequestHeader("username") String caller,
+                                           @PathVariable  String author);
 
-        @GetMapping("{caller}/follows/{author}")
+        @GetMapping("{caller}/close-friends/{author}")
         BinaryQueryResponse checkCloseFriends(@PathVariable String caller, @PathVariable  String author);
     }
 

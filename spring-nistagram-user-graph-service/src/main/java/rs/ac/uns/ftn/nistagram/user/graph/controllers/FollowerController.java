@@ -23,8 +23,8 @@ public class FollowerController {
         this.modelMapper = new ModelMapper();
     }
 
-    @GetMapping("/{username}/followers")
-    public ResponseEntity<?> findFollowers(@PathVariable String username) {
+    @GetMapping("/followers")
+    public ResponseEntity<?> findFollowers(@Header("username") String username) {
         var users = userFollowerService.findFollowers(username)
                 .stream()
                 .map(e-> modelMapper.map(e, UserPayload.class))
