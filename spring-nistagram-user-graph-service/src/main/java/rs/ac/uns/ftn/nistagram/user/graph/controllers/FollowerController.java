@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.nistagram.user.graph.controllers;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserFollowingResponse;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserPayload;
@@ -49,8 +50,8 @@ public class FollowerController {
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("{subject}/follows/{target}")
-    public ResponseEntity<?> checkFollowing(@PathVariable String subject, @PathVariable String target){
+    @GetMapping("follows/{target}")
+    public ResponseEntity<?> checkFollowing(@Header("username") String subject, @PathVariable String target){
         var response = new UserFollowingResponse(userFollowerService.checkFollowing(subject, target));
         return ResponseEntity.ok(response);
     }
@@ -74,15 +75,15 @@ public class FollowerController {
         return ResponseEntity.ok("Request successfully processed");
     }
 
-    @PostMapping("/followers")
-    public ResponseEntity<?> follow(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest){
-        userFollowerService.follow(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
+    @GetMapping("/followers/{target}")
+    public ResponseEntity<?> follow(@Header("username") String subject, @PathVariable String target){
+        userFollowerService.follow(subject, target);
         return ResponseEntity.ok("Request successfully processed");
     }
 
-    @DeleteMapping("/followers")
-    public ResponseEntity<?> unfollow(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest){
-        userFollowerService.unfollow(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
+    @DeleteMapping("/followers/{target}")
+    public ResponseEntity<?> unfollow(@Header("username") String subject, @PathVariable String target){
+        userFollowerService.unfollow(subject, target);
         return ResponseEntity.ok("Request successfully processed");
     }
 
