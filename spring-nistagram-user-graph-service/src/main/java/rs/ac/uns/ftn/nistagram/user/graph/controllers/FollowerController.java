@@ -2,7 +2,6 @@ package rs.ac.uns.ftn.nistagram.user.graph.controllers;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserRelationshipResponse;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserPayload;
@@ -24,7 +23,7 @@ public class FollowerController {
     }
 
     @GetMapping("/followers")
-    public ResponseEntity<?> findFollowers(@Header("username") String username) {
+    public ResponseEntity<?> findFollowers(@RequestHeader("username") String username) {
         var users = userFollowerService.findFollowers(username)
                 .stream()
                 .map(e-> modelMapper.map(e, UserPayload.class))
@@ -51,13 +50,13 @@ public class FollowerController {
     }
 
     @GetMapping("follows/{target}")
-    public ResponseEntity<?> checkFollowing(@Header("username") String subject, @PathVariable String target){
+    public ResponseEntity<?> checkFollowing(@RequestHeader("username") String subject, @PathVariable String target){
         var response = new UserRelationshipResponse(userFollowerService.checkFollowing(subject, target));
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("pending/{target}")
-    public ResponseEntity<?> checkPending(@Header("username") String subject, @PathVariable String target){
+    public ResponseEntity<?> checkPending(@RequestHeader("username") String subject, @PathVariable String target){
         var response = new UserRelationshipResponse(userFollowerService.checkPending(subject, target));
         return ResponseEntity.ok(response);
     }
@@ -82,13 +81,13 @@ public class FollowerController {
     }
 
     @GetMapping("/followers/{target}")
-    public ResponseEntity<?> follow(@Header("username") String subject, @PathVariable String target){
+    public ResponseEntity<?> follow(@RequestHeader("username") String subject, @PathVariable String target){
         userFollowerService.follow(subject, target);
         return ResponseEntity.ok("Request successfully processed");
     }
 
     @DeleteMapping("/followers/{target}")
-    public ResponseEntity<?> unfollow(@Header("username") String subject, @PathVariable String target){
+    public ResponseEntity<?> unfollow(@RequestHeader("username") String subject, @PathVariable String target){
         userFollowerService.unfollow(subject, target);
         return ResponseEntity.ok("Request successfully processed");
     }
