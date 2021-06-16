@@ -7,6 +7,7 @@ import rs.ac.uns.ftn.nistagram.user.controllers.dtos.*;
 import rs.ac.uns.ftn.nistagram.user.controllers.mappers.ProfileMapper;
 import rs.ac.uns.ftn.nistagram.user.controllers.mappers.RegistrationRequestMapper;
 import rs.ac.uns.ftn.nistagram.user.domain.user.User;
+import rs.ac.uns.ftn.nistagram.user.domain.user.UserStats;
 import rs.ac.uns.ftn.nistagram.user.service.ProfileService;
 import rs.ac.uns.ftn.nistagram.user.service.RegistrationService;
 
@@ -23,7 +24,10 @@ public class UserController {
     private final ProfileMapper profileMapper;
     private final RegistrationRequestMapper registrationRequestMapper;
 
-    public UserController(RegistrationService registrationService, ProfileService profileService, ProfileMapper profileMapper, RegistrationRequestMapper registrationRequestMapper) {
+    public UserController(RegistrationService registrationService,
+                          ProfileService profileService,
+                          ProfileMapper profileMapper,
+                          RegistrationRequestMapper registrationRequestMapper) {
         this.registrationService = registrationService;
         this.profileService = profileService;
         this.profileMapper = profileMapper;
@@ -103,6 +107,12 @@ public class UserController {
             @RequestBody NotificationPreferencesUpdateDTO update) {
         User updated = profileService.update(username, profileMapper.map(update));
         return profileMapper.map(updated.getNotificationPreferences());
+    }
+
+    @GetMapping("profile/stats/{username}")
+    public ProfileStatsDTO getProfileStats(@PathVariable String username) {
+        UserStats stats = profileService.getStats(username);
+        return profileMapper.map(stats);
     }
 
 }
