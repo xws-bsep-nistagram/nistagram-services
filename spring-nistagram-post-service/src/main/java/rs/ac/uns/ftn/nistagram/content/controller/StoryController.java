@@ -112,6 +112,7 @@ public class StoryController {
         );
     }
 
+    // izvini gudelj
     @GetMapping("highlights/{highlightId}")
     public ResponseEntity<?> getStoriesFromHighlight(@RequestHeader("username") String caller,
                                                      @PathVariable String highlightId) {

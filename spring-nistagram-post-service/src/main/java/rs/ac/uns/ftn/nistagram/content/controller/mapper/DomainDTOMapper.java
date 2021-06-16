@@ -8,10 +8,10 @@ import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.CustomPostCollection;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.UserInteraction;
-import rs.ac.uns.ftn.nistagram.content.domain.core.story.MediaStory;
-import rs.ac.uns.ftn.nistagram.content.domain.core.story.ShareStory;
-import rs.ac.uns.ftn.nistagram.content.domain.core.story.Story;
-import rs.ac.uns.ftn.nistagram.content.domain.core.story.StoryHighlight;
+import rs.ac.uns.ftn.nistagram.content.domain.core.story.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class DomainDTOMapper {
@@ -138,7 +138,15 @@ public class DomainDTOMapper {
     // Story highlights
 
     public StoryHighlightOverviewDTO toDto(StoryHighlight highlight) {
-        return StoryHighlightOverviewDTO.builder().id(highlight.getId()).name(highlight.getName()).build();
+        List<Story> stories = highlight.getStories().stream()
+                .map(HighlightedStory::getStory)
+                .collect(Collectors.toList());
+        List<StoryOverviewDTO> storyDtos = stories.stream().map(story -> toDto(story)).collect(Collectors.toList());
+        return StoryHighlightOverviewDTO.builder()
+                .id(highlight.getId())
+                .name(highlight.getName())
+                .stories(storyDtos)
+                .build();
     }
 
     public PostCountDTO toDto(Long postCount) {
