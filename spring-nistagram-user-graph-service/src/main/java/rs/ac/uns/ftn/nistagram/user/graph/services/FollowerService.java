@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
+import rs.ac.uns.ftn.nistagram.user.graph.domain.UserStats;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.producers.UserRelationsProducer;
 import rs.ac.uns.ftn.nistagram.user.graph.repositories.FollowerRepository;
 
@@ -164,5 +165,12 @@ public class FollowerService {
         constraintChecker.userPresenceCheck(subject);
         constraintChecker.userPresenceCheck(target);
         return followerRepository.sentFollowRequest(subject, target);
+    }
+
+    public UserStats getStats(String subject) {
+        constraintChecker.userPresenceCheck(subject);
+        Long following = followerRepository.findFollowingCount(subject);
+        Long followers = followerRepository.findFollowerCount(subject);
+        return new UserStats(following, followers);
     }
 }
