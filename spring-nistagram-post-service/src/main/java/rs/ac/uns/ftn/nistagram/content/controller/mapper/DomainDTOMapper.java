@@ -140,4 +140,11 @@ public class DomainDTOMapper {
     public StoryHighlightOverviewDTO toDto(StoryHighlight highlight) {
         return StoryHighlightOverviewDTO.builder().id(highlight.getId()).name(highlight.getName()).build();
     }
+
+    public PostCountDTO toDto(Long postCount) {
+        PostCountDTO dto = new PostCountDTO();
+        dto.setPostCount(postCount);
+        return dto;
+    }
+
 }

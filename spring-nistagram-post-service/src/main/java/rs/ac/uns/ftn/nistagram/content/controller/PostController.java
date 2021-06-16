@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.CommentCreationDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.PostCreationDTO;
+import rs.ac.uns.ftn.nistagram.content.controller.dto.output.PostCountDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.mapper.DomainDTOMapper;
 import rs.ac.uns.ftn.nistagram.content.service.PostService;
 
@@ -46,6 +47,13 @@ public class PostController {
                 .collect(Collectors.toList())
         );
     }
+
+    @GetMapping("user/{username}/count")
+    public ResponseEntity<PostCountDTO> getPostCount(@PathVariable String username) {
+        Long postCount = postService.getPostCount(username);
+        return ResponseEntity.ok(mapper.toDto(postCount));
+    }
+
     @GetMapping("user/{username}/restricted")
     @CrossOrigin("http://feed-service:9001")
     public ResponseEntity<?> getByUsernameRestricted(@PathVariable String username) {

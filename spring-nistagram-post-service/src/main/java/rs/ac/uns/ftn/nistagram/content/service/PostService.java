@@ -283,4 +283,9 @@ public class PostService {
 
         return postCollections;
     }
+
+    @Transactional(readOnly = true)
+    public Long getPostCount(String username) {
+        return postRepository.getCountByUsername(username);
+    }
 }
