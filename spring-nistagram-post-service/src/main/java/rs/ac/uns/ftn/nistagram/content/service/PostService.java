@@ -16,6 +16,7 @@ import rs.ac.uns.ftn.nistagram.content.exception.NistagramException;
 import rs.ac.uns.ftn.nistagram.content.exception.OwnershipException;
 import rs.ac.uns.ftn.nistagram.content.exception.ProfileNotPublicException;
 import rs.ac.uns.ftn.nistagram.content.messaging.producers.ContentProducer;
+import rs.ac.uns.ftn.nistagram.content.messaging.producers.NotificationProducer;
 import rs.ac.uns.ftn.nistagram.content.repository.post.*;
 
 import javax.persistence.EntityNotFoundException;
@@ -37,6 +38,7 @@ public class PostService {
     private final CustomPostCollectionRepository collectionRepository;
     private final PostInCollectionRepository postInCollectionRepository;
     private final ContentProducer contentProducer;
+    private final NotificationProducer notificationProducer;
     private final External.GraphClientWrapper graphClient;
     private final External.UserClientWrapper userClient;
 
@@ -57,6 +59,8 @@ public class PostService {
         Post savedPost = postRepository.save(post);
         log.info("[POST][C][C][CALL={}]", post.getAuthor());
 
+        if(post.usersTagged())
+            notificationProducer.publishUserTagged(post);
         contentProducer.publishPostCreated(post);
         log.info("[POST][C][P][CALL={}]", post.getAuthor());
 
@@ -131,8 +135,8 @@ public class PostService {
     private void addInteraction(long postId, String caller, UserInteraction.Sentiment sentiment) {
         Optional<UserInteraction> optionalInteraction = interactionRepository
                 .findByPostAndUser(postId, caller);
+        Post post = postRepository.findById(postId).orElseThrow();
         if (optionalInteraction.isEmpty()) {
-            Post post = postRepository.findById(postId).orElseThrow();
             if(userClient.isPrivate(post.getAuthor()))
                 graphClient.assertFollow(caller, post.getAuthor());
             log.info("[{}][C][C][CALL={}][ID={}]", sentiment, caller, postId);
@@ -152,6 +156,10 @@ public class PostService {
             }
             log.info("[{}][C][C][CALL={}][ID={}]", sentiment, caller, postId);
         }
+
+        if(sentiment.equals(UserInteraction.Sentiment.LIKE))
+            notificationProducer.publishPostLiked(post, caller);
+
     }
     private void removeInteraction(long postId, String caller, UserInteraction.Sentiment sentiment) {
         Optional<UserInteraction> optionalInteraction = interactionRepository.findByPostAndUser(postId, caller);
@@ -178,6 +186,7 @@ public class PostService {
         comment.setTime(LocalDateTime.now());
 
         commentRepository.save(comment);
+        notificationProducer.publishPostCommented(commentedPost, comment);
         log.info("[COMMENT][C][C][CALL={}][ID={}]", comment.getAuthor(), postId);
     }
 
