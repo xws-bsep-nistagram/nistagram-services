@@ -5,8 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.CommentCreationDTO;
+import rs.ac.uns.ftn.nistagram.content.controller.dto.input.LocationSearchDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.PostCreationDTO;
+import rs.ac.uns.ftn.nistagram.content.controller.dto.output.PostCountDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.mapper.DomainDTOMapper;
+import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 import rs.ac.uns.ftn.nistagram.content.service.PostService;
 
 import javax.validation.Valid;
@@ -26,8 +29,8 @@ public class PostController {
     public ResponseEntity<?> create(@RequestHeader("username") String username,
                                     @Valid @RequestBody PostCreationDTO dto) {
         dto.setAuthor(username);
-        postService.create(mapper.toDomain(dto));
-        return ResponseEntity.ok().build();
+        Post createdPost =  postService.create(mapper.toDomain(dto));
+        return ResponseEntity.ok(createdPost);
     }
 
     @DeleteMapping("{postId}")
@@ -46,6 +49,13 @@ public class PostController {
                 .collect(Collectors.toList())
         );
     }
+
+    @GetMapping("user/{username}/count")
+    public ResponseEntity<PostCountDTO> getPostCount(@PathVariable String username) {
+        Long postCount = postService.getPostCount(username);
+        return ResponseEntity.ok(mapper.toDto(postCount));
+    }
+
     @GetMapping("user/{username}/restricted")
     @CrossOrigin("http://feed-service:9001")
     public ResponseEntity<?> getByUsernameRestricted(@PathVariable String username) {
@@ -68,6 +78,21 @@ public class PostController {
         return ResponseEntity.ok(mapper.toDto(postService.getById(Long.parseLong(postId))));
     }
 
+    @PostMapping("search/location")
+    public ResponseEntity<?> searchByLocation(@RequestBody LocationSearchDTO dto) {
+        return ResponseEntity.ok(
+                postService.searchByLocation(dto.getStreet())
+                .stream().map(mapper::toDto).collect(Collectors.toList())
+        );
+    }
+
+    @GetMapping("tagged/{username}")
+    public ResponseEntity<?> searchByTagged(@PathVariable String username) {
+        return ResponseEntity.ok(
+            postService.searchByTagged(username)
+                .stream().map(mapper::toDto).collect(Collectors.toList())
+        );
+    }
 
     @GetMapping("like/{postId}")
     public ResponseEntity<?> like(@RequestHeader("username") String caller,
@@ -123,9 +148,18 @@ public class PostController {
     public ResponseEntity<?> getSaved(@RequestHeader("username") String caller) {
         return ResponseEntity.ok(
                 postService.getSaved(caller)
-                .stream().map(savedPost -> mapper.toDto(savedPost.getPost()))
-                .collect(Collectors.toList())
+                            .stream()
+                            .map(savedPost -> mapper.toDto(savedPost.getPost()))
+                            .collect(Collectors.toList())
         );
+    }
+
+    @GetMapping("collection")
+    public ResponseEntity<?> getCollections(@RequestHeader("username") String caller){
+        return ResponseEntity.ok(postService.getCollections(caller)
+                                            .stream()
+                                            .map(mapper::toDto)
+                                            .collect(Collectors.toList()));
     }
 
     @PostMapping("collection/{collectionName}")

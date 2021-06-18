@@ -42,4 +42,10 @@ public interface FollowerRepository extends Neo4jRepository<User, String> {
 
     @Query("MATCH (n1:User{ username:$0 })-[r:FOLLOWS]->(n2:User{ username:$1 }) DELETE r")
     void unfollow(String subject, String target);
+
+    @Query("OPTIONAL MATCH (n:User{username:$0})<-[:FOLLOWS]-(f:User) Return count(f)")
+    Long findFollowerCount(String subject);
+
+    @Query("OPTIONAL MATCH (n:User{username:$0})-[:FOLLOWS]->(f:User) Return count(f)")
+    Long findFollowingCount(String subject);
 }

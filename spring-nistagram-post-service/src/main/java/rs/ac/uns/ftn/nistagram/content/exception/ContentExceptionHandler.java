@@ -37,8 +37,8 @@ public class ContentExceptionHandler {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<?> handleOtherRuntimeErrors(Exception e) {
-        log.error(e.getMessage());
+    public ResponseEntity<?> handleOtherRuntimeErrors(RuntimeException e) {
+        log.error(e.getMessage(), e);
         return ResponseEntity.badRequest().body("An internal server error occurred.");
     }
 

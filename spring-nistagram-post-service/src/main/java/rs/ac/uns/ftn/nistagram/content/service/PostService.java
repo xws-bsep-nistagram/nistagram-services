@@ -21,6 +21,8 @@ import rs.ac.uns.ftn.nistagram.content.repository.post.*;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,17 +52,19 @@ public class PostService {
     // Example, '[POST][C][R][CALL=joe]' means, POST Creation Request by user Joe
     //          '[POST][D][C][ID=25]' means, POST with Id=25 Deletion Complete
 
-    public void create(Post post) {
+    public Post create(Post post) {
         log.info("[POST][C][R][CALL={}]", post.getAuthor());
 
         post.setTime(LocalDateTime.now());
-        postRepository.save(post);
+        Post savedPost = postRepository.save(post);
         log.info("[POST][C][C][CALL={}]", post.getAuthor());
 
         if(post.usersTagged())
             notificationProducer.publishUserTagged(post);
         contentProducer.publishPostCreated(post);
         log.info("[POST][C][P][CALL={}]", post.getAuthor());
+
+        return savedPost;
     }
 
     public void delete(String caller, long postId) {
@@ -283,4 +287,31 @@ public class PostService {
         log.info("[COLLECTION][D][C][CALL={}][ID={}]", caller, collectionName);
     }
 
+    public List<CustomPostCollection> getCollections(String caller) {
+        List<CustomPostCollection> postCollections = collectionRepository.getByUser(caller);
+
+        if(postCollections == null)
+            return new ArrayList<CustomPostCollection>();
+
+        return postCollections;
+    }
+
+    @Transactional(readOnly = true)
+    public Long getPostCount(String username) {
+        return postRepository.getCountByUsername(username);
+    }
+
+    public List<Post> searchByLocation(String street) {
+        log.info("[SEARCH-LOC][G][R][PARAM={}]", street);
+        List<Post> foundPosts = postRepository.getByLocation(street);
+        log.info("Found {} posts", foundPosts.size());
+        return foundPosts;
+    }
+
+    public List<Post> searchByTagged(String username) {
+        log.info("[SEARCH-TAG][G][R][PARAM={}]", username);
+        List<Post> foundPosts = postRepository.getByTagged(username);
+        log.info("[SEARCH-TAG][C] Found {} posts", foundPosts.size());
+        return foundPosts;
+    }
 }

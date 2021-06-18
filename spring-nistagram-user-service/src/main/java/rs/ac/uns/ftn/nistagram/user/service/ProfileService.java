@@ -7,7 +7,13 @@ import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.domain.user.PersonalData;
 import rs.ac.uns.ftn.nistagram.user.domain.user.PrivacyData;
 import rs.ac.uns.ftn.nistagram.user.domain.user.User;
+import rs.ac.uns.ftn.nistagram.user.domain.user.UserStats;
 import rs.ac.uns.ftn.nistagram.user.domain.user.preferences.NotificationPreferences;
+import rs.ac.uns.ftn.nistagram.user.http.graph.FollowerStats;
+import rs.ac.uns.ftn.nistagram.user.http.graph.UserGraphClient;
+import rs.ac.uns.ftn.nistagram.user.http.mapper.UserStatsMapper;
+import rs.ac.uns.ftn.nistagram.user.http.post.PostClient;
+import rs.ac.uns.ftn.nistagram.user.http.post.PostStats;
 import rs.ac.uns.ftn.nistagram.user.infrastructure.exceptions.EntityNotFoundException;
 import rs.ac.uns.ftn.nistagram.user.messaging.producers.UserProducer;
 import rs.ac.uns.ftn.nistagram.user.repository.UserRepository;
@@ -22,6 +28,9 @@ public class ProfileService {
 
     private final UserRepository repository;
     private final UserProducer userProducer;
+    private final UserGraphClient userGraphClient;
+    private final PostClient postClient;
+    private final UserStatsMapper statsMapper;
 
 
     @Transactional(readOnly = true)
@@ -89,6 +98,16 @@ public class ProfileService {
         return repository.save(found);
     }
 
-
+    @Transactional(readOnly = true)
+    public UserStats getStats(String username) {
+        if (!repository.existsById(username)) {
+            throw new EntityNotFoundException(
+                    String.format("User with username '%s' not found!", username));
+        }
+        FollowerStats followerStats = userGraphClient.getFollowerStats(username);
+        PostStats postStats = postClient.getPostStats(username);
+        log.info("Fetched user stats for user '{}'", username);
+        return statsMapper.map(followerStats, postStats);
+    }
 
 }

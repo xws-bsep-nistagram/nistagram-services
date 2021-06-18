@@ -5,6 +5,7 @@ import rs.ac.uns.ftn.nistagram.user.controllers.dtos.*;
 import rs.ac.uns.ftn.nistagram.user.domain.user.PersonalData;
 import rs.ac.uns.ftn.nistagram.user.domain.user.PrivacyData;
 import rs.ac.uns.ftn.nistagram.user.domain.user.User;
+import rs.ac.uns.ftn.nistagram.user.domain.user.UserStats;
 import rs.ac.uns.ftn.nistagram.user.domain.user.preferences.NotificationPreferences;
 
 import java.time.LocalDate;
@@ -89,5 +90,9 @@ public class ProfileMapper {
                 found.getPersonalData().getBio(),
                 found.getPersonalData().getWebsite()
         );
+    }
+
+    public ProfileStatsDTO map(UserStats stats) {
+        return new ProfileStatsDTO(stats.getFollowing(), stats.getFollowers(), stats.getPostCount());
     }
 }
