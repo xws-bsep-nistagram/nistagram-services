@@ -11,6 +11,7 @@ import rs.ac.uns.ftn.nistagram.notification.messaging.config.RabbitMQConfig;
 import rs.ac.uns.ftn.nistagram.notification.messaging.mappers.TopicPayloadMapper;
 import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.PostCommentedTopicPayload;
 import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.PostLikedTopicPayload;
+import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.UserRelationTopicPayload;
 import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.UsersTaggedTopicPayload;
 import rs.ac.uns.ftn.nistagram.notification.services.NotificationService;
 
@@ -38,7 +39,25 @@ public class NotificationConsumer {
     @RabbitListener(queues = RabbitMQConfig.POST_LIKED_NOTIFICATION_SERVICE)
     public void consumePostLiked(PostLikedTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
         acknowledgeMessage(channel, tag);
-        notificationService.handlePostLikes(TopicPayloadMapper.toDomain(payload));
+        notificationService.handlePostLiked(TopicPayloadMapper.toDomain(payload));
+    }
+
+    @RabbitListener(queues = RabbitMQConfig.NEW_FOLLOW_NOTIFICATION_SERVICE)
+    public void consumeUserTagged(UserRelationTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
+        acknowledgeMessage(channel, tag);
+        notificationService.handleNewFollow(TopicPayloadMapper.toDomain(payload));
+    }
+
+    @RabbitListener(queues = RabbitMQConfig.FOLLOW_REQUESTED_NOTIFICATION_SERVICE)
+    public void consumeFollowRequested(UserRelationTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
+        acknowledgeMessage(channel, tag);
+        notificationService.handleFollowRequested(TopicPayloadMapper.toDomain(payload));
+    }
+
+    @RabbitListener(queues = RabbitMQConfig.FOLLOW_ACCEPTED_NOTIFICATION_SERVICE)
+    public void consumeFollowAccepted(UserRelationTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
+        acknowledgeMessage(channel, tag);
+        notificationService.handleFollowAccepted(TopicPayloadMapper.toDomain(payload));
     }
 
     private void acknowledgeMessage(Channel channel, long tag) throws IOException {

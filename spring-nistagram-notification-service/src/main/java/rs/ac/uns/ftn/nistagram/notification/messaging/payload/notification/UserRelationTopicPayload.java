@@ -4,13 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import rs.ac.uns.ftn.nistagram.notification.domain.NotificationType;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostLikedTopicPayload extends NotificationTopicPayload {
+public class UserRelationTopicPayload extends NotificationTopicPayload {
 
     private String target;
-
+    private NotificationType notificationType;
 }

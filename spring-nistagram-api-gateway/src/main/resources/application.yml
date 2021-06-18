@@ -9,6 +9,7 @@ zuul :
     max-per-route-connections : 10000
     max-total-connections : 5000
   ignoredServices : '*'
+
   routes :
     auth-service :
       path : /api/auth/**
@@ -39,7 +40,13 @@ zuul :
       path : /api/notification/**
       serviceId : notification-service
       stripPrefix : false
+      customSensitiveHeaders : true
       sensitive-headers : Cookie,Set-Cookie
+  ws :
+    brokerages :
+      notification-service :
+        end-points : /api/notification/ws
+        brokers : /queue
   ribbon :
     eager-load :
       enabled : true

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
+import rs.ac.uns.ftn.nistagram.user.graph.messaging.producers.NotificationProducer;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.producers.UserRelationsProducer;
 import rs.ac.uns.ftn.nistagram.user.graph.repositories.FollowerRepository;
 
@@ -19,14 +20,14 @@ public class FollowerService {
     private final FollowerRepository followerRepository;
     private final UserConstraintChecker constraintChecker;
     private final UserRelationsProducer userRelationsProducer;
-
+    private final NotificationProducer notificationProducer;
 
 
     @Transactional
     public List<User> findFollowing(String username) {
         constraintChecker.userPresenceCheck(username);
 
-        if(!followerRepository.hasFollowings(username)) {
+        if (!followerRepository.hasFollowings(username)) {
             log.info("User {} follows no one", username);
             return new ArrayList<>();
         }
@@ -41,7 +42,7 @@ public class FollowerService {
     public List<User> findFollowers(String username) {
         constraintChecker.userPresenceCheck(username);
 
-        if(!followerRepository.hasFollowers(username)) {
+        if (!followerRepository.hasFollowers(username)) {
             log.info("User {} has no followers", username);
             return new ArrayList<>();
         }
@@ -53,10 +54,10 @@ public class FollowerService {
     }
 
     @Transactional
-    public List<User> findPendingFollowers(String username){
+    public List<User> findPendingFollowers(String username) {
         constraintChecker.userPresenceCheck(username);
 
-        if(!followerRepository.hasPendingFollowers(username)) {
+        if (!followerRepository.hasPendingFollowers(username)) {
             log.info("User {} has no pending follow requests", username);
             return new ArrayList<>();
         }
@@ -68,7 +69,7 @@ public class FollowerService {
     }
 
     @Transactional
-    public void acceptFollowRequest(String subject, String target){
+    public void acceptFollowRequest(String subject, String target) {
         log.info("Received a follow request confirmation from {} to {}",
                 subject,
                 target);
@@ -78,6 +79,7 @@ public class FollowerService {
         followerRepository.follow(subject, target);
         followerRepository.removeFollowRequest(subject, target);
         userRelationsProducer.publishUserFollowed(subject, target);
+        notificationProducer.publishFollowAccepted(subject, target);
 
         log.info("Follow request from user {} to user {} has been accepted",
                 subject,
@@ -85,7 +87,7 @@ public class FollowerService {
     }
 
     @Transactional
-    public void revokeFollowRequest(String subject, String target){
+    public void revokeFollowRequest(String subject, String target) {
         log.info("Received a follow request cancellation from {} to {}",
                 subject,
                 target);
@@ -98,7 +100,7 @@ public class FollowerService {
                 target);
     }
 
-    public void declineFollowRequest(String subject, String target){
+    public void declineFollowRequest(String subject, String target) {
         log.info("Received a follow request rejection from {} to {}",
                 subject,
                 target);
@@ -113,7 +115,7 @@ public class FollowerService {
     }
 
     @Transactional
-    public void follow(String subject, String target){
+    public void follow(String subject, String target) {
         log.info("Received a follow request from {} to {}",
                 subject,
                 target);
@@ -123,25 +125,28 @@ public class FollowerService {
         var targetUser = followerRepository.findById(target).get();
 
         String message;
-        if(targetUser.hasPrivateProfile()) {
+        if (targetUser.hasPrivateProfile()) {
             followerRepository.sendFollowRequest(subject, target);
+            notificationProducer.publishFollowRequested(subject, target);
             message = String.format("User %s sent a following request to %s", subject, target);
-        }
-        else {
+
+        } else {
             followerRepository.follow(subject, target);
             userRelationsProducer.publishUserFollowed(subject, target);
+            notificationProducer.publishNewFollow(subject, target);
             message = String.format("User %s follows %s", subject, target);
         }
 
         log.info(message);
     }
+
     @Transactional
     public void unfollow(String subject, String target) {
         log.info("Received a unfollow request from {} to {}",
                 subject,
                 target);
 
-        constraintChecker.unfollowRequestCheck(subject,target);
+        constraintChecker.unfollowRequestCheck(subject, target);
 
         var subjectUser = followerRepository.findById(subject).get();
 

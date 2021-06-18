@@ -18,9 +18,6 @@ public class NotificationPreferencesDTO {
     private boolean messageRequestNotificationEnabled;
     private boolean messageNotificationEnabled;
 
-    public boolean commentNotificationDisabled() {
-        return this.comment.equals(NotificationPreferences.OFF);
-    }
 
     public boolean commentNotificationEnabledForFollowers() {
         return this.comment.equals(NotificationPreferences.PEOPLE_I_FOLLOW);
@@ -30,20 +27,12 @@ public class NotificationPreferencesDTO {
         return this.comment.equals(NotificationPreferences.EVERYONE);
     }
 
-    public boolean likeNotificationDisabled() {
-        return this.likes.equals(NotificationPreferences.OFF);
-    }
-
     public boolean likeNotificationEnabledForFollowers() {
         return this.likes.equals(NotificationPreferences.PEOPLE_I_FOLLOW);
     }
 
     public boolean likeNotificationEnabled() {
         return this.likes.equals(NotificationPreferences.EVERYONE);
-    }
-
-    public boolean tagNotificationDisabled() {
-        return this.photosOfMe.equals(NotificationPreferences.OFF);
     }
 
     public boolean tagNotificationEnabledForFollowers() {
