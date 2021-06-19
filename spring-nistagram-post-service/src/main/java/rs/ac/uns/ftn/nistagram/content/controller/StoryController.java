@@ -7,6 +7,7 @@ import rs.ac.uns.ftn.nistagram.content.controller.dto.input.MediaStoryCreationDT
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.ShareStoryCreationDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.StoryCreationDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.mapper.DomainDTOMapper;
+import rs.ac.uns.ftn.nistagram.content.domain.core.story.StoryHighlight;
 import rs.ac.uns.ftn.nistagram.content.service.StoryService;
 
 import javax.validation.Valid;
@@ -91,8 +92,8 @@ public class StoryController {
     @PostMapping("highlights/{name}")
     public ResponseEntity<?> createStoryHighlights(@RequestHeader("username") String caller,
                                                    @PathVariable String name) {
-        storyService.createStoryHighlights(name, caller);
-        return ResponseEntity.ok().build();
+        StoryHighlight created = storyService.createStoryHighlights(name, caller);
+        return ResponseEntity.ok(mapper.toDto(created));
     }
 
     @PostMapping("highlights/{highlightId}/story/{storyId}")
