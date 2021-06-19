@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
 import javax.persistence.EntityNotFoundException;
 
 @ControllerAdvice
@@ -12,7 +13,7 @@ import javax.persistence.EntityNotFoundException;
 public class ContentExceptionHandler {
 
     @ExceptionHandler(OwnershipException.class)
-    public ResponseEntity<?> handleOwnershipError(Exception e){
+    public ResponseEntity<?> handleOwnershipError(Exception e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
 
@@ -22,12 +23,12 @@ public class ContentExceptionHandler {
     }
 
     @ExceptionHandler(ProfileNotPublicException.class)
-    public ResponseEntity<?> handleProfileNotPublicException(Exception e){
+    public ResponseEntity<?> handleProfileNotPublicException(Exception e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<?> handleEntityNotFoundException(Exception e){
+    public ResponseEntity<?> handleEntityNotFoundException(Exception e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
@@ -39,7 +40,7 @@ public class ContentExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleOtherRuntimeErrors(RuntimeException e) {
         log.error(e.getMessage(), e);
-        return ResponseEntity.badRequest().body("An internal server error occurred.");
+        return ResponseEntity.internalServerError().body("An internal server error occurred.");
     }
 
 }

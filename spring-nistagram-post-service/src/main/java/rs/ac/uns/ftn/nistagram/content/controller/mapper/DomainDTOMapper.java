@@ -3,13 +3,20 @@ package rs.ac.uns.ftn.nistagram.content.controller.mapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.*;
+import rs.ac.uns.ftn.nistagram.content.controller.dto.input.report.PostReportResponse;
+import rs.ac.uns.ftn.nistagram.content.controller.dto.input.report.ReportRequest;
+import rs.ac.uns.ftn.nistagram.content.controller.dto.input.report.StoryReportResponse;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.output.*;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.CustomPostCollection;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.UserInteraction;
+import rs.ac.uns.ftn.nistagram.content.domain.core.report.BaseReport;
+import rs.ac.uns.ftn.nistagram.content.domain.core.report.PostReport;
+import rs.ac.uns.ftn.nistagram.content.domain.core.report.StoryReport;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,13 +30,13 @@ public class DomainDTOMapper {
     }
 
     public Post toDomain(PostCreationDTO dto) {
-        Post post =  modelMapper.map(dto, Post.class);
+        Post post = modelMapper.map(dto, Post.class);
         post.getMediaUrls().forEach(url -> url.setPost(post));
         post.getTags().forEach(hashTag -> hashTag.setPost(post));
         return post;
     }
 
-    public PostCollectionDTO toDto(CustomPostCollection postCollection){
+    public PostCollectionDTO toDto(CustomPostCollection postCollection) {
         return PostCollectionDTO
                 .builder()
                 .name(postCollection.getName())
@@ -39,14 +46,14 @@ public class DomainDTOMapper {
 
     public PostOverviewDTO toDto(Post post) {
 
-        PostOverviewDTO dto =  PostOverviewDTO
-                                .builder()
-                                .author(post.getAuthor())
-                                .id(post.getId())
-                                .location(post.getLocation())
-                                .caption(post.getCaption())
-                                .time(post.getTime())
-                                .build();
+        PostOverviewDTO dto = PostOverviewDTO
+                .builder()
+                .author(post.getAuthor())
+                .id(post.getId())
+                .location(post.getLocation())
+                .caption(post.getCaption())
+                .time(post.getTime())
+                .build();
 
         post.getMediaUrls().forEach(link -> dto.addMediaUrl(link.getUrl()));
         post.getComments().forEach(comment -> dto.addComment(toDto(comment)));
@@ -70,7 +77,7 @@ public class DomainDTOMapper {
         return Comment.builder()
                 .author(dto.getAuthor())
                 .text(dto.getText())
-            .build();
+                .build();
     }
 
     // Story
@@ -85,7 +92,8 @@ public class DomainDTOMapper {
     private ShareStory toShareStory(ShareStoryCreationDTO dto) {
         ShareStory shareStory = new ShareStory();
 
-        Post mockPost = new Post(); mockPost.setId(dto.getPostId());
+        Post mockPost = new Post();
+        mockPost.setId(dto.getPostId());
         shareStory.setSharedPost(mockPost);
 
         populateDefaultStory(shareStory, dto);
@@ -110,9 +118,9 @@ public class DomainDTOMapper {
 
     public StoryOverviewDTO toDto(Story story) {
         if (story.getClass().equals(ShareStory.class))
-            return toDto((ShareStory)story);
+            return toDto((ShareStory) story);
         if (story.getClass().equals(MediaStory.class))
-            return toDto((MediaStory)story);
+            return toDto((MediaStory) story);
         else throw new RuntimeException("Story type " + story.getClass() + " not recognized.");
     }
 
@@ -155,4 +163,36 @@ public class DomainDTOMapper {
         return dto;
     }
 
+    //Reports
+
+    public BaseReport toDomain(ReportRequest request, String username) {
+        return BaseReport
+                .builder()
+                .creationDate(LocalDateTime.now())
+                .reason(request.getReason())
+                .reportedBy(username)
+                .build();
+    }
+
+    public PostReportResponse toDto(PostReport postReport) {
+        return PostReportResponse
+                .builder()
+                .postId(postReport.getReportedPost().getId())
+                .reason(postReport.getReason())
+                .reportedBy(postReport.getReportedBy())
+                .creationDate(postReport.getCreationDate())
+                .id(postReport.getId())
+                .build();
+    }
+
+    public StoryReportResponse toDto(StoryReport storyReport) {
+        return StoryReportResponse
+                .builder()
+                .storyId(storyReport.getReportedStory().getId())
+                .reason(storyReport.getReason())
+                .reportedBy(storyReport.getReportedBy())
+                .creationDate(storyReport.getCreationDate())
+                .id(storyReport.getId())
+                .build();
+    }
 }
