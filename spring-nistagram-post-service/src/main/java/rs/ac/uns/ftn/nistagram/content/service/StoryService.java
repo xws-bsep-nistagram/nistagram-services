@@ -6,18 +6,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.content.communication.External;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.HighlightedStory;
+import rs.ac.uns.ftn.nistagram.content.domain.core.story.ShareStory;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.Story;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.StoryHighlight;
 import rs.ac.uns.ftn.nistagram.content.exception.NistagramException;
 import rs.ac.uns.ftn.nistagram.content.exception.OwnershipException;
 import rs.ac.uns.ftn.nistagram.content.exception.ProfileNotPublicException;
 import rs.ac.uns.ftn.nistagram.content.messaging.producers.ContentProducer;
+import rs.ac.uns.ftn.nistagram.content.messaging.producers.NotificationProducer;
 import rs.ac.uns.ftn.nistagram.content.repository.story.StoryHighlightsRepository;
 import rs.ac.uns.ftn.nistagram.content.repository.story.StoryRepository;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,7 @@ public class StoryService {
     private final External.GraphClientWrapper graphClient;
     private final External.UserClientWrapper userClient;
     private final ContentProducer contentProducer;
+    private final NotificationProducer notificationProducer;
 
 
     public void create(Story story) {
@@ -42,6 +44,9 @@ public class StoryService {
         log.info("[STORY][C][C][CALL={}]", story.getAuthor());
 
         contentProducer.publishStoryCreated(story);
+        if (story.getClass().equals(ShareStory.class))
+            notificationProducer.publishPostShared(story);
+
         log.info("[STORY][C][P][CALL={}]", story.getAuthor());
     }
 
@@ -67,8 +72,7 @@ public class StoryService {
 
         try {
             graphClient.assertCloseFriends(caller, username);
-        }
-        catch (RuntimeException ignore) {
+        } catch (RuntimeException ignore) {
             log.info("[STORY-PUBLIC][G][C][CALL={}][TGT={}]", caller, username);
             return storyRepository.getNonCloseFriendsByUsernameAfterDate(username, twentyFourHoursAgo());
         }
@@ -84,7 +88,7 @@ public class StoryService {
 
         graphClient.assertFollow(caller, story.getAuthor());
 
-        if(story.isCloseFriends())
+        if (story.isCloseFriends())
             graphClient.assertCloseFriends(caller, story.getAuthor());
 
         log.info("[STORY][G][C][CALL={}][ID={}]", caller, storyId);
@@ -92,7 +96,7 @@ public class StoryService {
     }
 
 
-    public List<Story> getByUsername(String username){
+    public List<Story> getByUsername(String username) {
         log.info("[STORY][G][RC][TGT={}]", username);
         return storyRepository.getNonCloseFriendsByUsernameAfterDate(username, twentyFourHoursAgo());
     }
@@ -107,7 +111,9 @@ public class StoryService {
         return storyRepository.getAllByUsername(caller);
     }
 
-    private LocalDateTime twentyFourHoursAgo() { return LocalDateTime.now().minus(Duration.ofDays(1));}
+    private LocalDateTime twentyFourHoursAgo() {
+        return LocalDateTime.now().minus(Duration.ofDays(1));
+    }
 
     public StoryHighlight createStoryHighlights(String name, String caller) {
         log.info("[HIGH][C][R][CALL={}][ID={}]", caller, name);
@@ -172,8 +178,7 @@ public class StoryService {
 
         try {
             graphClient.assertCloseFriends(caller, highlight.getOwner());
-        }
-        catch (RuntimeException ignore) {
+        } catch (RuntimeException ignore) {
             log.info("[HIGH-STORY-PUBLIC][G][C][CALL={}][ID={}]", caller, highlightId);
             return highlightStories.stream().filter(story -> !story.isCloseFriends()).collect(Collectors.toList());
         }

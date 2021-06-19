@@ -19,6 +19,12 @@ public class NotificationPreferencesViewDTO {
     private NotificationPreferences.Content.Preference likes;
     @NotNull
     @EnumPattern(regexp = "OFF|PEOPLE_I_FOLLOW|EVERYONE")
+    private NotificationPreferences.Content.Preference dislikes;
+    @NotNull
+    @EnumPattern(regexp = "OFF|PEOPLE_I_FOLLOW|EVERYONE")
+    private NotificationPreferences.Content.Preference shares;
+    @NotNull
+    @EnumPattern(regexp = "OFF|PEOPLE_I_FOLLOW|EVERYONE")
     private NotificationPreferences.Content.Preference photosOfMe;
     @NotNull
     private boolean followerRequestNotificationEnabled;

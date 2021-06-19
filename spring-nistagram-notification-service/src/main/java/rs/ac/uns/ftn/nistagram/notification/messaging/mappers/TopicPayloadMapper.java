@@ -3,7 +3,7 @@ package rs.ac.uns.ftn.nistagram.notification.messaging.mappers;
 import rs.ac.uns.ftn.nistagram.notification.domain.Notification;
 import rs.ac.uns.ftn.nistagram.notification.domain.NotificationType;
 import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.PostCommentedTopicPayload;
-import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.PostLikedTopicPayload;
+import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.PostInteractionTopicPayload;
 import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.UserRelationTopicPayload;
 import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.UsersTaggedTopicPayload;
 
@@ -14,6 +14,8 @@ public class TopicPayloadMapper {
 
     private static final String USER_TAGGED_MESSAGE = "User %s tagged you on his photo.";
     private static final String NEW_LIKE_MESSAGE = "User %s liked your photo.";
+    private static final String NEW_DISLIKE_MESSAGE = "User %s disliked your photo.";
+    private static final String NEW_SHARE_MESSAGE = "User %s shared your photo.";
     private static final String POST_COMMENTED_MESSAGE = "User %s commented '%s' on your photo.";
     private static final String FOLLOW_REQUESTED_MESSAGE = "User %s requested to follow you";
     private static final String FOLLOW_ACCEPTED_MESSAGE = "User %s accepted your follow request";
@@ -36,7 +38,7 @@ public class TopicPayloadMapper {
         return notifications;
     }
 
-    public static Notification toDomain(PostLikedTopicPayload payload) {
+    public static Notification toDomain(PostInteractionTopicPayload payload, NotificationType type) {
         return Notification
                 .builder()
                 .time(payload.getTime())
@@ -44,8 +46,9 @@ public class TopicPayloadMapper {
                 .subject(payload.getSubject())
                 .seen(false)
                 .contentId(payload.getContentId())
-                .notificationType(NotificationType.NEW_LIKE)
-                .text(String.format(NEW_LIKE_MESSAGE, payload.getSubject()))
+                .notificationType(type)
+                .text(formatUserNotificationMessage(type,
+                        payload.getSubject()))
                 .build();
     }
 
@@ -69,12 +72,12 @@ public class TopicPayloadMapper {
                 .target(payload.getTarget())
                 .subject(payload.getSubject())
                 .notificationType(payload.getNotificationType())
-                .text(formatUserRelationNotificationMessage(payload.getNotificationType(),
+                .text(formatUserNotificationMessage(payload.getNotificationType(),
                         payload.getSubject()))
                 .build();
     }
 
-    private static String formatUserRelationNotificationMessage(NotificationType type, String subject) {
+    private static String formatUserNotificationMessage(NotificationType type, String subject) {
         switch (type) {
             case NEW_FOLLOWER:
                 return String.format(NEW_FOLLOW_MESSAGE, subject);
@@ -82,6 +85,12 @@ public class TopicPayloadMapper {
                 return String.format(FOLLOW_ACCEPTED_MESSAGE, subject);
             case NEW_FOLLOW_REQUEST:
                 return String.format(FOLLOW_REQUESTED_MESSAGE, subject);
+            case NEW_LIKE:
+                return String.format(NEW_LIKE_MESSAGE, subject);
+            case NEW_DISLIKE:
+                return String.format(NEW_DISLIKE_MESSAGE, subject);
+            case NEW_SHARE:
+                return String.format(NEW_SHARE_MESSAGE, subject);
         }
         return "";
     }

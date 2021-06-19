@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.nistagram.content.domain.core.post;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import rs.ac.uns.ftn.nistagram.content.domain.core.UserContent;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.PostInCollection;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.SavedPost;
@@ -20,6 +21,7 @@ import java.util.List;
 @Table(name = "posts")
 @Getter
 @Setter
+@ToString
 public class Post extends UserContent {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostLikedTopicPayload extends NotificationTopicPayload {
+public class PostInteractionTopicPayload extends NotificationTopicPayload {
 
     private String target;
 
