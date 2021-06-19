@@ -8,7 +8,7 @@ import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.config.RabbitMQConfig;
-import rs.ac.uns.ftn.nistagram.user.graph.messaging.mappers.UserTopicPayloadMapper;
+import rs.ac.uns.ftn.nistagram.user.graph.messaging.mappers.TopicPayloadMapper;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.payload.user.UserTopicPayload;
 import rs.ac.uns.ftn.nistagram.user.graph.services.UserService;
 
@@ -24,13 +24,13 @@ public class UserConsumer {
     @RabbitListener(queues = RabbitMQConfig.USER_CREATED_GRAPH_SERVICE)
     public void consumeUserCreated(UserTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
         acknowledgeMessage(channel, tag);
-        userService.create(UserTopicPayloadMapper.toDomain(payload));
+        userService.create(TopicPayloadMapper.toDomain(payload));
     }
 
     @RabbitListener(queues = RabbitMQConfig.USER_UPDATED_GRAPH_SERVICE)
     public void consumeUserUpdated(UserTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
         acknowledgeMessage(channel, tag);
-        userService.update(UserTopicPayloadMapper.toDomain(payload));
+        userService.update(TopicPayloadMapper.toDomain(payload));
     }
 
     private void acknowledgeMessage(Channel channel, long tag) throws IOException {

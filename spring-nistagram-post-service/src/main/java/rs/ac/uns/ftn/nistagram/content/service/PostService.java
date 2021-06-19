@@ -16,11 +16,13 @@ import rs.ac.uns.ftn.nistagram.content.exception.NistagramException;
 import rs.ac.uns.ftn.nistagram.content.exception.OwnershipException;
 import rs.ac.uns.ftn.nistagram.content.exception.ProfileNotPublicException;
 import rs.ac.uns.ftn.nistagram.content.messaging.producers.ContentProducer;
+import rs.ac.uns.ftn.nistagram.content.messaging.producers.NotificationProducer;
 import rs.ac.uns.ftn.nistagram.content.repository.post.*;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +38,7 @@ public class PostService {
     private final CustomPostCollectionRepository collectionRepository;
     private final PostInCollectionRepository postInCollectionRepository;
     private final ContentProducer contentProducer;
+    private final NotificationProducer notificationProducer;
     private final External.GraphClientWrapper graphClient;
     private final External.UserClientWrapper userClient;
 
@@ -49,15 +52,19 @@ public class PostService {
     // Example, '[POST][C][R][CALL=joe]' means, POST Creation Request by user Joe
     //          '[POST][D][C][ID=25]' means, POST with Id=25 Deletion Complete
 
-    public void create(Post post) {
+    public Post create(Post post) {
         log.info("[POST][C][R][CALL={}]", post.getAuthor());
 
         post.setTime(LocalDateTime.now());
-        postRepository.save(post);
+        Post savedPost = postRepository.save(post);
         log.info("[POST][C][C][CALL={}]", post.getAuthor());
 
+        if(post.usersTagged())
+            notificationProducer.publishUserTagged(post);
         contentProducer.publishPostCreated(post);
         log.info("[POST][C][P][CALL={}]", post.getAuthor());
+
+        return savedPost;
     }
 
     public void delete(String caller, long postId) {
@@ -136,8 +143,8 @@ public class PostService {
     private void addInteraction(long postId, String caller, UserInteraction.Sentiment sentiment) {
         Optional<UserInteraction> optionalInteraction = interactionRepository
                 .findByPostAndUser(postId, caller);
+        Post post = postRepository.findById(postId).orElseThrow();
         if (optionalInteraction.isEmpty()) {
-            Post post = postRepository.findById(postId).orElseThrow();
             if(userClient.isPrivate(post.getAuthor()))
                 graphClient.assertFollow(caller, post.getAuthor());
             log.info("[{}][C][C][CALL={}][ID={}]", sentiment, caller, postId);
@@ -157,6 +164,10 @@ public class PostService {
             }
             log.info("[{}][C][C][CALL={}][ID={}]", sentiment, caller, postId);
         }
+
+        if(sentiment.equals(UserInteraction.Sentiment.LIKE))
+            notificationProducer.publishPostLiked(post, caller);
+
     }
     private void removeInteraction(long postId, String caller, UserInteraction.Sentiment sentiment) {
         Optional<UserInteraction> optionalInteraction = interactionRepository.findByPostAndUser(postId, caller);
@@ -183,6 +194,7 @@ public class PostService {
         comment.setTime(LocalDateTime.now());
 
         commentRepository.save(comment);
+        notificationProducer.publishPostCommented(commentedPost, comment);
         log.info("[COMMENT][C][C][CALL={}][ID={}]", comment.getAuthor(), postId);
     }
 
@@ -295,5 +307,19 @@ public class PostService {
     @Transactional(readOnly = true)
     public Long getPostCount(String username) {
         return postRepository.getCountByUsername(username);
+    }
+
+    public List<Post> searchByLocation(String street) {
+        log.info("[SEARCH-LOC][G][R][PARAM={}]", street);
+        List<Post> foundPosts = postRepository.getByLocation(street);
+        log.info("Found {} posts", foundPosts.size());
+        return foundPosts;
+    }
+
+    public List<Post> searchByTagged(String username) {
+        log.info("[SEARCH-TAG][G][R][PARAM={}]", username);
+        List<Post> foundPosts = postRepository.getByTagged(username);
+        log.info("[SEARCH-TAG][C] Found {} posts", foundPosts.size());
+        return foundPosts;
     }
 }

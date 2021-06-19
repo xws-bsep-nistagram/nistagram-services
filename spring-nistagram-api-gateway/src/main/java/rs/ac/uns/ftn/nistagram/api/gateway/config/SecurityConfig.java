@@ -22,9 +22,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         this.authFilter = authFilter;
     }
 
+
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+                .headers().disable()
                 .csrf().disable()
                 .cors().and()
                 .logout().disable()
@@ -41,11 +43,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .addFilterBefore(new GatewayRequestLoggingFilter(), JwtTokenAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/users/**").permitAll()
-                .antMatchers(HttpMethod.POST,"/api/users/**").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/users/taggable/**").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/users/public/**").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/content/post/public/**").permitAll()
+                .antMatchers("/api/notification/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/users/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/users/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/users/taggable/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/users/public/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/content/post/public/**").permitAll()
                 .antMatchers("/api/**").hasRole("USER")
                 .anyRequest().permitAll();
     }
@@ -55,9 +58,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         registry
                 .addMapping("/**")
                 .allowedOrigins("http://localhost:8080")
-                .allowedHeaders("*")
-                .allowedMethods("GET","POST","PUT","DELETE","OPTIONS")
-                .exposedHeaders("Authorization");
+                .allowCredentials(true)
+                .maxAge(3600)
+                .allowedHeaders("Accept", "Content-Type", "Origin",
+                        "Authorization", "X-Auth-Token")
+                .exposedHeaders("X-Auth-Token", "Authorization")
+                .allowedMethods("POST", "GET", "DELETE", "PUT", "OPTIONS");
     }
 
 }

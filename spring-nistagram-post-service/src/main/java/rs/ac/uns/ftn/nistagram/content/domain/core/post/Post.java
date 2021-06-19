@@ -47,6 +47,10 @@ public class Post extends UserContent {
         else return this.id == ((Post) obj).getId();
     }
 
+    public boolean usersTagged() {
+        return this.tags != null && !this.tags.isEmpty();
+    }
+
     @Entity
     @Table(name = "media_links")
     @Getter
