@@ -31,15 +31,20 @@ public class NotificationPreferences {
 
         private Preference comment;
         private Preference likes;
+        private Preference dislikes;
+        private Preference shares;
         private Preference photosOfMe;
+
 
         public Content() {
             this.comment = Preference.PEOPLE_I_FOLLOW;
             this.likes = Preference.PEOPLE_I_FOLLOW;
+            this.dislikes = Preference.PEOPLE_I_FOLLOW;
+            this.shares = Preference.PEOPLE_I_FOLLOW;
             this.photosOfMe = Preference.PEOPLE_I_FOLLOW;
         }
 
-        public enum Preference { OFF, PEOPLE_I_FOLLOW, EVERYONE }
+        public enum Preference {OFF, PEOPLE_I_FOLLOW, EVERYONE}
 
     }
 
