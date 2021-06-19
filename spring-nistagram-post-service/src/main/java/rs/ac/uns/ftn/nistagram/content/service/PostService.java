@@ -95,6 +95,14 @@ public class PostService {
         return post;
     }
 
+    public List<Post> getAllPublicByUsername(String username) {
+        if(userClient.isPrivate(username)) {
+            throw new ProfileNotPublicException(username);
+        }
+        List<Post> publicPosts = getByUsername(username);
+        return publicPosts;
+    }
+
     public List<Post> getByUsername(String caller, String username) {
         log.info("[POST][G][R][CALL={}][TGT={}]", caller, username);
         graphClient.assertFollow(caller, username);

@@ -8,9 +8,11 @@ import rs.ac.uns.ftn.nistagram.content.controller.dto.input.CommentCreationDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.PostCreationDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.output.PostCountDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.mapper.DomainDTOMapper;
+import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 import rs.ac.uns.ftn.nistagram.content.service.PostService;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
@@ -76,6 +78,14 @@ public class PostController {
         return ResponseEntity.ok(mapper.toDto(postService.getById(Long.parseLong(postId))));
     }
 
+    @GetMapping("/public/{username}")
+    public ResponseEntity<?> getByUsername(@PathVariable String username) {
+        List<Post> publicPosts = postService.getAllPublicByUsername(username);
+        return ResponseEntity.ok(
+                publicPosts.stream()
+                        .map(mapper::toDto)
+                        .collect(Collectors.toList()));
+    }
 
     @GetMapping("like/{postId}")
     public ResponseEntity<?> like(@RequestHeader("username") String caller,
