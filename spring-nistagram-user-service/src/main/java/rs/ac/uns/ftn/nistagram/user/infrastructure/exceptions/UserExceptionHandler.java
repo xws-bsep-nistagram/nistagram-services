@@ -21,6 +21,14 @@ public class UserExceptionHandler {
         return e.getMessage();
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(EntityNotFoundException.class)
+    String handleNotFound(EntityNotFoundException e) {
+        log.info(e.getMessage());
+        log.trace(e.getMessage(), e);
+        return e.getMessage();
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     String handleMethodArgumentNotValid(MethodArgumentNotValidException e) {

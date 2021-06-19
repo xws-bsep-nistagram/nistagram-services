@@ -79,7 +79,7 @@ public class PostController {
         return ResponseEntity.ok(mapper.toDto(postService.getById(Long.parseLong(postId))));
     }
 
-    @GetMapping("/public/{username}")
+    @GetMapping("/public/user/{username}")
     public ResponseEntity<?> getByUsername(@PathVariable String username) {
         List<Post> publicPosts = postService.getAllPublicByUsername(username);
         return ResponseEntity.ok(

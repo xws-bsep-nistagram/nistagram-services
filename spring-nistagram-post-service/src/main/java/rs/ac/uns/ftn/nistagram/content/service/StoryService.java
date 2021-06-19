@@ -10,6 +10,7 @@ import rs.ac.uns.ftn.nistagram.content.domain.core.story.Story;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.StoryHighlight;
 import rs.ac.uns.ftn.nistagram.content.exception.NistagramException;
 import rs.ac.uns.ftn.nistagram.content.exception.OwnershipException;
+import rs.ac.uns.ftn.nistagram.content.exception.ProfileNotPublicException;
 import rs.ac.uns.ftn.nistagram.content.messaging.producers.ContentProducer;
 import rs.ac.uns.ftn.nistagram.content.repository.story.StoryHighlightsRepository;
 import rs.ac.uns.ftn.nistagram.content.repository.story.StoryRepository;
@@ -28,6 +29,7 @@ public class StoryService {
     private final StoryRepository storyRepository;
     private final StoryHighlightsRepository highlightsRepository;
     private final External.GraphClientWrapper graphClient;
+    private final External.UserClientWrapper userClient;
     private final ContentProducer contentProducer;
 
 
@@ -140,6 +142,19 @@ public class StoryService {
         graphClient.assertFollow(caller, username);
         List<StoryHighlight> highlights = highlightsRepository.getByUsername(username);
         log.info("[HIGH][G][C][CALL={}][TGT={}]", caller, username);
+
+        return highlights;
+    }
+
+    public List<StoryHighlight> getHighlightsByUsername(String username) {
+        log.info("[HIGH][G][R][TGT={}]", username);
+
+        if (userClient.isPrivate(username)) {
+            throw new ProfileNotPublicException(username);
+        }
+
+        List<StoryHighlight> highlights = highlightsRepository.getByUsername(username);
+        log.info("[HIGH][G][C][TGT={}]", username);
 
         return highlights;
     }

@@ -112,7 +112,14 @@ public class StoryController {
         );
     }
 
-    // izvini gudelj
+    @GetMapping("public/highlights/user/{username}")
+    public ResponseEntity<?> getHighlightsByUsernamePublic(@PathVariable String username) {
+        return ResponseEntity.ok(
+                storyService.getHighlightsByUsername(username)
+                        .stream().map(mapper::toDto).collect(Collectors.toList())
+        );
+    }
+
     @GetMapping("highlights/{highlightId}")
     public ResponseEntity<?> getStoriesFromHighlight(@RequestHeader("username") String caller,
                                                      @PathVariable String highlightId) {
