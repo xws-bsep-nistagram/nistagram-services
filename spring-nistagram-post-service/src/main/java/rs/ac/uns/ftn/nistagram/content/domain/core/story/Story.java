@@ -1,10 +1,12 @@
 package rs.ac.uns.ftn.nistagram.content.domain.core.story;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import rs.ac.uns.ftn.nistagram.content.domain.core.UserContent;
 import rs.ac.uns.ftn.nistagram.content.domain.core.report.StoryReport;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,8 +28,14 @@ public abstract class Story extends UserContent {
     @Override
     public boolean equals(Object obj) {
         try {
-            return ((Story)obj).getId() == this.id;
+            return ((Story) obj).getId() == this.id;
+        } catch (Exception e) {
+            return false;
         }
-        catch (Exception e) { return false; }
+    }
+
+    public void addReport(StoryReport storyReport) {
+        if (storyReports == null) storyReports = new ArrayList<>();
+        storyReports.add(storyReport);
     }
 }

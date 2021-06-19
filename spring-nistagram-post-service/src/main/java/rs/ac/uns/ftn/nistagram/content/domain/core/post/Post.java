@@ -13,6 +13,7 @@ import rs.ac.uns.ftn.nistagram.content.domain.core.story.ShareStory;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -49,6 +50,11 @@ public class Post extends UserContent {
 
     public boolean usersTagged() {
         return this.tags != null && !this.tags.isEmpty();
+    }
+
+    public void addReport(PostReport postReport) {
+        if (this.postReports == null) postReports = new ArrayList<>();
+        postReports.add(postReport);
     }
 
     @Entity
