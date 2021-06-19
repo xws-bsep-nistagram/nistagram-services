@@ -13,6 +13,7 @@ import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 import rs.ac.uns.ftn.nistagram.content.service.PostService;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
@@ -77,6 +78,15 @@ public class PostController {
         return ResponseEntity.ok(mapper.toDto(postService.getById(Long.parseLong(postId))));
     }
 
+    @GetMapping("/public/user/{username}")
+    public ResponseEntity<?> getByUsername(@PathVariable String username) {
+        List<Post> publicPosts = postService.getAllPublicByUsername(username);
+        return ResponseEntity.ok(
+                publicPosts.stream()
+                        .map(mapper::toDto)
+                        .collect(Collectors.toList()));
+    }
+    
     @PostMapping("search/location")
     public ResponseEntity<?> searchByLocation(@RequestBody LocationSearchDTO dto) {
         return ResponseEntity.ok(

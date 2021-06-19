@@ -146,10 +146,13 @@ public class DomainDTOMapper {
     // Story highlights
 
     public StoryHighlightOverviewDTO toDto(StoryHighlight highlight) {
-        List<Story> stories = highlight.getStories().stream()
-                .map(HighlightedStory::getStory)
-                .collect(Collectors.toList());
-        List<StoryOverviewDTO> storyDtos = stories.stream().map(story -> toDto(story)).collect(Collectors.toList());
+        List<StoryOverviewDTO> storyDtos = null;
+        if (highlight.getStories() != null) {
+            List<Story> stories = highlight.getStories().stream()
+                    .map(HighlightedStory::getStory)
+                    .collect(Collectors.toList());
+            storyDtos = stories.stream().map(story -> toDto(story)).collect(Collectors.toList());
+        }
         return StoryHighlightOverviewDTO.builder()
                 .id(highlight.getId())
                 .name(highlight.getName())
