@@ -38,6 +38,7 @@ rs/ac/uns/ftn/nistagram/feed/controllers/FeedController.class
 rs/ac/uns/ftn/nistagram/feed/messaging/consumers/ContentConsumer.class
 rs/ac/uns/ftn/nistagram/feed/messaging/config/RabbitMQConfig.class
 rs/ac/uns/ftn/nistagram/feed/messaging/payload/user/NotificationPreferences.class
+rs/ac/uns/ftn/nistagram/feed/http/payload/user/MutedRelationshipResponse.class
 rs/ac/uns/ftn/nistagram/feed/controllers/payload/FeedResponseGroup$FeedResponseGroupBuilder.class
 rs/ac/uns/ftn/nistagram/feed/services/FeedService.class
 rs/ac/uns/ftn/nistagram/feed/domain/entry/feed/FeedEntry.class

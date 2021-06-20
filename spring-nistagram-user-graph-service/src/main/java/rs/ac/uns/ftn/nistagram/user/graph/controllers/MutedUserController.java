@@ -3,11 +3,10 @@ package rs.ac.uns.ftn.nistagram.user.graph.controllers;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.MutedRelationshipResponse;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserPayload;
-import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserRelationshipRequest;
 import rs.ac.uns.ftn.nistagram.user.graph.services.MutedUserService;
 
-import javax.validation.Valid;
 import java.util.stream.Collectors;
 
 @RestController
@@ -22,24 +21,29 @@ public class MutedUserController {
         this.modelMapper = new ModelMapper();
     }
 
-    @GetMapping("/{username}/muted")
-    public ResponseEntity<?> findMutedUsers(@PathVariable String username) {
-        var users = mutedUserService.findMutedUsers(username)
+    @GetMapping("/muted")
+    public ResponseEntity<?> findMutedUsers(@RequestHeader("username") String subject) {
+        var users = mutedUserService.findMutedUsers(subject)
                 .stream()
-                .map(e-> modelMapper.map(e, UserPayload.class))
+                .map(e -> modelMapper.map(e, UserPayload.class))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(users);
     }
 
-    @PostMapping("/mute")
-    public ResponseEntity<?> mute(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest){
-        mutedUserService.mute(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
+    @GetMapping("/muted/{target}")
+    public ResponseEntity<?> hasMuted(@RequestHeader("username") String subject, @PathVariable String target) {
+        return ResponseEntity.ok(new MutedRelationshipResponse(mutedUserService.hasMuted(subject, target)));
+    }
+
+    @PostMapping("/mute/{target}")
+    public ResponseEntity<?> mute(@RequestHeader("username") String subject, @PathVariable String target) {
+        mutedUserService.mute(subject, target);
         return ResponseEntity.ok("Request successfully processed");
     }
 
-    @DeleteMapping("/unmute")
-    public ResponseEntity<?> unmute(@RequestBody @Valid UserRelationshipRequest userRelationshipRequest){
-        mutedUserService.unmute(userRelationshipRequest.getSubject(), userRelationshipRequest.getTarget());
+    @DeleteMapping("/mute/{target}")
+    public ResponseEntity<?> unmute(@RequestHeader("username") String subject, @PathVariable String target) {
+        mutedUserService.unmute(subject, target);
         return ResponseEntity.ok("Request successfully processed");
     }
 

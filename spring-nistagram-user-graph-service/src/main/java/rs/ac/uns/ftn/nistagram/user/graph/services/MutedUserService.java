@@ -19,10 +19,10 @@ public class MutedUserService {
     private final UserConstraintChecker constraintChecker;
 
     @Transactional
-    public List<User> findMutedUsers(String username){
+    public List<User> findMutedUsers(String username) {
         constraintChecker.userPresenceCheck(username);
 
-        if(!mutedUserRepository.hasMutedUsers(username)) {
+        if (!mutedUserRepository.hasMutedUsers(username)) {
             log.info("User {} has no muted users", username);
             return new ArrayList<>();
         }
@@ -32,6 +32,11 @@ public class MutedUserService {
 
         return mutedUsers;
 
+    }
+
+    public Boolean hasMuted(String subject, String target) {
+        log.info("Checking if {} has muted {}", subject, target);
+        return mutedUserRepository.hasMuted(subject, target);
     }
 
     @Transactional
@@ -63,5 +68,6 @@ public class MutedUserService {
                 subject,
                 target);
     }
+
 
 }

@@ -33,21 +33,29 @@ public class FeedService {
     private final PostFeedRepository postFeedRepository;
     private final StoryFeedRepository storyFeedRepository;
 
-    public List<PostFeedEntry> getPostFeedByUsername(String username){
+    public List<PostFeedEntry> getPostFeedByUsername(String username) {
         log.info("Request for getting all the post feed entries for {} received", username);
 
         var postFeedEntries = postFeedRepository.findAllByUsername(username);
 
+        postFeedEntries = filterPostFeedEntries(postFeedEntries, username);
+
         log.info("Found '{}' post entries for an user '{}'", postFeedEntries.size(), username);
 
-        if(postFeedEntries.size() != 0)
+        if (postFeedEntries.size() != 0)
             postFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt).reversed());
 
 
         return postFeedEntries;
     }
 
-    public List<StoryFeedEntry> getStoryFeedByUsername(String username){
+    private List<PostFeedEntry> filterPostFeedEntries(List<PostFeedEntry> postFeedEntries, String subject) {
+        return postFeedEntries.stream().filter(postFeedEntry -> !userGraphClient
+                .hasMuted(subject, postFeedEntry.getPublisher()).getMuted())
+                .collect(Collectors.toList());
+    }
+
+    public List<StoryFeedEntry> getStoryFeedByUsername(String username) {
         log.info("Request for getting all the story feed entries for an user '{}' received", username);
 
         var storyFeedEntries = storyFeedRepository
@@ -56,15 +64,17 @@ public class FeedService {
                 .filter(e -> !e.getCloseFriends())
                 .collect(Collectors.toList());
 
+        storyFeedEntries = filterStoryFeedEntries(storyFeedEntries, username);
+
         log.info("Found '{}' story feed entries for an user '{}'", storyFeedEntries.size(), username);
 
-        if(storyFeedEntries.size() != 0)
+        if (storyFeedEntries.size() != 0)
             storyFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt).reversed());
 
         return storyFeedEntries;
     }
 
-    public List<StoryFeedEntry> getCloseFriendStoryFeedByUsername(String username){
+    public List<StoryFeedEntry> getCloseFriendStoryFeedByUsername(String username) {
 
         log.info("Request for getting all the close friend story feed entries for an user '{}' received",
                 username);
@@ -74,12 +84,20 @@ public class FeedService {
                 .stream().filter(StoryFeedEntry::getCloseFriends)
                 .collect(Collectors.toList());
 
+        storyFeedEntries = filterStoryFeedEntries(storyFeedEntries, username);
+
         log.info("Found '{}' story feed entries for an user '{}'", storyFeedEntries.size(), username);
 
-        if(storyFeedEntries.size() != 0)
+        if (storyFeedEntries.size() != 0)
             storyFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt).reversed());
 
         return storyFeedEntries;
+    }
+
+    private List<StoryFeedEntry> filterStoryFeedEntries(List<StoryFeedEntry> storyFeedEntries, String subject) {
+        return storyFeedEntries.stream().filter(storyFeedEntry -> !userGraphClient
+                .hasMuted(subject, storyFeedEntry.getPublisher()).getMuted())
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -99,7 +117,7 @@ public class FeedService {
                 storyFeedEntry.getPublisher());
 
         List<UserPayload> followers;
-        if(storyFeedEntry.getCloseFriends())
+        if (storyFeedEntry.getCloseFriends())
             followers = userGraphClient.getCloseFriends(storyFeedEntry.getPublisher());
         else
             followers = userGraphClient.getFollowers(storyFeedEntry.getPublisher());
@@ -123,7 +141,7 @@ public class FeedService {
                 storyFeedEntry.getPublisher());
 
         List<UserPayload> followers;
-        if(storyFeedEntry.getCloseFriends())
+        if (storyFeedEntry.getCloseFriends())
             followers = userGraphClient.getCloseFriends(storyFeedEntry.getPublisher());
         else
             followers = userGraphClient.getFollowers(storyFeedEntry.getPublisher());
@@ -147,9 +165,9 @@ public class FeedService {
     private void appendTargetStoryCollection(User foundSubject, List<StoryFeedEntry> targetStoryCollection) {
         targetStoryCollection.forEach(storyFeedEntry -> {
             StoryFeedEntry entry;
-            try{
+            try {
                 entry = findStoryFeedEntry(storyFeedEntry);
-            }catch (EntityNotFoundException e){
+            } catch (EntityNotFoundException e) {
                 entry = storyFeedEntry;
             }
             entry.addUser(foundSubject);
@@ -162,9 +180,9 @@ public class FeedService {
     private void appendTargetPostCollection(User foundSubject, List<PostFeedEntry> targetPostCollection) {
         targetPostCollection.forEach(postFeedEntry -> {
             PostFeedEntry entry;
-            try{
+            try {
                 entry = findPostFeedEntry(postFeedEntry);
-            } catch (EntityNotFoundException e){
+            } catch (EntityNotFoundException e) {
                 entry = postFeedEntry;
             }
             entry.addUser(foundSubject);
@@ -204,7 +222,7 @@ public class FeedService {
         List<StoryFeedEntry> subjectsStoryFeedEntries = storyFeedRepository
                 .findAllByUsername(foundSubject.getUsername());
         subjectsStoryFeedEntries.forEach(storyFeedEntry -> {
-            if(storyFeedEntry.getPublisher().equals(target)){
+            if (storyFeedEntry.getPublisher().equals(target)) {
                 storyFeedEntry.removeUser(foundSubject);
                 foundSubject.removeFromStoryFeed(storyFeedEntry);
             }
@@ -215,7 +233,7 @@ public class FeedService {
         List<PostFeedEntry> subjectsPostFeedEntries = postFeedRepository
                 .findAllByUsername(foundSubject.getUsername());
         subjectsPostFeedEntries.forEach(postFeedEntry -> {
-            if(postFeedEntry.getPublisher().equals(target)) {
+            if (postFeedEntry.getPublisher().equals(target)) {
                 postFeedEntry.removeUser(foundSubject);
                 foundSubject.removeFromPostFeed(postFeedEntry);
             }
@@ -223,7 +241,7 @@ public class FeedService {
     }
 
     private void clearPostFeeds(List<UserPayload> followers, PostFeedEntry postFeedEntry) {
-        if(followers.isEmpty()){
+        if (followers.isEmpty()) {
             log.warn("User '{}' has no followers", postFeedEntry.getPublisher());
             return;
         }
@@ -241,8 +259,9 @@ public class FeedService {
                 postFeedEntry.getPublisher());
 
     }
+
     private void clearStoryFeeds(List<UserPayload> followers, StoryFeedEntry storyFeedEntry) {
-        if(followers.isEmpty()){
+        if (followers.isEmpty()) {
             log.warn("User '{}' has no followers", storyFeedEntry.getPublisher());
             return;
         }
@@ -268,7 +287,7 @@ public class FeedService {
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Post feed entry assigned with a post with an id %s doesn't exist",
-                            postFeedEntry.getPostId())));
+                                postFeedEntry.getPostId())));
     }
 
     private StoryFeedEntry findStoryFeedEntry(StoryFeedEntry storyFeedEntry) {
@@ -284,7 +303,7 @@ public class FeedService {
     }
 
     private void populatePostFeeds(List<UserPayload> followers, PostFeedEntry postFeedEntry) {
-        if(followers.isEmpty()){
+        if (followers.isEmpty()) {
             log.warn("User '{}' has no followers", postFeedEntry.getPublisher());
             return;
         }
@@ -298,8 +317,9 @@ public class FeedService {
         log.info("Post by {} is successfully added to all of his follower feeds",
                 postFeedEntry.getPublisher());
     }
+
     private void populateStoryFeeds(List<UserPayload> followers, StoryFeedEntry storyFeedEntry) {
-        if(followers.isEmpty()){
+        if (followers.isEmpty()) {
             log.warn("User '{}' has no followers", storyFeedEntry.getPublisher());
             return;
         }

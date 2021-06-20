@@ -14,7 +14,4 @@ public class ShareStory extends Story {
     @ManyToOne
     private Post sharedPost;
 
-    public Long getSharedPostId() {
-        return sharedPost.getId();
-    }
 }

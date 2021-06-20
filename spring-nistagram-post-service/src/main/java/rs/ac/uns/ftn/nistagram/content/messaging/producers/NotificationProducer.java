@@ -47,7 +47,7 @@ public class NotificationProducer {
 
         //When creating a share story, shared post is faked by setting a post id,
         //so I had to manually fetch it here.
-        Post sharedPost = postRepository.getById(shareStory.getSharedPostId());
+        Post sharedPost = postRepository.getById(shareStory.getSharedPost().getId());
         PostInteractionTopicPayload payload = TopicPayloadMapper.toPayload(sharedPost, shareStory.getTime(), shareStory.getAuthor());
         rabbitTemplate.convertAndSend(RabbitMQConfig.POST_SHARED_NOTIFICATION_SERVICE, payload);
     }
