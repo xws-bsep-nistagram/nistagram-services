@@ -34,7 +34,7 @@ public class VerificationController {
         return "Verification request successfully registered.";
     }
 
-    @GetMapping
+    @GetMapping("admin")
     public List<VerificationRequestViewDTO> getAllPending() {
         List<VerificationRequest> pending = service.getPending();
         return pending.stream()
@@ -42,13 +42,13 @@ public class VerificationController {
                 .collect(Collectors.toList());
     }
 
-    @PutMapping("{id}")
+    @PutMapping("admin/{id}")
     public String verify(@PathVariable Long id) {
         service.verify(id);
         return "User successfully verified.";
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("admin/{id}")
     public String decline(@PathVariable Long id) {
         service.decline(id);
         return "User verification declined.";
