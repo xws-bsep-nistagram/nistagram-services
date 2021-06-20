@@ -21,14 +21,19 @@ public class VerificationRequestMapper {
 
     public VerificationRequestViewDTO map (VerificationRequest domain) {
         VerificationRequestViewDTO dto = new VerificationRequestViewDTO();
-        CategoryDTO category = new CategoryDTO();
-        category.setId(domain.getCategory().getId());
-        category.setName(domain.getCategory().getName());
+        CategoryDTO category = map(domain.getCategory());
         dto.setId(domain.getId());
         dto.setCategory(category);
         dto.setImageUrl(domain.getImageUrl());
         dto.setStatus(domain.getStatus());
         dto.setProfile(profileMapper.map(domain.getUser()));
+        return dto;
+    }
+
+    public CategoryDTO map(Category domain) {
+        CategoryDTO dto = new CategoryDTO();
+        dto.setId(domain.getId());
+        dto.setName(domain.getName());
         return dto;
     }
 
