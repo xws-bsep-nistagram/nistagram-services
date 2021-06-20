@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.user.domain.user;
+package rs.ac.uns.ftn.nistagram.user.domain.verification;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,5 +25,7 @@ public class Category {
     public Category(Long id) {
         this.id = id;
     }
+
+    protected Category() {}
 
 }

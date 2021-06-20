@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.user.domain.user.request;
+package rs.ac.uns.ftn.nistagram.user.domain.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

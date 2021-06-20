@@ -5,11 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.domain.user.User;
-import rs.ac.uns.ftn.nistagram.user.domain.user.request.VerificationRequest;
+import rs.ac.uns.ftn.nistagram.user.domain.verification.VerificationRequest;
+import rs.ac.uns.ftn.nistagram.user.domain.verification.VerificationStatus;
 import rs.ac.uns.ftn.nistagram.user.infrastructure.exceptions.UserException;
 import rs.ac.uns.ftn.nistagram.user.repository.VerificationRequestRepository;
 
-import javax.persistence.EntityExistsException;
+import java.util.List;
 
 @Slf4j
 @AllArgsConstructor
@@ -32,4 +33,8 @@ public class VerificationService {
         return created;
     }
 
+    @Transactional(readOnly = true)
+    public List<VerificationRequest> getPending() {
+        return repository.findByStatus(VerificationStatus.PENDING);
+    }
 }

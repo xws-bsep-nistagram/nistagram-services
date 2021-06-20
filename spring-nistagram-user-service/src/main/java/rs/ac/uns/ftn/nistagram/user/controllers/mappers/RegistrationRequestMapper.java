@@ -3,7 +3,7 @@ package rs.ac.uns.ftn.nistagram.user.controllers.mappers;
 import org.springframework.stereotype.Component;
 import rs.ac.uns.ftn.nistagram.user.controllers.dtos.RegistrationRequestDTO;
 import rs.ac.uns.ftn.nistagram.user.domain.user.PersonalData;
-import rs.ac.uns.ftn.nistagram.user.domain.user.request.RegistrationRequest;
+import rs.ac.uns.ftn.nistagram.user.domain.user.RegistrationRequest;
 
 @Component
 public class RegistrationRequestMapper {
