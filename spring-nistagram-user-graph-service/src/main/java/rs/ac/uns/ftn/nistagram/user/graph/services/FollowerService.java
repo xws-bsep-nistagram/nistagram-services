@@ -9,6 +9,7 @@ import rs.ac.uns.ftn.nistagram.user.graph.domain.UserStats;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.producers.NotificationProducer;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.producers.UserRelationsProducer;
 import rs.ac.uns.ftn.nistagram.user.graph.repositories.FollowerRepository;
+import rs.ac.uns.ftn.nistagram.user.graph.repositories.MutedUserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 public class FollowerService {
 
     private final FollowerRepository followerRepository;
+    private final MutedUserRepository mutedUserRepository;
     private final UserConstraintChecker constraintChecker;
     private final UserRelationsProducer userRelationsProducer;
     private final NotificationProducer notificationProducer;
@@ -152,7 +154,12 @@ public class FollowerService {
         var subjectUser = followerRepository.findById(subject).get();
 
         followerRepository.unfollow(subjectUser.getUsername(), target);
+
+        if (mutedUserRepository.hasMuted(subject, target))
+            mutedUserRepository.unmute(subject, target);
+
         userRelationsProducer.publishUserUnfollowed(subject, target);
+
         log.info("User {} is no longer following {}",
                 subjectUser.getUsername(),
                 target);

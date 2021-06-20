@@ -38,8 +38,6 @@ public class FeedService {
 
         var postFeedEntries = postFeedRepository.findAllByUsername(username);
 
-        postFeedEntries = filterPostFeedEntries(postFeedEntries, username);
-
         log.info("Found '{}' post entries for an user '{}'", postFeedEntries.size(), username);
 
         if (postFeedEntries.size() != 0)
@@ -47,12 +45,6 @@ public class FeedService {
 
 
         return postFeedEntries;
-    }
-
-    private List<PostFeedEntry> filterPostFeedEntries(List<PostFeedEntry> postFeedEntries, String subject) {
-        return postFeedEntries.stream().filter(postFeedEntry -> !userGraphClient
-                .hasMuted(subject, postFeedEntry.getPublisher()).getMuted())
-                .collect(Collectors.toList());
     }
 
     public List<StoryFeedEntry> getStoryFeedByUsername(String username) {
@@ -63,8 +55,6 @@ public class FeedService {
                 .stream()
                 .filter(e -> !e.getCloseFriends())
                 .collect(Collectors.toList());
-
-        storyFeedEntries = filterStoryFeedEntries(storyFeedEntries, username);
 
         log.info("Found '{}' story feed entries for an user '{}'", storyFeedEntries.size(), username);
 
@@ -84,20 +74,12 @@ public class FeedService {
                 .stream().filter(StoryFeedEntry::getCloseFriends)
                 .collect(Collectors.toList());
 
-        storyFeedEntries = filterStoryFeedEntries(storyFeedEntries, username);
-
         log.info("Found '{}' story feed entries for an user '{}'", storyFeedEntries.size(), username);
 
         if (storyFeedEntries.size() != 0)
             storyFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt).reversed());
 
         return storyFeedEntries;
-    }
-
-    private List<StoryFeedEntry> filterStoryFeedEntries(List<StoryFeedEntry> storyFeedEntries, String subject) {
-        return storyFeedEntries.stream().filter(storyFeedEntry -> !userGraphClient
-                .hasMuted(subject, storyFeedEntry.getPublisher()).getMuted())
-                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -153,7 +135,7 @@ public class FeedService {
     public void addTargetsContent(String subject, String target) {
         log.info("All the '{}' available post and stories are being added to a '{}' feed", target, subject);
 
-        var foundSubject = userRepository.getOne(subject);
+        var foundSubject = userRepository.getById(subject);
 
         appendTargetPostCollection(foundSubject, getUsersPosts(target));
         appendTargetStoryCollection(foundSubject, getUsersStories(target));
@@ -211,7 +193,7 @@ public class FeedService {
     public void removeTargetsContent(String subject, String target) {
         log.info("All the '{}' post and stories are being removed from a '{}' feed", target, subject);
 
-        User foundSubject = userRepository.getOne(subject);
+        User foundSubject = userRepository.getById(subject);
         removeTargetsPostFromSubjectsFeed(target, foundSubject);
         removeTargetsStoriesFromSubjectsFeed(target, foundSubject);
 
@@ -248,7 +230,7 @@ public class FeedService {
 
         PostFeedEntry foundEntry = findPostFeedEntry(postFeedEntry);
         followers.forEach(follower -> {
-            User foundFollower = userRepository.getOne(follower.getUsername());
+            User foundFollower = userRepository.getById(follower.getUsername());
             foundEntry.removeUser(foundFollower);
             foundFollower.removeFromPostFeed(foundEntry);
             userRepository.save(foundFollower);
@@ -268,7 +250,7 @@ public class FeedService {
 
         StoryFeedEntry foundEntry = findStoryFeedEntry(storyFeedEntry);
         followers.forEach(follower -> {
-            User foundFollower = userRepository.getOne(follower.getUsername());
+            User foundFollower = userRepository.getById(follower.getUsername());
             foundEntry.removeUser(foundFollower);
             foundFollower.removeFromStoryFeed(foundEntry);
             userRepository.save(foundFollower);
@@ -309,7 +291,7 @@ public class FeedService {
         }
 
         followers.forEach(follower -> {
-            User foundFollower = userRepository.getOne(follower.getUsername());
+            User foundFollower = userRepository.getById(follower.getUsername());
             postFeedEntry.addUser(foundFollower);
             foundFollower.addToPostFeed(postFeedEntry);
         });
@@ -325,7 +307,7 @@ public class FeedService {
         }
 
         followers.forEach(follower -> {
-            User foundFollower = userRepository.getOne(follower.getUsername());
+            User foundFollower = userRepository.getById(follower.getUsername());
             storyFeedEntry.addUser(foundFollower);
             foundFollower.addToStoryFeed(storyFeedEntry);
         });

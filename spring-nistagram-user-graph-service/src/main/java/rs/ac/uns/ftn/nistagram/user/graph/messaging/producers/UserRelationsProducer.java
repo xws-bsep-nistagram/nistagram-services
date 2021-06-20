@@ -13,7 +13,7 @@ import rs.ac.uns.ftn.nistagram.user.graph.messaging.config.RabbitMQConfig;
 public class UserRelationsProducer {
     private final RabbitTemplate rabbitTemplate;
 
-    public void publishUserFollowed(String subject, String target){
+    public void publishUserFollowed(String subject, String target) {
         log.info("Follow event from {} to {} published to a {}",
                 subject, target,
                 RabbitMQConfig.USER_FOLLOWED_FEED_SERVICE);
@@ -21,11 +21,28 @@ public class UserRelationsProducer {
                 new UserRelationshipRequest(subject, target));
     }
 
-    public void publishUserUnfollowed(String subject, String target){
+    public void publishUserUnfollowed(String subject, String target) {
         log.info("Unfollow event from {} to {} published to a {}",
                 subject, target,
                 RabbitMQConfig.USER_UNFOLLOWED_FEED_SERVICE);
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_UNFOLLOWED_FEED_SERVICE,
                 new UserRelationshipRequest(subject, target));
     }
+
+    public void publishUserMuted(String subject, String target) {
+        log.info("User muted event from {} to {} published to a {}",
+                subject, target,
+                RabbitMQConfig.USER_MUTED_FEED_SERVICE);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.USER_MUTED_FEED_SERVICE,
+                new UserRelationshipRequest(subject, target));
+    }
+
+    public void publishUserUnmuted(String subject, String target) {
+        log.info("User unmuted event from {} to {} published to a {}",
+                subject, target,
+                RabbitMQConfig.USER_UNMUTED_FEED_SERVICE);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.USER_UNMUTED_FEED_SERVICE,
+                new UserRelationshipRequest(subject, target));
+    }
+
 }

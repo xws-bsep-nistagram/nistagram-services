@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
+import rs.ac.uns.ftn.nistagram.user.graph.messaging.producers.UserRelationsProducer;
 import rs.ac.uns.ftn.nistagram.user.graph.repositories.MutedUserRepository;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class MutedUserService {
 
     private final MutedUserRepository mutedUserRepository;
     private final UserConstraintChecker constraintChecker;
+    private final UserRelationsProducer userRelationsProducer;
 
     @Transactional
     public List<User> findMutedUsers(String username) {
@@ -49,6 +51,8 @@ public class MutedUserService {
 
         mutedUserRepository.mute(subject, target);
 
+        userRelationsProducer.publishUserMuted(subject, target);
+
         log.info("User {} has muted {}",
                 subject,
                 target);
@@ -63,6 +67,8 @@ public class MutedUserService {
         constraintChecker.unmuteRequestCheck(subject, target);
 
         mutedUserRepository.unmute(subject, target);
+
+        userRelationsProducer.publishUserUnmuted(subject, target);
 
         log.info("User {} has unmuted {}",
                 subject,
