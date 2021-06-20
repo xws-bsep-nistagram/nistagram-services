@@ -44,4 +44,8 @@ public class User {
 
     public boolean isPrivate() {return privacyData.isProfilePrivate();}
 
+    public void verify() {
+        administrativeData.setVerified(true);
+    }
+
 }

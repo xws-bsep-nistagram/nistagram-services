@@ -43,6 +43,13 @@ public class ProfileService {
         );
     }
 
+    @Transactional
+    public void verify(String username) {
+        User found = get(username);
+        found.verify();
+        repository.save(found);
+    }
+
     @Transactional(readOnly = true)
     public List<User> find(String usernameQuery, String caller) {
         List<User> foundUsers = repository.findAllByUsernameContains(usernameQuery);
@@ -127,5 +134,6 @@ public class ProfileService {
                         && !userGraphClient.isBlockedBy(caller, user.getUsername()).isBlocked())
                 .collect(Collectors.toList());
     }
+
 
 }
