@@ -322,4 +322,11 @@ public class PostService {
         log.info("[SEARCH-TAG][C] Found {} posts", foundPosts.size());
         return foundPosts;
     }
+
+    public List<Post> getLikedAndDisliked(String username) {
+        log.info("[LD][G][R][TGT={}]", username);
+        List<Post> foundPosts = postRepository.getLikedAndDislikedByUser(username);
+        log.info("[LD][G][C][TGT={}]", username);
+        return foundPosts;
+    }
 }

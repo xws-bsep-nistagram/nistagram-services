@@ -20,7 +20,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = "select P from Post P where P.location.name = :street")
     List<Post> getByLocation(@Param("street") String street);
 
-    // TODO Make a query to fetch all posts where the 'username' is tagged
     @Query(value = "select P from Post P left join P.tags T where T.tag = :username")
     List<Post> getByTagged(@Param("username") String username);
+
+    @Query(value = "select P from Post P right join P.userInteractions UI where UI.username = :username")
+    List<Post> getLikedAndDislikedByUser(@Param("username") String username);
 }

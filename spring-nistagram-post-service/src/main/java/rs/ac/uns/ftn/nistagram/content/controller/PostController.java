@@ -104,6 +104,14 @@ public class PostController {
         );
     }
 
+    @GetMapping("interactions")
+    public ResponseEntity<?> getLikedAndDislikedPostsForUser(@RequestHeader("username") String caller) {
+        return ResponseEntity.ok(
+            postService.getLikedAndDisliked(caller)
+                .stream().map(mapper::toDto).collect(Collectors.toList())
+        );
+    }
+
     @GetMapping("like/{postId}")
     public ResponseEntity<?> like(@RequestHeader("username") String caller,
                                   @PathVariable String postId) {

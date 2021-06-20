@@ -17,4 +17,3 @@ public class StoryReport extends BaseReport {
     @ManyToOne
     private Story reportedStory;
 }
-
