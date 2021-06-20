@@ -30,7 +30,7 @@ public class PostController {
                                     @Valid @RequestBody PostCreationDTO dto) {
         dto.setAuthor(username);
         Post createdPost = postService.create(mapper.toDomain(dto));
-        return ResponseEntity.ok(createdPost);
+        return ResponseEntity.ok(mapper.toDto(createdPost));
     }
 
     @DeleteMapping("{postId}")
@@ -86,19 +86,21 @@ public class PostController {
                         .map(mapper::toDto)
                         .collect(Collectors.toList()));
     }
-    
+
     @PostMapping("search/location")
-    public ResponseEntity<?> searchByLocation(@RequestBody LocationSearchDTO dto) {
+    public ResponseEntity<?> searchByLocation(@RequestHeader("username") String caller,
+                                              @RequestBody LocationSearchDTO dto) {
         return ResponseEntity.ok(
-                postService.searchByLocation(dto.getStreet())
+                postService.searchByLocation(dto.getStreet(), caller)
                         .stream().map(mapper::toDto).collect(Collectors.toList())
         );
     }
 
     @GetMapping("tagged/{username}")
-    public ResponseEntity<?> searchByTagged(@PathVariable String username) {
+    public ResponseEntity<?> searchByTagged(@PathVariable String username,
+                                            @RequestHeader("username") String caller) {
         return ResponseEntity.ok(
-                postService.searchByTagged(username)
+                postService.searchByTagged(username, caller)
                         .stream().map(mapper::toDto).collect(Collectors.toList())
         );
     }

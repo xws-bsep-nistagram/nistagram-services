@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
+import rs.ac.uns.ftn.nistagram.user.graph.messaging.producers.UserRelationsProducer;
 import rs.ac.uns.ftn.nistagram.user.graph.repositories.BlockedUserRepository;
 import rs.ac.uns.ftn.nistagram.user.graph.repositories.FollowerRepository;
 
@@ -19,10 +20,11 @@ public class BlockedUserService {
     private final BlockedUserRepository blockedUserRepository;
     private final UserConstraintChecker constraintChecker;
     private final FollowerRepository followerRepository;
+    private final UserRelationsProducer relationsProducer;
 
-    public List<User> findBlocked(String username){
+    public List<User> findBlocked(String username) {
         constraintChecker.userPresenceCheck(username);
-        if(!blockedUserRepository.hasBlockedUsers(username)){
+        if (!blockedUserRepository.hasBlockedUsers(username)) {
             log.info("User {} has no blocked users", username);
             return new ArrayList<>();
         }
@@ -33,8 +35,13 @@ public class BlockedUserService {
         return blockedUsers;
     }
 
+    public Boolean hasBlocked(String subject, String target) {
+        log.info("Checking if {} has blocked {}", subject, target);
+        return blockedUserRepository.hasBlocked(subject, target);
+    }
+
     @Transactional
-    public void block(String subject, String target){
+    public void block(String subject, String target) {
         log.info("Received a block request from {} to {}",
                 subject,
                 target);
@@ -48,13 +55,13 @@ public class BlockedUserService {
     }
 
     @Transactional
-    public void unblock(String subject, String target){
+    public void unblock(String subject, String target) {
         log.info("Received a unblock request from {} to {}",
                 subject,
                 target);
 
         constraintChecker.unblockRequestCheck(subject, target);
-        blockedUserRepository.unblock(subject,target);
+        blockedUserRepository.unblock(subject, target);
 
         log.info("User {} has unblocked {}",
                 subject,
@@ -71,7 +78,7 @@ public class BlockedUserService {
     }
 
     private void removeFollowRequestIfPresent(String subject, String target) {
-        if(followerRepository.sentFollowRequest(subject, target)) {
+        if (followerRepository.sentFollowRequest(subject, target)) {
             followerRepository.removeFollowRequest(subject, target);
             log.info("Follow request from user {} to user {} has been removed",
                     subject,
@@ -82,10 +89,12 @@ public class BlockedUserService {
     private void unfollowIfFollowing(String subject, String target) {
         if (followerRepository.isFollowing(subject, target)) {
             followerRepository.unfollow(subject, target);
+            relationsProducer.publishUserUnfollowed(subject, target);
             log.info("User {} is no longer following {}",
                     subject,
                     target);
         }
     }
+
 
 }

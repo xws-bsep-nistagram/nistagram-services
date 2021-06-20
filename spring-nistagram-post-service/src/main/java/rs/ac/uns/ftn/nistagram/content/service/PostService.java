@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -60,6 +61,7 @@ public class PostService {
 
         if (post.usersTagged())
             notificationProducer.publishUserTagged(post);
+
         contentProducer.publishPostCreated(post);
         log.info("[POST][C][P][CALL={}]", post.getAuthor());
 
@@ -102,7 +104,7 @@ public class PostService {
     }
 
     public List<Post> getAllPublicByUsername(String username) {
-        if(userClient.isPrivate(username)) {
+        if (userClient.isPrivate(username)) {
             throw new ProfileNotPublicException(username);
         }
         List<Post> publicPosts = getByUsername(username);
@@ -111,6 +113,7 @@ public class PostService {
 
     public List<Post> getByUsername(String caller, String username) {
         log.info("[POST][G][R][CALL={}][TGT={}]", caller, username);
+        graphClient.assertBlocked(username, caller);
         graphClient.assertFollow(caller, username);
         List<Post> posts = postRepository.getByUsername(username);
         log.info("[POST][G][C][CALL={}][TGT={}]", caller, username);
@@ -310,16 +313,26 @@ public class PostService {
         return postRepository.getCountByUsername(username);
     }
 
-    public List<Post> searchByLocation(String street) {
+    public List<Post> searchByLocation(String street, String caller) {
         log.info("[SEARCH-LOC][G][R][PARAM={}]", street);
         List<Post> foundPosts = postRepository.getByLocation(street);
+        foundPosts = filterBlocked(foundPosts, caller);
         log.info("Found {} posts", foundPosts.size());
         return foundPosts;
     }
 
-    public List<Post> searchByTagged(String username) {
+    private List<Post> filterBlocked(List<Post> foundPosts, String caller) {
+        return foundPosts
+                .stream()
+                .filter(post -> !graphClient.blocked(caller, post.getAuthor()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Post> searchByTagged(String username, String caller) {
         log.info("[SEARCH-TAG][G][R][PARAM={}]", username);
+        graphClient.assertBlocked(caller, username);
         List<Post> foundPosts = postRepository.getByTagged(username);
+        foundPosts = filterBlocked(foundPosts, caller);
         log.info("[SEARCH-TAG][C] Found {} posts", foundPosts.size());
         return foundPosts;
     }
