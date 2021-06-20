@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import rs.ac.uns.ftn.nistagram.user.domain.user.RegistrationRequest;
+import rs.ac.uns.ftn.nistagram.user.domain.user.request.RegistrationRequest;
 import rs.ac.uns.ftn.nistagram.user.domain.user.User;
 import rs.ac.uns.ftn.nistagram.user.http.auth.AuthClient;
 import rs.ac.uns.ftn.nistagram.user.http.auth.Credentials;
