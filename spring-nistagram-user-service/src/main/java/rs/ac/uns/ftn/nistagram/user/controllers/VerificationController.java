@@ -1,8 +1,11 @@
 package rs.ac.uns.ftn.nistagram.user.controllers;
 
 import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +40,18 @@ public class VerificationController {
         return pending.stream()
                 .map(mapper::map)
                 .collect(Collectors.toList());
+    }
+
+    @PutMapping("{id}")
+    public String verify(@PathVariable Long id) {
+        service.verify(id);
+        return "User successfully verified.";
+    }
+
+    @DeleteMapping("{id}")
+    public String decline(@PathVariable Long id) {
+        service.decline(id);
+        return "User verification declined.";
     }
 
 }

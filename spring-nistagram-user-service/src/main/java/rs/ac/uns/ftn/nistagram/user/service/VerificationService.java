@@ -37,4 +37,34 @@ public class VerificationService {
     public List<VerificationRequest> getPending() {
         return repository.findByStatus(VerificationStatus.PENDING);
     }
+
+    @Transactional(readOnly = true)
+    public VerificationRequest get(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new UserException("Verification request doesn't exist!"));
+    }
+
+    @Transactional
+    public void verify(Long id) {
+        VerificationRequest found = get(id);
+        if (found.getStatus() != VerificationStatus.PENDING) {
+            throw new UserException("Cannot decline request that isn't pending.");
+        }
+        String username = found.getUser().getUsername();
+        profileService.verify(username);
+        found.setStatus(VerificationStatus.ACCEPTED);
+        repository.save(found);
+        log.info("Accepted verification request from user '{}'", username);
+    }
+
+    @Transactional
+    public void decline(Long id) {
+        VerificationRequest found = get(id);
+        if (found.getStatus() != VerificationStatus.PENDING) {
+            throw new UserException("Cannot decline request that isn't pending.");
+        }
+        found.setStatus(VerificationStatus.DECLINED);
+        repository.save(found);
+        log.info("Declined verification request from user '{}'", found.getUser().getUsername());
+    }
 }
