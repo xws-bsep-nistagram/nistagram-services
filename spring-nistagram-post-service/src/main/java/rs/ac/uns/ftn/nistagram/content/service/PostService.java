@@ -22,9 +22,9 @@ import rs.ac.uns.ftn.nistagram.content.repository.post.*;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -59,8 +59,9 @@ public class PostService {
         Post savedPost = postRepository.save(post);
         log.info("[POST][C][C][CALL={}]", post.getAuthor());
 
-        if(post.usersTagged())
+        if (post.usersTagged())
             notificationProducer.publishUserTagged(post);
+
         contentProducer.publishPostCreated(post);
         log.info("[POST][C][P][CALL={}]", post.getAuthor());
 
@@ -86,7 +87,7 @@ public class PostService {
         log.info("[POST][G][R][CALL={}][ID={}]", caller, postId);
 
         Post post = postRepository.findById(postId).orElseThrow();
-        if(userClient.isPrivate(post.getAuthor()))
+        if (userClient.isPrivate(post.getAuthor()))
             graphClient.assertFollow(caller, post.getAuthor());
 
         log.info("[POST][G][C][CALL={}][ID={}]", caller, postId);
@@ -96,14 +97,14 @@ public class PostService {
     public Post getById(long postId) {
         Post post = postRepository.findById(postId).orElseThrow();
 
-        if(userClient.isPrivate(post.getAuthor()))
+        if (userClient.isPrivate(post.getAuthor()))
             throw new ProfileNotPublicException(post.getAuthor());
 
         return post;
     }
 
     public List<Post> getAllPublicByUsername(String username) {
-        if(userClient.isPrivate(username)) {
+        if (userClient.isPrivate(username)) {
             throw new ProfileNotPublicException(username);
         }
         List<Post> publicPosts = getByUsername(username);
@@ -112,6 +113,7 @@ public class PostService {
 
     public List<Post> getByUsername(String caller, String username) {
         log.info("[POST][G][R][CALL={}][TGT={}]", caller, username);
+        graphClient.assertBlocked(username, caller);
         graphClient.assertFollow(caller, username);
         List<Post> posts = postRepository.getByUsername(username);
         log.info("[POST][G][C][CALL={}][TGT={}]", caller, username);
@@ -127,6 +129,7 @@ public class PostService {
         log.info("[LIKE][C][R][CALL={}][ID={}]", caller, postId);
         addInteraction(postId, caller, UserInteraction.Sentiment.LIKE);
     }
+
     public void deleteLike(long postId, String caller) {
         removeInteraction(postId, caller, UserInteraction.Sentiment.LIKE);
     }
@@ -145,7 +148,7 @@ public class PostService {
                 .findByPostAndUser(postId, caller);
         Post post = postRepository.findById(postId).orElseThrow();
         if (optionalInteraction.isEmpty()) {
-            if(userClient.isPrivate(post.getAuthor()))
+            if (userClient.isPrivate(post.getAuthor()))
                 graphClient.assertFollow(caller, post.getAuthor());
             log.info("[{}][C][C][CALL={}][ID={}]", sentiment, caller, postId);
             interactionRepository.save(
@@ -153,10 +156,9 @@ public class PostService {
                             .username(caller)
                             .post(post)
                             .sentiment(sentiment)
-                        .build()
+                            .build()
             );
-        }
-        else {
+        } else {
             UserInteraction interaction = optionalInteraction.get();
             if (interaction.getSentiment() != sentiment) {
                 interaction.setSentiment(sentiment);
@@ -165,20 +167,22 @@ public class PostService {
             log.info("[{}][C][C][CALL={}][ID={}]", sentiment, caller, postId);
         }
 
-        if(sentiment.equals(UserInteraction.Sentiment.LIKE))
+        if (sentiment.equals(UserInteraction.Sentiment.LIKE))
             notificationProducer.publishPostLiked(post, caller);
+        else
+            notificationProducer.publishPostDisliked(post, caller);
 
     }
+
     private void removeInteraction(long postId, String caller, UserInteraction.Sentiment sentiment) {
         Optional<UserInteraction> optionalInteraction = interactionRepository.findByPostAndUser(postId, caller);
 
         if (optionalInteraction.isPresent()) {
             UserInteraction interaction = optionalInteraction.get();
-            if(interaction.getSentiment() == sentiment)
+            if (interaction.getSentiment() == sentiment)
                 interactionRepository.delete(interaction);
 
-        }
-        else
+        } else
             throw new EntityNotFoundException("Interaction doesn't exist");
 
     }
@@ -187,7 +191,7 @@ public class PostService {
         log.info("[COMMENT][C][R][ID={}][CALL={}]", postId, comment.getAuthor());
 
         Post commentedPost = postRepository.findById(postId).orElseThrow();
-        if(userClient.isPrivate(commentedPost.getAuthor()))
+        if (userClient.isPrivate(commentedPost.getAuthor()))
             graphClient.assertFollow(comment.getAuthor(), commentedPost.getAuthor());
 
         comment.setPost(commentedPost);
@@ -202,7 +206,7 @@ public class PostService {
         log.info("[SAVE][C][R][ID={}][CALL={}]", postId, caller);
 
         Post post = postRepository.findById(postId).orElseThrow();
-        if(userClient.isPrivate(post.getAuthor()))
+        if (userClient.isPrivate(post.getAuthor()))
             graphClient.assertFollow(caller, post.getAuthor());
 
         Optional<SavedPost> savedPost = savedPostRepository.findByUserAndPost(caller, postId);
@@ -242,7 +246,7 @@ public class PostService {
             throw new ExistingEntityException("Collection", collectionName);
 
         collectionRepository.save(
-            CustomPostCollection.builder().name(collectionName).owner(caller).build()
+                CustomPostCollection.builder().name(collectionName).owner(caller).build()
         );
         log.info("[COLLECTION][C][C][CALL={}][ID={}]", caller, collectionName);
     }
@@ -260,8 +264,8 @@ public class PostService {
 
         try {
             save(caller, postId); // This will throw if the post is already saved
+        } catch (RuntimeException ignored) {
         }
-        catch (RuntimeException ignored) {}
 
         postInCollectionRepository.save(PostInCollection.builder().collection(customPostCollection).post(post).build());
         log.info("[COLLECTION-POST][C][C][ID={}][CALL={}]", collectionName, caller);
@@ -298,7 +302,7 @@ public class PostService {
     public List<CustomPostCollection> getCollections(String caller) {
         List<CustomPostCollection> postCollections = collectionRepository.getByUser(caller);
 
-        if(postCollections == null)
+        if (postCollections == null)
             return new ArrayList<CustomPostCollection>();
 
         return postCollections;
@@ -309,16 +313,26 @@ public class PostService {
         return postRepository.getCountByUsername(username);
     }
 
-    public List<Post> searchByLocation(String street) {
+    public List<Post> searchByLocation(String street, String caller) {
         log.info("[SEARCH-LOC][G][R][PARAM={}]", street);
         List<Post> foundPosts = postRepository.getByLocation(street);
+        foundPosts = filterBlocked(foundPosts, caller);
         log.info("Found {} posts", foundPosts.size());
         return foundPosts;
     }
 
-    public List<Post> searchByTagged(String username) {
+    private List<Post> filterBlocked(List<Post> foundPosts, String caller) {
+        return foundPosts
+                .stream()
+                .filter(post -> !graphClient.blocked(caller, post.getAuthor()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Post> searchByTagged(String username, String caller) {
         log.info("[SEARCH-TAG][G][R][PARAM={}]", username);
+        graphClient.assertBlocked(caller, username);
         List<Post> foundPosts = postRepository.getByTagged(username);
+        foundPosts = filterBlocked(foundPosts, caller);
         log.info("[SEARCH-TAG][C] Found {} posts", foundPosts.size());
         return foundPosts;
     }

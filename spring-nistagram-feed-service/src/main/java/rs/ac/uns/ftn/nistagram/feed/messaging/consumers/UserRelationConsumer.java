@@ -32,6 +32,18 @@ public class UserRelationConsumer {
         feedService.removeTargetsContent(payload.getSubject(), payload.getTarget());
     }
 
+    @RabbitListener(queues = RabbitMQConfig.USER_MUTED_FEED_SERVICE)
+    public void consumeUserMuted(UserRelationshipRequest payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
+        acknowledgeMessage(channel, tag);
+        feedService.removeTargetsContent(payload.getSubject(), payload.getTarget());
+    }
+
+    @RabbitListener(queues = RabbitMQConfig.USER_UNMUTED_FEED_SERVICE)
+    public void consumeUserUnmuted(UserRelationshipRequest payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
+        acknowledgeMessage(channel, tag);
+        feedService.addTargetsContent(payload.getSubject(), payload.getTarget());
+    }
+
 
     private void acknowledgeMessage(Channel channel, long tag) throws IOException {
         try {

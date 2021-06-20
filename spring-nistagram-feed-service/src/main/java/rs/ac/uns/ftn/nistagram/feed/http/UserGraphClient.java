@@ -4,6 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
+import rs.ac.uns.ftn.nistagram.feed.http.payload.user.MutedRelationshipResponse;
 import rs.ac.uns.ftn.nistagram.feed.http.payload.user.UserPayload;
 
 import java.util.List;
@@ -16,4 +17,8 @@ public interface UserGraphClient {
 
     @GetMapping("/{username}/close-friends")
     List<UserPayload> getCloseFriends(@PathVariable("username") String username);
+
+    @GetMapping("/muted/{target}")
+    MutedRelationshipResponse hasMuted(@RequestHeader("username") String subject, @PathVariable String target);
+
 }

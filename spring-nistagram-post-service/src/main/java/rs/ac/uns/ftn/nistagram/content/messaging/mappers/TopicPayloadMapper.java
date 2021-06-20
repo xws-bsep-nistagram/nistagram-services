@@ -4,16 +4,17 @@ import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.Story;
 import rs.ac.uns.ftn.nistagram.content.messaging.payload.notification.PostCommentedTopicPayload;
-import rs.ac.uns.ftn.nistagram.content.messaging.payload.notification.PostLikedTopicPayload;
+import rs.ac.uns.ftn.nistagram.content.messaging.payload.notification.PostInteractionTopicPayload;
 import rs.ac.uns.ftn.nistagram.content.messaging.payload.notification.UserTaggedTopicPayload;
-import rs.ac.uns.ftn.nistagram.content.messaging.payload.post.PostTopicPayload;
 import rs.ac.uns.ftn.nistagram.content.messaging.payload.post.PostPayloadType;
-import rs.ac.uns.ftn.nistagram.content.messaging.payload.notification.NotificationTopicPayload;
+import rs.ac.uns.ftn.nistagram.content.messaging.payload.post.PostTopicPayload;
 import rs.ac.uns.ftn.nistagram.content.messaging.payload.story.StoryPayloadType;
 import rs.ac.uns.ftn.nistagram.content.messaging.payload.story.StoryTopicPayload;
 
+import java.time.LocalDateTime;
+
 public class TopicPayloadMapper {
-    public static PostTopicPayload toPayload(Post post, PostPayloadType postPayloadType){
+    public static PostTopicPayload toPayload(Post post, PostPayloadType postPayloadType) {
         return PostTopicPayload
                 .builder()
                 .contentId(post.getId())
@@ -23,7 +24,7 @@ public class TopicPayloadMapper {
                 .build();
     }
 
-    public static StoryTopicPayload toPayload(Story story, StoryPayloadType storyPayloadType){
+    public static StoryTopicPayload toPayload(Story story, StoryPayloadType storyPayloadType) {
         return StoryTopicPayload
                 .builder()
                 .contentId(story.getId())
@@ -34,20 +35,20 @@ public class TopicPayloadMapper {
                 .build();
     }
 
-    public static UserTaggedTopicPayload toPayload(Post post){
-            UserTaggedTopicPayload payload = UserTaggedTopicPayload
-                                                .builder()
-                                                .contentId(post.getId())
-                                                .time(post.getTime())
-                                                .subject(post.getAuthor())
-                                                .build();
+    public static UserTaggedTopicPayload toPayload(Post post) {
+        UserTaggedTopicPayload payload = UserTaggedTopicPayload
+                .builder()
+                .contentId(post.getId())
+                .time(post.getTime())
+                .subject(post.getAuthor())
+                .build();
 
-            post.getTags().forEach(payload::addTarget);
-            return payload;
+        post.getTags().forEach(payload::addTarget);
+        return payload;
     }
 
-    public static PostLikedTopicPayload toPayload(Post post, String subject){
-        return PostLikedTopicPayload
+    public static PostInteractionTopicPayload toPayload(Post post, String subject) {
+        return PostInteractionTopicPayload
                 .builder()
                 .contentId(post.getId())
                 .subject(subject)
@@ -57,7 +58,18 @@ public class TopicPayloadMapper {
 
     }
 
-    public static PostCommentedTopicPayload toPayload(Post post, Comment comment){
+    public static PostInteractionTopicPayload toPayload(Post post, LocalDateTime time, String subject) {
+        return PostInteractionTopicPayload
+                .builder()
+                .contentId(post.getId())
+                .subject(subject)
+                .target(post.getAuthor())
+                .time(time)
+                .build();
+
+    }
+
+    public static PostCommentedTopicPayload toPayload(Post post, Comment comment) {
         return PostCommentedTopicPayload
                 .builder()
                 .contentId(post.getId())

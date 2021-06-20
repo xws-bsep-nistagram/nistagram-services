@@ -37,18 +37,31 @@ public class ProfileService {
     public User get(String username) {
         log.info("Getting user by username: '{}'", username);
         return repository.findById(username).orElseThrow(() ->
-            new EntityNotFoundException(
-                    String.format("Profile for username '%s' doesn't exist!", username)
-            )
+                new EntityNotFoundException(
+                        String.format("Profile for username '%s' doesn't exist!", username)
+                )
         );
     }
-    @Transactional(readOnly = true)
-    public List<User> find(String usernameQuery) {
-        return repository.findAllByUsernameContains(usernameQuery);
+
+    @Transactional
+    public void verify(String username) {
+        User found = get(username);
+        found.verify();
+        repository.save(found);
     }
 
-    public boolean isPrivate(String username){
-        log.info("Getting user profile visibility for an user: '{}'",username);
+    @Transactional(readOnly = true)
+    public List<User> find(String usernameQuery, String caller) {
+        List<User> foundUsers = repository.findAllByUsernameContains(usernameQuery);
+
+        foundUsers = filterBlocked(caller, foundUsers);
+
+        return foundUsers;
+
+    }
+
+    public boolean isPrivate(String username) {
+        log.info("Getting user profile visibility for an user: '{}'", username);
         User user = repository.findById(username).orElseThrow(() ->
                 new EntityNotFoundException(
                         String.format("Profile for username '%s' doesn't exist!", username)
@@ -58,13 +71,17 @@ public class ProfileService {
     }
 
     @Transactional(readOnly = true)
-    public List<User> findTaggable(String usernameQuery) {
+    public List<User> findTaggable(String usernameQuery, String caller) {
         log.info("Finding taggable users by username search query: '{}'", usernameQuery);
-        return repository
+        List<User> foundUsers = repository
                 .findAllByUsernameContains(usernameQuery)
                 .stream()
                 .filter(User::isTaggable)
                 .collect(Collectors.toList());
+
+        foundUsers = filterBlocked(caller, foundUsers);
+
+        return foundUsers;
     }
 
     @Transactional
@@ -109,5 +126,14 @@ public class ProfileService {
         log.info("Fetched user stats for user '{}'", username);
         return statsMapper.map(followerStats, postStats);
     }
+
+    private List<User> filterBlocked(String caller, List<User> foundUsers) {
+        return foundUsers
+                .stream()
+                .filter(user -> !userGraphClient.hasBlocked(caller, user.getUsername()).isBlocked()
+                        && !userGraphClient.isBlockedBy(caller, user.getUsername()).isBlocked())
+                .collect(Collectors.toList());
+    }
+
 
 }

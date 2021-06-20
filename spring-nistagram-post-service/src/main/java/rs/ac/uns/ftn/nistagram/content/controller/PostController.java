@@ -24,30 +24,29 @@ public class PostController {
     private final PostService postService;
     private final DomainDTOMapper mapper;
 
-    // TODO Search by location and hashtag
 
     @PostMapping
     public ResponseEntity<?> create(@RequestHeader("username") String username,
                                     @Valid @RequestBody PostCreationDTO dto) {
         dto.setAuthor(username);
-        Post createdPost =  postService.create(mapper.toDomain(dto));
-        return ResponseEntity.ok(createdPost);
+        Post createdPost = postService.create(mapper.toDomain(dto));
+        return ResponseEntity.ok(mapper.toDto(createdPost));
     }
 
     @DeleteMapping("{postId}")
-    public ResponseEntity<?> delete( @RequestHeader("username") String username,
-                                     @PathVariable String postId) {
+    public ResponseEntity<?> delete(@RequestHeader("username") String username,
+                                    @PathVariable String postId) {
         postService.delete(username, Long.parseLong(postId));
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("user/{username}")
     public ResponseEntity<?> getByUsername(@RequestHeader("username") String caller,
-                                            @PathVariable String username) {
+                                           @PathVariable String username) {
         return ResponseEntity.ok(
                 postService.getByUsername(caller, username)
-                .stream().map(mapper::toDto)
-                .collect(Collectors.toList())
+                        .stream().map(mapper::toDto)
+                        .collect(Collectors.toList())
         );
     }
 
@@ -87,20 +86,22 @@ public class PostController {
                         .map(mapper::toDto)
                         .collect(Collectors.toList()));
     }
-    
+
     @PostMapping("search/location")
-    public ResponseEntity<?> searchByLocation(@RequestBody LocationSearchDTO dto) {
+    public ResponseEntity<?> searchByLocation(@RequestHeader("username") String caller,
+                                              @RequestBody LocationSearchDTO dto) {
         return ResponseEntity.ok(
-                postService.searchByLocation(dto.getStreet())
-                .stream().map(mapper::toDto).collect(Collectors.toList())
+                postService.searchByLocation(dto.getStreet(), caller)
+                        .stream().map(mapper::toDto).collect(Collectors.toList())
         );
     }
 
     @GetMapping("tagged/{username}")
-    public ResponseEntity<?> searchByTagged(@PathVariable String username) {
+    public ResponseEntity<?> searchByTagged(@PathVariable String username,
+                                            @RequestHeader("username") String caller) {
         return ResponseEntity.ok(
-            postService.searchByTagged(username)
-                .stream().map(mapper::toDto).collect(Collectors.toList())
+                postService.searchByTagged(username, caller)
+                        .stream().map(mapper::toDto).collect(Collectors.toList())
         );
     }
 
@@ -121,7 +122,7 @@ public class PostController {
 
     @DeleteMapping("like/{postId}")
     public ResponseEntity<?> deleteLike(@RequestHeader("username") String caller,
-                                  @PathVariable String postId) {
+                                        @PathVariable String postId) {
         postService.deleteLike(Long.parseLong(postId), caller);
         return ResponseEntity.ok().build();
     }
@@ -135,7 +136,7 @@ public class PostController {
 
     @DeleteMapping("dislike/{postId}")
     public ResponseEntity<?> deleteDislike(@RequestHeader("username") String caller,
-                                     @PathVariable String postId) {
+                                           @PathVariable String postId) {
         postService.deleteDislike(Long.parseLong(postId), caller);
         return ResponseEntity.ok().build();
     }
@@ -166,18 +167,18 @@ public class PostController {
     public ResponseEntity<?> getSaved(@RequestHeader("username") String caller) {
         return ResponseEntity.ok(
                 postService.getSaved(caller)
-                            .stream()
-                            .map(savedPost -> mapper.toDto(savedPost.getPost()))
-                            .collect(Collectors.toList())
+                        .stream()
+                        .map(savedPost -> mapper.toDto(savedPost.getPost()))
+                        .collect(Collectors.toList())
         );
     }
 
     @GetMapping("collection")
-    public ResponseEntity<?> getCollections(@RequestHeader("username") String caller){
+    public ResponseEntity<?> getCollections(@RequestHeader("username") String caller) {
         return ResponseEntity.ok(postService.getCollections(caller)
-                                            .stream()
-                                            .map(mapper::toDto)
-                                            .collect(Collectors.toList()));
+                .stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList()));
     }
 
     @PostMapping("collection/{collectionName}")

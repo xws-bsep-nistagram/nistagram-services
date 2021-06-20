@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
+import rs.ac.uns.ftn.nistagram.user.graph.messaging.producers.UserRelationsProducer;
 import rs.ac.uns.ftn.nistagram.user.graph.repositories.MutedUserRepository;
 
 import java.util.ArrayList;
@@ -17,12 +18,13 @@ public class MutedUserService {
 
     private final MutedUserRepository mutedUserRepository;
     private final UserConstraintChecker constraintChecker;
+    private final UserRelationsProducer userRelationsProducer;
 
     @Transactional
-    public List<User> findMutedUsers(String username){
+    public List<User> findMutedUsers(String username) {
         constraintChecker.userPresenceCheck(username);
 
-        if(!mutedUserRepository.hasMutedUsers(username)) {
+        if (!mutedUserRepository.hasMutedUsers(username)) {
             log.info("User {} has no muted users", username);
             return new ArrayList<>();
         }
@@ -34,6 +36,11 @@ public class MutedUserService {
 
     }
 
+    public Boolean hasMuted(String subject, String target) {
+        log.info("Checking if {} has muted {}", subject, target);
+        return mutedUserRepository.hasMuted(subject, target);
+    }
+
     @Transactional
     public void mute(String subject, String target) {
         log.info("Received a mute request from {} to {}",
@@ -43,6 +50,8 @@ public class MutedUserService {
         constraintChecker.muteRequestCheck(subject, target);
 
         mutedUserRepository.mute(subject, target);
+
+        userRelationsProducer.publishUserMuted(subject, target);
 
         log.info("User {} has muted {}",
                 subject,
@@ -59,9 +68,12 @@ public class MutedUserService {
 
         mutedUserRepository.unmute(subject, target);
 
+        userRelationsProducer.publishUserUnmuted(subject, target);
+
         log.info("User {} has unmuted {}",
                 subject,
                 target);
     }
+
 
 }

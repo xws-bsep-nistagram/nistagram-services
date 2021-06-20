@@ -9,11 +9,22 @@ import java.time.LocalDateTime;
 @Table(name = "reports")
 @Getter
 @Setter
-public abstract class BaseReport {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class BaseReport {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
     private LocalDateTime creationDate;
     private String reportedBy;
     private String reason;
+
+    public BaseReport(BaseReport baseReport) {
+        this.id = baseReport.id;
+        this.creationDate = baseReport.creationDate;
+        this.reportedBy = baseReport.reportedBy;
+        this.reason = baseReport.reason;
+    }
+
 }

@@ -7,10 +7,11 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.nistagram.notification.domain.NotificationType;
 import rs.ac.uns.ftn.nistagram.notification.messaging.config.RabbitMQConfig;
 import rs.ac.uns.ftn.nistagram.notification.messaging.mappers.TopicPayloadMapper;
 import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.PostCommentedTopicPayload;
-import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.PostLikedTopicPayload;
+import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.PostInteractionTopicPayload;
 import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.UserRelationTopicPayload;
 import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.UsersTaggedTopicPayload;
 import rs.ac.uns.ftn.nistagram.notification.services.NotificationService;
@@ -37,9 +38,21 @@ public class NotificationConsumer {
     }
 
     @RabbitListener(queues = RabbitMQConfig.POST_LIKED_NOTIFICATION_SERVICE)
-    public void consumePostLiked(PostLikedTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
+    public void consumePostLiked(PostInteractionTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
         acknowledgeMessage(channel, tag);
-        notificationService.handlePostLiked(TopicPayloadMapper.toDomain(payload));
+        notificationService.handlePostLiked(TopicPayloadMapper.toDomain(payload, NotificationType.NEW_LIKE));
+    }
+
+    @RabbitListener(queues = RabbitMQConfig.POST_DISLIKED_NOTIFICATION_SERVICE)
+    public void consumePostDisliked(PostInteractionTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
+        acknowledgeMessage(channel, tag);
+        notificationService.handlePostDisliked(TopicPayloadMapper.toDomain(payload, NotificationType.NEW_DISLIKE));
+    }
+
+    @RabbitListener(queues = RabbitMQConfig.POST_SHARED_NOTIFICATION_SERVICE)
+    public void consumePostShared(PostInteractionTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
+        acknowledgeMessage(channel, tag);
+        notificationService.handlePostShared(TopicPayloadMapper.toDomain(payload, NotificationType.NEW_SHARE));
     }
 
     @RabbitListener(queues = RabbitMQConfig.NEW_FOLLOW_NOTIFICATION_SERVICE)

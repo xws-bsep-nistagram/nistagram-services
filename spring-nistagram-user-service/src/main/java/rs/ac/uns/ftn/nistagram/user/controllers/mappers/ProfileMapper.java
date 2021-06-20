@@ -36,6 +36,8 @@ public class ProfileMapper {
         return new NotificationPreferencesViewDTO(
                 notificationPreferences.getContent().getComment(),
                 notificationPreferences.getContent().getLikes(),
+                notificationPreferences.getContent().getDislikes(),
+                notificationPreferences.getContent().getShares(),
                 notificationPreferences.getContent().getPhotosOfMe(),
                 notificationPreferences.getFollowing().isFollowerRequestNotificationEnabled(),
                 notificationPreferences.getFollowing().isFollowRequestAcceptedNotificationEnabled(),
@@ -44,7 +46,7 @@ public class ProfileMapper {
                 notificationPreferences.getMessage().isMessageNotificationEnabled());
     }
 
-    public PersonalData map (ProfileUpdateDTO dto) {
+    public PersonalData map(ProfileUpdateDTO dto) {
         PersonalData newData = new PersonalData();
         newData.setFullName(dto.getFullName());
         newData.setEmail(dto.getEmail());
@@ -56,7 +58,7 @@ public class ProfileMapper {
         return newData;
     }
 
-    public PrivacyData map (PrivacyDataUpdateDTO dto) {
+    public PrivacyData map(PrivacyDataUpdateDTO dto) {
         PrivacyData newData = new PrivacyData();
         newData.setProfilePrivate(dto.isProfilePrivate());
         newData.setTaggable(dto.isTaggable());
@@ -71,6 +73,8 @@ public class ProfileMapper {
         NotificationPreferences.Following following = new NotificationPreferences.Following();
         content.setComment(dto.getComment());
         content.setLikes(dto.getLikes());
+        content.setDislikes(dto.getDislikes());
+        content.setShares(dto.getShares());
         content.setPhotosOfMe(dto.getPhotosOfMe());
         message.setMessageNotificationEnabled(dto.isMessageNotificationEnabled());
         message.setMessageRequestNotificationEnabled(dto.isMessageRequestNotificationEnabled());

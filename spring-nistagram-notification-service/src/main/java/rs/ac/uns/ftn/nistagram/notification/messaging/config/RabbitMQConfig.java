@@ -17,6 +17,8 @@ public class RabbitMQConfig {
     public static final String FOLLOW_REQUESTED_NOTIFICATION_SERVICE = "follow.requested.notification-service";
     public static final String FOLLOW_ACCEPTED_NOTIFICATION_SERVICE = "follow.accepted.notification-service";
     public static final String NEW_FOLLOW_NOTIFICATION_SERVICE = "new.follow.notification-service";
+    public static final String POST_DISLIKED_NOTIFICATION_SERVICE = "post.disliked.notification-service";
+    public static final String POST_SHARED_NOTIFICATION_SERVICE = "post.shared.notification-service";
 
     @Bean
     public RabbitTemplate jsonRabbitTemplate(ConnectionFactory connectionFactory) {
@@ -58,5 +60,15 @@ public class RabbitMQConfig {
     @Bean
     public Queue newFollowNotificationQueue() {
         return new Queue(NEW_FOLLOW_NOTIFICATION_SERVICE);
+    }
+
+    @Bean
+    public Queue postDislikedNotificationQueue() {
+        return new Queue(POST_DISLIKED_NOTIFICATION_SERVICE);
+    }
+
+    @Bean
+    public Queue postSharedNotificationQueue() {
+        return new Queue(POST_SHARED_NOTIFICATION_SERVICE);
     }
 }

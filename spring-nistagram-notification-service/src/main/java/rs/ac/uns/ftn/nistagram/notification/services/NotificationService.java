@@ -104,6 +104,26 @@ public class NotificationService {
                 postLikedPreferencesSatisfied(postLikedNotification, preferences));
     }
 
+    public void handlePostDisliked(Notification postDislikedNotification) {
+        log.info("Handling post disliked notification for an user '{}'", postDislikedNotification.getTarget());
+
+        NotificationPreferencesDTO preferences = userClient.getNotificationPreferences(postDislikedNotification.getTarget());
+
+        handleNotification(postDislikedNotification,
+                postDislikedPreferencesSatisfied(postDislikedNotification, preferences));
+
+    }
+
+
+    public void handlePostShared(Notification postSharedNotification) {
+        log.info("Handling post shared notification for an user '{}'", postSharedNotification.getTarget());
+
+        NotificationPreferencesDTO preferences = userClient.getNotificationPreferences(postSharedNotification.getTarget());
+
+        handleNotification(postSharedNotification,
+                postSharedPreferencesSatisfied(postSharedNotification, preferences));
+    }
+
 
     public void handleTaggedUser(Notification taggedUserNotification) {
         log.info("Handling tagged on post notification for an user '{}'", taggedUserNotification.getTarget());
@@ -150,8 +170,21 @@ public class NotificationService {
                         && isFollowing(postLikedNotification.getSubject(), postLikedNotification.getTarget()));
     }
 
+    private boolean postDislikedPreferencesSatisfied(Notification postDislikedNotification, NotificationPreferencesDTO preferences) {
+        return preferences.dislikeNotificationEnabled() ||
+                (preferences.dislikeNotificationEnabledForFollowers()
+                        && isFollowing(postDislikedNotification.getSubject(), postDislikedNotification.getTarget()));
+    }
+
+    private boolean postSharedPreferencesSatisfied(Notification postSharedNotification, NotificationPreferencesDTO preferences) {
+        return preferences.shareNotificationEnabled() ||
+                (preferences.shareNotificationEnabledForFollowers()
+                        && isFollowing(postSharedNotification.getSubject(), postSharedNotification.getTarget()));
+    }
+
     private boolean isFollowing(String subject, String target) {
         return userGraphClient.checkFollowing(subject, target).isFollowing();
     }
+
 
 }

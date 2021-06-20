@@ -16,6 +16,8 @@ public class RabbitMQConfig {
     public static final String STORY_DELETED_FEED_SERVICE = "story.deleted.feed-service";
     public static final String USERS_TAGGED_NOTIFICATION_SERVICE = "user.tagged.notification-service";
     public static final String POST_LIKED_NOTIFICATION_SERVICE = "post.liked.notification-service";
+    public static final String POST_DISLIKED_NOTIFICATION_SERVICE = "post.disliked.notification-service";
+    public static final String POST_SHARED_NOTIFICATION_SERVICE = "post.shared.notification-service";
     public static final String POST_COMMENTED_NOTIFICATION_SERVICE = "post.commented.notification-service";
 
 
@@ -64,5 +66,15 @@ public class RabbitMQConfig {
     @Bean
     public Queue postCommentedNotificationQueue() {
         return new Queue(POST_COMMENTED_NOTIFICATION_SERVICE);
+    }
+
+    @Bean
+    public Queue postDislikedNotificationQueue() {
+        return new Queue(POST_DISLIKED_NOTIFICATION_SERVICE);
+    }
+
+    @Bean
+    public Queue postSharedNotificationQueue() {
+        return new Queue(POST_SHARED_NOTIFICATION_SERVICE);
     }
 }

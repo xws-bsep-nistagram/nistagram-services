@@ -17,6 +17,8 @@ public class RabbitMQConfig {
     public static final String STORY_DELETED_FEED_SERVICE = "story.deleted.feed-service";
     public static final String USER_FOLLOWED_FEED_SERVICE = "user.followed.feed-service";
     public static final String USER_UNFOLLOWED_FEED_SERVICE = "user.unfollowed.feed-service";
+    public static final String USER_MUTED_FEED_SERVICE = "user.unfollowed.feed-service";
+    public static final String USER_UNMUTED_FEED_SERVICE = "user.unfollowed.feed-service";
 
     @Bean
     public RabbitTemplate jsonRabbitTemplate(ConnectionFactory connectionFactory) {
@@ -31,23 +33,48 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue userCreatedFeedQueue(){
+    public Queue userCreatedFeedQueue() {
         return new Queue(USER_CREATED_FEED_SERVICE);
     }
+
     @Bean
     public Queue postCreatedFeedQueue() {
         return new Queue(POST_CREATED_FEED_SERVICE);
     }
+
     @Bean
-    public Queue postDeletedFeedQueue(){ return new Queue(POST_DELETED_FEED_SERVICE); }
+    public Queue postDeletedFeedQueue() {
+        return new Queue(POST_DELETED_FEED_SERVICE);
+    }
+
     @Bean
     public Queue storyCreatedFeedQueue() {
         return new Queue(STORY_CREATED_FEED_SERVICE);
     }
+
     @Bean
-    public Queue storyDeletedFeedQueue(){ return new Queue(STORY_DELETED_FEED_SERVICE); }
+    public Queue storyDeletedFeedQueue() {
+        return new Queue(STORY_DELETED_FEED_SERVICE);
+    }
+
     @Bean
-    public Queue userFollowedFeedQueue(){ return new Queue(USER_FOLLOWED_FEED_SERVICE); }
+    public Queue userFollowedFeedQueue() {
+        return new Queue(USER_FOLLOWED_FEED_SERVICE);
+    }
+
     @Bean
-    public Queue userUnfollowedFeedQueue(){ return new Queue(USER_UNFOLLOWED_FEED_SERVICE); }
+    public Queue userUnfollowedFeedQueue() {
+        return new Queue(USER_UNFOLLOWED_FEED_SERVICE);
+    }
+
+    @Bean
+    public Queue userMutedFeedQueue() {
+        return new Queue(USER_MUTED_FEED_SERVICE);
+    }
+
+    @Bean
+    public Queue userUnmutedFeedQueue() {
+        return new Queue(USER_UNMUTED_FEED_SERVICE);
+    }
+
 }

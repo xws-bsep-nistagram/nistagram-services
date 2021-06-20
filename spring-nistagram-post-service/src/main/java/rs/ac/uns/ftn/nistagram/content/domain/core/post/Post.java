@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.nistagram.content.domain.core.post;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import rs.ac.uns.ftn.nistagram.content.domain.core.UserContent;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.PostInCollection;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.collection.SavedPost;
@@ -13,12 +14,14 @@ import rs.ac.uns.ftn.nistagram.content.domain.core.story.ShareStory;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "posts")
 @Getter
 @Setter
+@ToString
 public class Post extends UserContent {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -49,6 +52,11 @@ public class Post extends UserContent {
 
     public boolean usersTagged() {
         return this.tags != null && !this.tags.isEmpty();
+    }
+
+    public void addReport(PostReport postReport) {
+        if (this.postReports == null) postReports = new ArrayList<>();
+        postReports.add(postReport);
     }
 
     @Entity
