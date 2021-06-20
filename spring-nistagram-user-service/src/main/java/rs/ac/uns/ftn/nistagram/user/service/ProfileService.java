@@ -110,4 +110,11 @@ public class ProfileService {
         return statsMapper.map(followerStats, postStats);
     }
 
+    @Transactional
+    public void verify(String username) {
+        User found = get(username);
+        found.verify();
+        repository.save(found);
+    }
+
 }

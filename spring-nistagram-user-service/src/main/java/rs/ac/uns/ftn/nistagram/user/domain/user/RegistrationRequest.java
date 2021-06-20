@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.nistagram.user.domain.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import rs.ac.uns.ftn.nistagram.user.domain.user.PersonalData;
 
 @AllArgsConstructor
 @Getter

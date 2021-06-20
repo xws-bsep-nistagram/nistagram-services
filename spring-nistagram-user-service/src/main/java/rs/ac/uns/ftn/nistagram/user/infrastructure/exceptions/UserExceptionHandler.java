@@ -30,6 +30,14 @@ public class UserExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserException.class)
+    String handleUserException(UserException e) {
+        log.info(e.getMessage());
+        log.trace(e.getMessage(), e);
+        return e.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     String handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
         log.info(e.getMessage());
