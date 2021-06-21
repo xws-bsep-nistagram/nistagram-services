@@ -22,7 +22,8 @@ public class ProfileMapper {
                 user.getPersonalData().getGender(),
                 user.getPersonalData().getDateOfBirth(),
                 user.getPersonalData().getWebsite(),
-                user.getPersonalData().getBio());
+                user.getPersonalData().getBio(),
+                user.getAdministrativeData().isVerified());
     }
 
     public PrivacyDataViewDTO map(PrivacyData privacyData) {

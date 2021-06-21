@@ -18,5 +18,6 @@ public class ProfileViewDTO {
     private LocalDate dateOfBirth;
     private String website;
     private String bio;
+    private boolean verified;
 
 }

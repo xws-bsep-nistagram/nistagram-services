@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("api/verification")
+@RequestMapping("api/users/verification")
 public class VerificationController {
 
     private final VerificationService verificationService;
