@@ -55,10 +55,14 @@ public class DomainDTOMapper {
                 .time(post.getTime())
                 .build();
 
-        post.getMediaUrls().forEach(link -> dto.addMediaUrl(link.getUrl()));
-        post.getComments().forEach(comment -> dto.addComment(toDto(comment)));
-        post.getUserInteractions().forEach(interaction -> dto.addInteraction(toDto(interaction)));
-        post.getTags().forEach(tag -> dto.addTag(tag.getTag()));
+        if (post.getMediaUrls() != null)
+            post.getMediaUrls().forEach(link -> dto.addMediaUrl(link.getUrl()));
+        if (post.getComments() != null)
+            post.getComments().forEach(comment -> dto.addComment(toDto(comment)));
+        if (post.getUserInteractions() != null)
+            post.getUserInteractions().forEach(interaction -> dto.addInteraction(toDto(interaction)));
+        if (post.getTags() != null)
+            post.getTags().forEach(tag -> dto.addTag(tag.getTag()));
 
         return dto;
     }

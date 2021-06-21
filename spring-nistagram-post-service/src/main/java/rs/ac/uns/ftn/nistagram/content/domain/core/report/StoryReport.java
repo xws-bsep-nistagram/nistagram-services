@@ -28,4 +28,3 @@ public class StoryReport extends BaseReport {
     }
 
 }
-

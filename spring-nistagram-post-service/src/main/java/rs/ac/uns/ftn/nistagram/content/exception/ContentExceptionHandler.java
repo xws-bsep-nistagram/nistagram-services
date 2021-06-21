@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 
 @ControllerAdvice
 @Slf4j
@@ -41,6 +42,12 @@ public class ContentExceptionHandler {
     public ResponseEntity<?> handleOtherRuntimeErrors(RuntimeException e) {
         log.error(e.getMessage(), e);
         return ResponseEntity.internalServerError().body("An internal server error occurred.");
+    }
+
+    @ExceptionHandler(UserBlockedException.class)
+    public ResponseEntity<?> handleUserBlockedException(UserBlockedException e) {
+        log.warn(e.getMessage());
+        return ResponseEntity.ok(new ArrayList<>());
     }
 
 }
