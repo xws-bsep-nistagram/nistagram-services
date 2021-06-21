@@ -3,16 +3,19 @@ package rs.ac.uns.ftn.nistagram.auth.controllers;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.AuthRequestDTO;
 import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.AuthTokenDTO;
 import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.PasswordResetRequestDTO;
 import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.RegistrationRequestDTO;
+import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.RolesDTO;
 import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.TokenRequestDTO;
 import rs.ac.uns.ftn.nistagram.auth.controllers.mappers.AuthRequestMapper;
 import rs.ac.uns.ftn.nistagram.auth.controllers.mappers.AuthTokenMapper;
 import rs.ac.uns.ftn.nistagram.auth.controllers.mappers.PasswordResetRequestMapper;
 import rs.ac.uns.ftn.nistagram.auth.controllers.mappers.RegistrationRequestMapper;
+import rs.ac.uns.ftn.nistagram.auth.controllers.mappers.RoleMapper;
 import rs.ac.uns.ftn.nistagram.auth.domain.AuthToken;
 import rs.ac.uns.ftn.nistagram.auth.domain.PasswordResetBundle;
 import rs.ac.uns.ftn.nistagram.auth.service.AuthService;
@@ -29,11 +32,18 @@ public class AuthController {
     private final RegistrationRequestMapper registrationMapper;
     private final PasswordResetRequestMapper passwordResetRequestMapper;
     private final AuthTokenMapper tokenMapper;
+    private final RoleMapper roleMapper;
 
     @PostMapping
     public ResponseEntity<Void> authenticate(@RequestBody AuthRequestDTO authRequest) {
         String generatedToken = authService.authenticate(authMapper.toDomain(authRequest));
         return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, generatedToken).build();
+    }
+
+    @GetMapping
+    public RolesDTO getRoles(@RequestHeader("username") String username) {
+        UserDetails found = authService.getUser(username);
+        return roleMapper.map(found);
     }
 
     @PostMapping("register")

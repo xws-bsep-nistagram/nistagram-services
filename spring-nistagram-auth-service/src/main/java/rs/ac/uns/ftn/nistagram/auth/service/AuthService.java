@@ -32,11 +32,16 @@ public class AuthService {
 
     public String authenticate(AuthRequest authRequest) {
         authenticationManager.authenticate(authRequest.convert());
-        UserDetails userDetails = credentialsService.loadUserByUsername(authRequest.getUsername());
+        UserDetails userDetails = getUser(authRequest.getUsername());
 
         log.info("Successfully authenticated user '{}' with roles: {}", userDetails.getUsername(), userDetails.getAuthorities());
 
         return encryptDetails(userDetails);
+    }
+
+    @Transactional(readOnly = true)
+    public UserDetails getUser(String username) {
+        return credentialsService.loadUserByUsername(username);
     }
 
     @Transactional
