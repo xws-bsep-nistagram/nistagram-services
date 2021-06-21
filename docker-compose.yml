@@ -1,0 +1,235 @@
+version : '3'
+services :
+  rabbitmq :
+    image : rabbitmq:3-management-alpine
+    container_name : 'rabbitmq'
+    restart : on-failure
+    ports :
+      - 5672:5672
+      - 15672:15672
+    networks :
+      - backend
+
+  neo4j-db :
+    image : neo4j:latest
+    container_name : neo4j-db
+    ports :
+      - "${NEO4J_DEFAULT_HTTP_PORT}:7474"
+      - "${NEO4J_DEFAULT_BOLT_PORT}:7687"
+    volumes :
+      - ${NEO4J_LOCAL_PATH}/data:/data
+      - ${NEO4J_LOCAL_PATH}/logs:/logs
+      - ${NEO4J_LOCAL_PATH}/import:/var/lib/neo4j/import
+      - ${NEO4J_LOCAL_PATH}/plugins:/plugins
+    environment :
+      NEO4J_AUTH : "${NEO4J_USERNAME}/${NEO4J_PASSWORD}"
+    networks :
+      - database
+
+  mysql-db :
+    image : mysql:latest
+    container_name : mysql-db
+    restart : on-failure
+    ports :
+      - "${MYSQL_PORT_EXTERNAL}:3306"
+    networks :
+      - database
+    environment :
+      MYSQL_ROOT_PASSWORD : "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_USER : "${MYSQL_USER}"
+      MYSQL_PASSWORD : "${MYSQL_PASSWORD}"
+    volumes :
+      - ${MYSQL_LOCAL_PATH}/data:/var/lib/mysql
+
+  gateway :
+    image : nistagram/api-gateway
+    container_name : gateway
+    build :
+      context : ./spring-nistagram-api-gateway
+      dockerfile : Dockerfile
+      target : "${STAGE}"
+    ports :
+      - "${API_GATEWAY_PORT}:${API_GATEWAY_PORT}"
+    restart : unless-stopped
+    depends_on :
+      - user-service
+      - user-graph-service
+      - auth-service
+      - post-service
+      - feed-service
+      - notification-service
+    environment :
+      API_GATEWAY_PORT : "${API_GATEWAY_PORT}"
+      AUTH_SERVICE_PORT : "${AUTH_SERVICE_PORT}"
+      POST_SERVICE_PORT : "${POST_SERVICE_PORT}"
+      USER_SERVICE_PORT : "${USER_SERVICE_PORT}"
+      USER_GRAPH_SERVICE_PORT : "${USER_GRAPH_SERVICE_PORT}"
+      FEED_SERVICE_PORT : "${FEED_SERVICE_PORT}"
+      NOTIFICATION_SERVICE_PORT : "${NOTIFICATION_SERVICE_PORT}"
+      JWT_SECRET : "${JWT_SECRET}"
+    networks :
+      - backend
+
+  auth-service :
+    image : nistagram/auth-service
+    container_name : auth-service
+    build :
+      context : ./spring-nistagram-auth-service
+      dockerfile : Dockerfile
+      target : "${STAGE}"
+    ports :
+      - "${AUTH_SERVICE_PORT}:${AUTH_SERVICE_PORT}"
+    restart : unless-stopped
+    depends_on :
+      - mysql-db
+    environment :
+      AUTH_SERVICE_PORT : "${AUTH_SERVICE_PORT}"
+      MYSQL_HOST : "${MYSQL_HOST}"
+      MYSQL_PORT : "${MYSQL_PORT}"
+      AUTH_DB_NAME : "${AUTH_DB_NAME}"
+      MYSQL_ROOT : "${MYSQL_ROOT}"
+      MYSQL_ROOT_PASSWORD : "${MYSQL_ROOT_PASSWORD}"
+      JWT_SECRET : "${JWT_SECRET}"
+      MAIL_USERNAME : "${MAIL_USERNAME}"
+      MAIL_PASSWORD : "${MAIL_PASSWORD}"
+    networks :
+      - backend
+      - database
+    volumes :
+      - ${LOG_PATH}/auth-service:/app/logs/
+
+  post-service :
+    image : nistagram/post-service
+    container_name : post-service
+    build :
+      context : ./spring-nistagram-post-service
+      dockerfile : Dockerfile
+      target : "${STAGE}"
+    ports :
+      - "${POST_SERVICE_PORT}:${POST_SERVICE_PORT}"
+    restart : unless-stopped
+    depends_on :
+      - mysql-db
+    environment :
+      POST_SERVICE_PORT : "${POST_SERVICE_PORT}"
+      MYSQL_HOST : "${MYSQL_HOST}"
+      MYSQL_PORT : "${MYSQL_PORT}"
+      POST_DB_NAME : "${POST_DB_NAME}"
+      MYSQL_ROOT : "${MYSQL_ROOT}"
+      MYSQL_ROOT_PASSWORD : "${MYSQL_ROOT_PASSWORD}"
+    networks :
+      - backend
+      - database
+    volumes :
+      - ${LOG_PATH}/post-service:/app/logs/
+
+  user-service :
+    image : nistagram/user-service
+    container_name : user-service
+    build :
+      context : ./spring-nistagram-user-service
+      dockerfile : Dockerfile
+      target : "${STAGE}"
+    ports :
+      - "${USER_SERVICE_PORT}:${USER_SERVICE_PORT}"
+    restart : unless-stopped
+    depends_on :
+      - mysql-db
+      - rabbitmq
+    environment :
+      USER_SERVICE_PORT : "${USER_SERVICE_PORT}"
+      MYSQL_HOST : "${MYSQL_HOST}"
+      MYSQL_PORT : "${MYSQL_PORT}"
+      USER_DB_NAME : "${USER_DB_NAME}"
+      MYSQL_ROOT : "${MYSQL_ROOT}"
+      MYSQL_ROOT_PASSWORD : "${MYSQL_ROOT_PASSWORD}"
+    networks :
+      - backend
+      - database
+    volumes :
+      - ${LOG_PATH}/user-service:/app/logs/
+
+  user-graph-service :
+    image : nistagram/user-graph-service
+    container_name : user-graph-service
+    build :
+      context : ./spring-nistagram-user-graph-service
+      dockerfile : Dockerfile
+      target : "${STAGE}"
+    ports :
+      - "${USER_GRAPH_SERVICE_PORT}:${USER_GRAPH_SERVICE_PORT}"
+    restart : unless-stopped
+    depends_on :
+      - neo4j-db
+      - rabbitmq
+    environment :
+      USER_GRAPH_SERVICE_PORT : "${USER_GRAPH_SERVICE_PORT}"
+      NEO4J_HOST : "${NEO4J_HOST}"
+      NEO4J_DEFAULT_BOLT_PORT : "${NEO4J_DEFAULT_BOLT_PORT}"
+      NEO4J_USERNAME : "${NEO4J_USERNAME}"
+      NEO4J_PASSWORD : "${NEO4J_PASSWORD}"
+    networks :
+      - backend
+      - database
+    volumes :
+      - ${LOG_PATH}/user-graph-service:/app/logs/
+
+  feed-service :
+    image : nistagram/feed-service
+    container_name : feed-service
+    build :
+      context : ./spring-nistagram-feed-service
+      dockerfile : Dockerfile
+      target : "${STAGE}"
+    ports :
+      - "${FEED_SERVICE_PORT}:${FEED_SERVICE_PORT}"
+    restart : unless-stopped
+    depends_on :
+      - mysql-db
+      - rabbitmq
+    environment :
+      FEED_SERVICE_PORT : "${FEED_SERVICE_PORT}"
+      MYSQL_HOST : "${MYSQL_HOST}"
+      MYSQL_PORT : "${MYSQL_PORT}"
+      FEED_DB_NAME : "${FEED_DB_NAME}"
+      MYSQL_ROOT : "${MYSQL_ROOT}"
+      MYSQL_ROOT_PASSWORD : "${MYSQL_ROOT_PASSWORD}"
+    networks :
+      - backend
+      - database
+    volumes :
+      - ${LOG_PATH}/feed-service:/app/logs/
+
+  notification-service :
+    image : nistagram/notification-service
+    container_name : notification-service
+    build :
+      context : ./spring-nistagram-notification-service
+      dockerfile : Dockerfile
+      target : "${STAGE}"
+    ports :
+      - "${NOTIFICATION_SERVICE_PORT}:${NOTIFICATION_SERVICE_PORT}"
+    restart : unless-stopped
+    depends_on :
+      - mysql-db
+      - rabbitmq
+    environment :
+      NOTIFICATION_SERVICE_PORT : "${NOTIFICATION_SERVICE_PORT}"
+      MYSQL_HOST : "${MYSQL_HOST}"
+      MYSQL_PORT : "${MYSQL_PORT}"
+      NOTIFICATION_DB_NAME : "${NOTIFICATION_DB_NAME}"
+      MYSQL_ROOT : "${MYSQL_ROOT}"
+      MYSQL_ROOT_PASSWORD : "${MYSQL_ROOT_PASSWORD}"
+    networks :
+      - backend
+      - database
+    volumes :
+      - ${LOG_PATH}/notification-service:/app/logs/
+
+networks :
+  backend :
+    name : backend
+    driver : bridge
+  database :
+    name : database
+    driver : bridge
