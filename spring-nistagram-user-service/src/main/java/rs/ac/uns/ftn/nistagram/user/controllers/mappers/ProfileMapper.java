@@ -93,7 +93,8 @@ public class ProfileMapper {
                 found.getUsername(),
                 found.getPersonalData().getFullName(),
                 found.getPersonalData().getBio(),
-                found.getPersonalData().getWebsite()
+                found.getPersonalData().getWebsite(),
+                found.getAdministrativeData().isVerified()
         );
     }
 

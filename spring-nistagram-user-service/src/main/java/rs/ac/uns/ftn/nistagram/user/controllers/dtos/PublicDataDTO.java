@@ -11,5 +11,6 @@ public class PublicDataDTO {
     private String fullName;
     private String bio;
     private String website;
+    private boolean verified;
 
 }
