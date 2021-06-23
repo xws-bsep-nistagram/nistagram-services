@@ -155,31 +155,34 @@ public class NotificationService {
     private boolean commentsPreferencesSatisfied(Notification postCommentedNotification, NotificationPreferencesDTO preferences) {
         return preferences.commentNotificationEnabled() ||
                 (preferences.commentNotificationEnabledForFollowers()
-                        && isFollowing(postCommentedNotification.getSubject(), postCommentedNotification.getTarget()));
+                        && isFollowing(postCommentedNotification.getTarget(), postCommentedNotification.getSubject()));
     }
 
     private boolean taggedPreferencesSatisfied(Notification taggedUserNotification, NotificationPreferencesDTO preferences) {
         return preferences.tagNotificationEnabled() ||
                 (preferences.tagNotificationEnabledForFollowers()
-                        && isFollowing(taggedUserNotification.getSubject(), taggedUserNotification.getTarget()));
+                        && isFollowing(taggedUserNotification.getTarget(), taggedUserNotification.getSubject()));
     }
 
     private boolean postLikedPreferencesSatisfied(Notification postLikedNotification, NotificationPreferencesDTO preferences) {
+        System.out.println(preferences.toString());
         return preferences.likeNotificationEnabled() ||
                 (preferences.likeNotificationEnabledForFollowers()
-                        && isFollowing(postLikedNotification.getSubject(), postLikedNotification.getTarget()));
+                        && isFollowing(postLikedNotification.getTarget(), postLikedNotification.getSubject()));
     }
 
     private boolean postDislikedPreferencesSatisfied(Notification postDislikedNotification, NotificationPreferencesDTO preferences) {
+        System.out.println(preferences.toString());
         return preferences.dislikeNotificationEnabled() ||
                 (preferences.dislikeNotificationEnabledForFollowers()
-                        && isFollowing(postDislikedNotification.getSubject(), postDislikedNotification.getTarget()));
+                        && isFollowing(postDislikedNotification.getTarget(), postDislikedNotification.getSubject()));
     }
 
     private boolean postSharedPreferencesSatisfied(Notification postSharedNotification, NotificationPreferencesDTO preferences) {
+        System.out.println(preferences.toString());
         return preferences.shareNotificationEnabled() ||
                 (preferences.shareNotificationEnabledForFollowers()
-                        && isFollowing(postSharedNotification.getSubject(), postSharedNotification.getTarget()));
+                        && isFollowing(postSharedNotification.getTarget(), postSharedNotification.getSubject()));
     }
 
     private boolean isFollowing(String subject, String target) {
