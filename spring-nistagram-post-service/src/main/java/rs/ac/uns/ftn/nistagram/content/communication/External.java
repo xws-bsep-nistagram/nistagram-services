@@ -20,12 +20,13 @@ public class External {
     @FeignClient(name = graphService, url = graphServiceDomain + "api/user-graph/")
     public interface GraphClient {
 
-        @GetMapping("follows/{author}")
-        BinaryQueryResponse checkFollowing(@RequestHeader("username") String caller,
-                                           @PathVariable String author);
+        @GetMapping("follows/{target}")
+        BinaryQueryResponse checkFollowing(@RequestHeader("username") String subject,
+                                           @PathVariable String target);
 
-        @GetMapping("{caller}/close-friends/{author}")
-        BinaryQueryResponse checkCloseFriends(@PathVariable String caller, @PathVariable String author);
+        @GetMapping("/close-friends/{target}")
+        CloseFriendRelationshipResponse checkCloseFriends(@RequestHeader("username") String subject,
+                                                          @PathVariable String target);
 
         @GetMapping("/blocked/{target}")
         BlockedRelationshipResponse hasBlocked(@RequestHeader("username") String subject,
@@ -70,6 +71,18 @@ public class External {
         }
     }
 
+    public static class CloseFriendRelationshipResponse {
+        private boolean closeFriend;
+
+        public boolean isCloseFriend() {
+            return closeFriend;
+        }
+
+        public void setCloseFriend(boolean closeFriend) {
+            this.closeFriend = closeFriend;
+        }
+    }
+
     public static class ProfileVisibility {
 
         private boolean profilePrivate;
@@ -90,13 +103,13 @@ public class External {
 
         public void assertFollow(String follower, String followed) {
             if (follower.equals(followed)) return;
-            boolean follows = graphClient.checkFollowing(follower, followed).getStatus();
-            if (!follows) throw new NotFollowException(follower, followed);
+            boolean follows = graphClient.checkFollowing(followed, follower).getStatus();
+            if (!follows) throw new NotFollowException(followed, follower);
         }
 
         public void assertCloseFriends(String follower, String followed) {
             if (follower.equals(followed)) return;
-            boolean closeFriends = graphClient.checkCloseFriends(follower, followed).getStatus();
+            boolean closeFriends = graphClient.checkCloseFriends(follower, followed).isCloseFriend();
             if (!closeFriends) throw new NotCloseFriendsException(follower, followed);
         }
 
