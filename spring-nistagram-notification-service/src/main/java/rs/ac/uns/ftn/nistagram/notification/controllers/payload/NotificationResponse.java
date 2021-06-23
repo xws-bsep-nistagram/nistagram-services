@@ -16,6 +16,7 @@ public class NotificationResponse {
     private Long contentId;
     private boolean seen;
     private LocalDateTime time;
+    private String subject;
     private String text;
     private NotificationType notificationType;
 
