@@ -3,13 +3,17 @@ package rs.ac.uns.ftn.nistagram.content.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rs.ac.uns.ftn.nistagram.content.controller.dto.input.report.PostReportResponse;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.report.ReportRequest;
+import rs.ac.uns.ftn.nistagram.content.controller.dto.input.report.StoryReportResponse;
 import rs.ac.uns.ftn.nistagram.content.controller.mapper.DomainDTOMapper;
 import rs.ac.uns.ftn.nistagram.content.domain.core.report.PostReport;
 import rs.ac.uns.ftn.nistagram.content.domain.core.report.StoryReport;
 import rs.ac.uns.ftn.nistagram.content.service.ReportService;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -38,4 +42,37 @@ public class ReportController {
                 .reportStory(mapper.toDomain(reportRequest, username), storyId);
         return ResponseEntity.ok(mapper.toDto(report));
     }
+
+    @GetMapping("posts")
+    public ResponseEntity<?> getAllPostReports() {
+        List<PostReportResponse> postReportResponses = reportService.getReportedPosts()
+                .stream().map(mapper::toDto)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(postReportResponses);
+    }
+
+    @GetMapping("stories")
+    public ResponseEntity<?> getAllStoryReports() {
+        List<StoryReportResponse> storyReportResponses = reportService.getReportedStories()
+                .stream().map(mapper::toDto)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(storyReportResponses);
+    }
+
+    @DeleteMapping("post/{postReportId}")
+    public ResponseEntity<?> deletePostReport(@PathVariable Long postReportId) {
+        PostReportResponse deletedPostReport = mapper.toDto(reportService.deletePostReport(postReportId));
+
+        return ResponseEntity.ok(deletedPostReport);
+    }
+
+    @DeleteMapping("story/{storyReportId}")
+    public ResponseEntity<?> deleteStoryReport(@PathVariable Long storyReportId) {
+        StoryReportResponse deletedStoryReport = mapper.toDto(reportService.deleteStoryReport(storyReportId));
+
+        return ResponseEntity.ok(deletedStoryReport);
+    }
+
 }
