@@ -71,7 +71,11 @@ public class PostService {
     public void delete(String caller, long postId) {
         log.info("[POST][D][R][CALL={}][ID={}]", caller, postId);
 
-        Post post = postRepository.findById(postId).orElseThrow();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Post with an id '%d' doesn't exist", postId)
+                ));
+
         if (!post.getAuthor().equals(caller))
             throw new OwnershipException();
         else {
@@ -83,10 +87,29 @@ public class PostService {
         }
     }
 
+    public void delete(long postId) {
+        log.info("[POST][D][R][CALL=ADMIN][ID={}]", postId);
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Post with an id '%d' doesn't exist", postId)
+                ));
+
+        postRepository.delete(post);
+        log.info("[POST][D][C][CALL=ADMIN][ID={}]", postId);
+
+        contentProducer.publishPostDeleted(post);
+        log.info("[POST][D][P][CALL=ADMIN][ID={}]", postId);
+
+    }
+
     public Post getById(long postId, String caller) {
         log.info("[POST][G][R][CALL={}][ID={}]", caller, postId);
 
-        Post post = postRepository.findById(postId).orElseThrow();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Post with an id '%d' doesn't exist", postId)
+                ));
         if (userClient.isPrivate(post.getAuthor()))
             graphClient.assertFollow(caller, post.getAuthor());
 
@@ -95,7 +118,10 @@ public class PostService {
     }
 
     public Post getById(long postId) {
-        Post post = postRepository.findById(postId).orElseThrow();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Post with an id '%d' doesn't exist", postId)
+                ));
 
         if (userClient.isPrivate(post.getAuthor()))
             throw new ProfileNotPublicException(post.getAuthor());
@@ -146,7 +172,12 @@ public class PostService {
     private void addInteraction(long postId, String caller, UserInteraction.Sentiment sentiment) {
         Optional<UserInteraction> optionalInteraction = interactionRepository
                 .findByPostAndUser(postId, caller);
-        Post post = postRepository.findById(postId).orElseThrow();
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Post with an id '%d' doesn't exist", postId)
+                ));
+
         if (optionalInteraction.isEmpty()) {
             if (userClient.isPrivate(post.getAuthor()))
                 graphClient.assertFollow(caller, post.getAuthor());
@@ -190,7 +221,11 @@ public class PostService {
     public void comment(Comment comment, long postId) {
         log.info("[COMMENT][C][R][ID={}][CALL={}]", postId, comment.getAuthor());
 
-        Post commentedPost = postRepository.findById(postId).orElseThrow();
+        Post commentedPost = postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Post with an id '%d' doesn't exist", postId)
+                ));
+
         if (userClient.isPrivate(commentedPost.getAuthor()))
             graphClient.assertFollow(comment.getAuthor(), commentedPost.getAuthor());
 
@@ -205,7 +240,11 @@ public class PostService {
     public void save(String caller, long postId) {
         log.info("[SAVE][C][R][ID={}][CALL={}]", postId, caller);
 
-        Post post = postRepository.findById(postId).orElseThrow();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Post with an id '%d' doesn't exist", postId)
+                ));
+
         if (userClient.isPrivate(post.getAuthor()))
             graphClient.assertFollow(caller, post.getAuthor());
 
@@ -223,7 +262,11 @@ public class PostService {
     public void unsave(String caller, long postId) {
         log.info("[SAVE][D][R][ID={}][CALL={}]", postId, caller);
 
-        SavedPost savedPost = savedPostRepository.findByUserAndPost(caller, postId).orElseThrow();
+        SavedPost savedPost = savedPostRepository.findByUserAndPost(caller, postId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Saved post with an id '%d' doesn't exist", postId)
+                ));
+
         savedPostRepository.delete(savedPost);
 
         // Fetch collection IDs from this user
@@ -256,9 +299,15 @@ public class PostService {
 
         CustomPostCollection customPostCollection =
                 collectionRepository.getByUserAndName(caller, collectionName)
-                        .orElseThrow();
+                        .orElseThrow(() -> new EntityNotFoundException(
+                                String.format("Post collection with an id '%d' doesn't exist", postId)
+                        ));
 
-        Post post = postRepository.findById(postId).orElseThrow();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Post with an id '%d' doesn't exist", postId)
+                ));
+
         if (postInCollectionRepository.postFromCollection(post.getId(), customPostCollection.getId()).isPresent())
             throw new NistagramException("Post already present in this collection");
 
@@ -282,8 +331,13 @@ public class PostService {
     public List<PostInCollection> getAllFromCollection(String caller, String collectionName) {
         log.info("[COLLECTION-POST][G][R][ID={}][CALL={}]", collectionName, caller);
 
-        long collectionId =
-                collectionRepository.getByUserAndName(caller, collectionName).orElseThrow().getId();
+        CustomPostCollection foundCollection = collectionRepository
+                .getByUserAndName(caller, collectionName)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Collection with  name '%s' doesn't exist", collectionName)
+                ));
+
+        long collectionId = foundCollection.getId();
 
         log.info("[COLLECTION-POST][G][C][ID={}][CALL={}]", collectionName, caller);
         return postInCollectionRepository.allPostsFromCollection(collectionId);
@@ -303,7 +357,7 @@ public class PostService {
         List<CustomPostCollection> postCollections = collectionRepository.getByUser(caller);
 
         if (postCollections == null)
-            return new ArrayList<CustomPostCollection>();
+            return new ArrayList<>();
 
         return postCollections;
     }
@@ -343,4 +397,6 @@ public class PostService {
         log.info("[LD][G][C][TGT={}]", username);
         return foundPosts;
     }
+
+
 }

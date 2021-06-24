@@ -17,6 +17,7 @@ import rs.ac.uns.ftn.nistagram.content.messaging.producers.NotificationProducer;
 import rs.ac.uns.ftn.nistagram.content.repository.story.StoryHighlightsRepository;
 import rs.ac.uns.ftn.nistagram.content.repository.story.StoryRepository;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -54,7 +55,11 @@ public class StoryService {
     public void delete(long storyId, String caller) {
         log.info("[STORY][D][R][CALL={}][ID={}]", caller, storyId);
 
-        Story story = storyRepository.findById(storyId).orElseThrow();
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Story with an id '%d' doesn't exist", storyId)
+                ));
+
         if (!story.getAuthor().equals(caller))
             throw new OwnershipException();
         else {
@@ -64,6 +69,21 @@ public class StoryService {
             contentProducer.publishStoryDeleted(story);
             log.info("[STORY][D][P][CALL={}][ID={}]", caller, storyId);
         }
+    }
+
+    public void delete(long storyId) {
+        log.info("[STORY][D][R][CALL=ADMIN][ID={}]", storyId);
+
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Story with an id '%d' doesn't exist", storyId)
+                ));
+
+        storyRepository.delete(story);
+        log.info("[STORY][D][C][CALL=ADMIN][ID={}]", storyId);
+
+        contentProducer.publishStoryDeleted(story);
+        log.info("[STORY][D][P][CALL=ADMIN][ID={}]", storyId);
     }
 
     public List<Story> getByUsername(String username, String caller) {
@@ -84,7 +104,10 @@ public class StoryService {
     public Story getById(Long storyId, String caller) {
         log.info("[STORY][G][R][CALL={}][ID={}]", caller, storyId);
 
-        Story story = storyRepository.findById(storyId).orElseThrow();
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Story with an id '%d' doesn't exist", storyId)
+                ));
 
         graphClient.assertFollow(caller, story.getAuthor());
 
@@ -117,9 +140,11 @@ public class StoryService {
 
     public StoryHighlight createStoryHighlights(String name, String caller) {
         log.info("[HIGH][C][R][CALL={}][ID={}]", caller, name);
+
         StoryHighlight created = highlightsRepository.save(  // TODO This allows non-unique highlight sections (with the same name)
                 StoryHighlight.builder().owner(caller).name(name).build()
         );
+
         log.info("[HIGH][C][C][CALL={}][ID={}]", caller, name);
 
         return created;
@@ -128,19 +153,30 @@ public class StoryService {
     public void addStoryToHighlights(long highlightsId, long storyId, String username) {
         log.info("[HIGH-STORY][C][R][IDS={}][IDH={}]", storyId, highlightsId);
 
-        Story story = storyRepository.findById(storyId).orElseThrow();
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Story with an id '%d' doesn't exist", storyId)
+                ));
+
         if (!story.getAuthor().equals(username))
             throw new OwnershipException();
 
-        StoryHighlight highlights = highlightsRepository.findById(highlightsId).orElseThrow();
+        StoryHighlight highlights = highlightsRepository.findById(highlightsId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Story highlight with an id '%d' doesn't exist", highlightsId)
+                ));
+
         if (!highlights.getOwner().equals(username))
             throw new OwnershipException();
 
         if (highlights.getStories().stream().map(HighlightedStory::getStory).collect(Collectors.toList()).contains(story))
             throw new NistagramException("This story is already in this highlights section!");
 
-        highlights.getStories().add(HighlightedStory.builder().highlight(highlights).story(story).build());
+        highlights.getStories()
+                .add(HighlightedStory.builder().highlight(highlights).story(story).build());
+
         highlightsRepository.save(highlights);
+
         log.info("[HIGH-STORY][C][C][IDS={}][IDH={}]", storyId, highlightsId);
     }
 
@@ -148,7 +184,9 @@ public class StoryService {
         log.info("[HIGH][G][R][CALL={}][TGT={}]", caller, username);
 
         graphClient.assertFollow(caller, username);
+
         List<StoryHighlight> highlights = highlightsRepository.getByUsername(username);
+
         log.info("[HIGH][G][C][CALL={}][TGT={}]", caller, username);
 
         return highlights;
@@ -170,7 +208,11 @@ public class StoryService {
     public List<Story> getStoriesFromHighlight(long highlightId, String caller) {
         log.info("[HIGH-STORY][G][R][CALL={}][ID={}]", caller, highlightId);
 
-        StoryHighlight highlight = highlightsRepository.findById(highlightId).orElseThrow();
+        StoryHighlight highlight = highlightsRepository.findById(highlightId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Story highlight with an id '%d' doesn't exist", highlightId)
+                ));
+
         List<Story> highlightStories = highlight.getStories().stream().map(HighlightedStory::getStory).collect(Collectors.toList());
 
         // TODO Maybe modify graph client to respond with a DTO which provides both of these info?
@@ -189,10 +231,18 @@ public class StoryService {
 
     public void deleteHighlight(long highlightId, String caller) {
         log.info("[HIGH][D][R][CALL={}][ID={}]", caller, highlightId);
-        StoryHighlight highlight = highlightsRepository.findById(highlightId).orElseThrow();
+
+        StoryHighlight highlight = highlightsRepository.findById(highlightId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Story highlight with an id '%d' doesn't exist", highlightId)
+                ));
+
         if (!highlight.getOwner().equals(caller))
             throw new OwnershipException();
         else highlightsRepository.delete(highlight);
+
         log.info("[HIGH][D][C][CALL={}][ID={}]", caller, highlightId);
     }
+
+
 }
