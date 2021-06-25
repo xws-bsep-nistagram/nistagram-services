@@ -74,4 +74,10 @@ public class AuthController {
         authService.resetPassword(bundle);
         return "Password has been successfully reset.";
     }
+
+    @PutMapping("agent/{username}")
+    public String registerAgent(@PathVariable String username) {
+        authService.registerAgent(username);
+        return "Agent successfully registered.";
+    }
 }

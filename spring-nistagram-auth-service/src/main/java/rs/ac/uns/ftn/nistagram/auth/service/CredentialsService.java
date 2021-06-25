@@ -1,6 +1,7 @@
 package rs.ac.uns.ftn.nistagram.auth.service;
 
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,7 +23,7 @@ public class CredentialsService implements UserDetailsService {
 
     @Transactional(readOnly = true)
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public Credentials loadUserByUsername(String username) throws UsernameNotFoundException {
         return repository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid credentials."));
     }
@@ -52,6 +53,16 @@ public class CredentialsService implements UserDetailsService {
                 .orElseThrow(() -> new AuthException("User with given UUID not found!"));
         if (found.getActivated()) throw new RuntimeException("Account already activated!");
         found.activate();
+        repository.save(found);
+    }
+
+    @Transactional
+    public void addUserRole(String username, String role) {
+        Credentials found = loadUserByUsername(username);
+        if (found.hasAuthority(role)) {
+            throw new AuthException(String.format("User '%s' already has role %s!", username, role));
+        }
+        found.addAuthority(role);
         repository.save(found);
     }
 
