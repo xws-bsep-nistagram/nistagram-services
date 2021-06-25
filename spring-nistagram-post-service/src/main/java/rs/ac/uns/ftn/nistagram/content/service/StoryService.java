@@ -118,6 +118,19 @@ public class StoryService {
         return story;
     }
 
+    public Story getByIdAsAdmin(Long storyId) {
+        log.info("[STORY][G][R][CALL=ADMIN][ID={}]", storyId);
+
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Story with an id '%d' doesn't exist", storyId)
+                ));
+
+        log.info("[STORY][G][C][CALL=ADMIN][ID={}]", storyId);
+        
+        return story;
+    }
+
 
     public List<Story> getByUsername(String username) {
         log.info("[STORY][G][RC][TGT={}]", username);

@@ -56,6 +56,12 @@ public class StoryController {
                 mapper.toDto(storyService.getById(storyId, caller)));
     }
 
+    @GetMapping("admin/{storyId}")
+    public ResponseEntity<?> getByIdAsAdmin(@PathVariable Long storyId) {
+        return ResponseEntity.ok(
+                mapper.toDto(storyService.getByIdAsAdmin(storyId)));
+    }
+
     @GetMapping("user/{username}/restricted")
     @CrossOrigin("http://feed-service:9001")
     public ResponseEntity<?> getByUsernameRestricted(@PathVariable String username) {

@@ -129,6 +129,13 @@ public class PostService {
         return post;
     }
 
+    public Post getByIdAsAdmin(long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Post with an id '%d' doesn't exist", postId)
+                ));
+    }
+
     public List<Post> getAllPublicByUsername(String username) {
         if (userClient.isPrivate(username)) {
             throw new ProfileNotPublicException(username);

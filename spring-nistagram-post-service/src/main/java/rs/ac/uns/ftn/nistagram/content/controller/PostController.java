@@ -79,6 +79,11 @@ public class PostController {
         return ResponseEntity.ok(mapper.toDto(postService.getById(Long.parseLong(postId), caller)));
     }
 
+    @GetMapping("admin/{postId}")
+    public ResponseEntity<?> getByIdAsAdmin(@PathVariable String postId) {
+        return ResponseEntity.ok(mapper.toDto(postService.getByIdAsAdmin(Long.parseLong(postId))));
+    }
+
     @GetMapping("/public/{postId}")
     public ResponseEntity<?> getById(@PathVariable String postId) {
         return ResponseEntity.ok(mapper.toDto(postService.getById(Long.parseLong(postId))));
