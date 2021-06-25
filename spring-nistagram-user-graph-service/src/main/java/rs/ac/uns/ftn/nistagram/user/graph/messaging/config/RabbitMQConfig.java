@@ -19,6 +19,7 @@ public class RabbitMQConfig {
     public static final String FOLLOW_REQUESTED_NOTIFICATION_SERVICE = "follow.requested.notification-service";
     public static final String FOLLOW_ACCEPTED_NOTIFICATION_SERVICE = "follow.accepted.notification-service";
     public static final String NEW_FOLLOW_NOTIFICATION_SERVICE = "new.follow.notification-service";
+    public static final String USER_BANNED_GRAPH_SERVICE = "user.banned.graph-service";
 
     @Bean
     public RabbitTemplate jsonRabbitTemplate(ConnectionFactory connectionFactory) {
@@ -77,4 +78,8 @@ public class RabbitMQConfig {
         return new Queue(NEW_FOLLOW_NOTIFICATION_SERVICE);
     }
 
+    @Bean
+    public Queue userBannedGraphQueue() {
+        return new Queue(USER_BANNED_GRAPH_SERVICE);
+    }
 }

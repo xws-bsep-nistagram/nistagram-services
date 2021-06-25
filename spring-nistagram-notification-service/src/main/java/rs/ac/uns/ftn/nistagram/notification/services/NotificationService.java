@@ -52,6 +52,19 @@ public class NotificationService {
         return notification;
     }
 
+    public void handleUserBanned(String username) {
+        log.info("Handling user banned event for an user '{}'",
+                username);
+
+        List<Notification> notifications = notificationRepository.findAllContaining(username);
+
+        notifications.forEach(notificationRepository::delete);
+
+        log.info("Notifications containing '{}' as a subject or as a target are successfully removed",
+                username);
+
+    }
+
     public void handleNewFollow(Notification newFollowNotification) {
         log.info("Handling new follow notification for an user '{}'",
                 newFollowNotification.getTarget());

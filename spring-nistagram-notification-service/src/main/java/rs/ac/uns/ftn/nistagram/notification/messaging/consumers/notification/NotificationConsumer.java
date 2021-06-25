@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.notification.messaging.consumers;
+package rs.ac.uns.ftn.nistagram.notification.messaging.consumers.notification;
 
 import com.rabbitmq.client.Channel;
 import lombok.AllArgsConstructor;

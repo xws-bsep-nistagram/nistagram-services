@@ -4,7 +4,7 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
-import org.springframework.stereotype.Indexed;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,12 +13,13 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
 @Node
 public class User {
 
     @Id
+    @EqualsAndHashCode.Include
     private String username;
     private ProfileType profileType;
     @Relationship(type = "FOLLOWS")
@@ -55,24 +56,24 @@ public class User {
     }
 
     public void addBlocked(User targetUser) {
-        if(blockedUsers == null)
+        if (blockedUsers == null)
             blockedUsers = new HashSet<>();
 
         blockedUsers.add(targetUser);
     }
 
     public void addMuted(User targetUser) {
-        if(mutedUsers == null)
+        if (mutedUsers == null)
             mutedUsers = new HashSet<>();
 
         mutedUsers.add(targetUser);
     }
 
-    private Boolean hasFollows(){
+    private Boolean hasFollows() {
         return follows != null && !follows.isEmpty();
     }
 
-    private Boolean followsUser(User user){
+    private Boolean followsUser(User user) {
         return follows.contains(user);
     }
 

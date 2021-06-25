@@ -38,14 +38,23 @@ public class User {
         this.notificationPreferences = new NotificationPreferences();
     }
 
-    public boolean isTaggable(){
+    public boolean isTaggable() {
         return privacyData.isTaggable();
     }
 
-    public boolean isPrivate() {return privacyData.isProfilePrivate();}
+    public boolean isPrivate() {
+        return privacyData.isProfilePrivate();
+    }
 
     public void verify() {
         administrativeData.setVerified(true);
     }
 
+    public void ban() {
+        administrativeData.setBanned(true);
+    }
+
+    public boolean isBanned() {
+        return administrativeData.isBanned();
+    }
 }

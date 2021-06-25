@@ -19,7 +19,7 @@ public class RabbitMQConfig {
     public static final String POST_DISLIKED_NOTIFICATION_SERVICE = "post.disliked.notification-service";
     public static final String POST_SHARED_NOTIFICATION_SERVICE = "post.shared.notification-service";
     public static final String POST_COMMENTED_NOTIFICATION_SERVICE = "post.commented.notification-service";
-
+    public static final String USER_BANNED_POST_SERVICE = "user.banned.post-service";
 
     @Bean
     public RabbitTemplate jsonRabbitTemplate(ConnectionFactory connectionFactory) {
@@ -77,4 +77,10 @@ public class RabbitMQConfig {
     public Queue postSharedNotificationQueue() {
         return new Queue(POST_SHARED_NOTIFICATION_SERVICE);
     }
+
+    @Bean
+    public Queue userBannedPostQueue() {
+        return new Queue(USER_BANNED_POST_SERVICE);
+    }
+
 }

@@ -43,7 +43,7 @@ public class ReportController {
         return ResponseEntity.ok(mapper.toDto(report));
     }
 
-    @GetMapping("posts")
+    @GetMapping("post")
     public ResponseEntity<?> getAllPostReports() {
         List<PostReportResponse> postReportResponses = reportService.getReportedPosts()
                 .stream().map(mapper::toDto)
@@ -52,7 +52,7 @@ public class ReportController {
         return ResponseEntity.ok(postReportResponses);
     }
 
-    @GetMapping("stories")
+    @GetMapping("story")
     public ResponseEntity<?> getAllStoryReports() {
         List<StoryReportResponse> storyReportResponses = reportService.getReportedStories()
                 .stream().map(mapper::toDto)

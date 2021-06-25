@@ -14,10 +14,12 @@ import rs.ac.uns.ftn.nistagram.user.http.graph.UserGraphClient;
 import rs.ac.uns.ftn.nistagram.user.http.mapper.UserStatsMapper;
 import rs.ac.uns.ftn.nistagram.user.http.post.PostClient;
 import rs.ac.uns.ftn.nistagram.user.http.post.PostStats;
+import rs.ac.uns.ftn.nistagram.user.infrastructure.exceptions.BannedException;
 import rs.ac.uns.ftn.nistagram.user.infrastructure.exceptions.EntityNotFoundException;
 import rs.ac.uns.ftn.nistagram.user.messaging.producers.UserProducer;
 import rs.ac.uns.ftn.nistagram.user.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,11 +38,32 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public User get(String username) {
         log.info("Getting user by username: '{}'", username);
-        return repository.findById(username).orElseThrow(() ->
+
+        User found = repository.findById(username).orElseThrow(() ->
                 new EntityNotFoundException(
                         String.format("Profile for username '%s' doesn't exist!", username)
                 )
         );
+        bannedCheck(found);
+        return found;
+    }
+
+
+    @Transactional
+    public User ban(String username) {
+        User found = get(username);
+        bannedCheck(found);
+        log.info("Banning user: '{}'", username);
+
+        found.ban();
+        repository.save(found);
+
+        userProducer.publishUserBanned(found);
+
+        log.info("User: '{}' successfully banned.", username);
+
+        return found;
+
     }
 
     @Transactional
@@ -52,7 +75,10 @@ public class ProfileService {
 
     @Transactional(readOnly = true)
     public List<User> find(String usernameQuery, String caller) {
-        List<User> foundUsers = repository.findAllByUsernameContains(usernameQuery);
+        List<User> foundUsers = repository.findAllByUsernameContains(usernameQuery)
+                .stream()
+                .filter(user -> !user.isBanned())
+                .collect(Collectors.toList());
 
         foundUsers = filterBlocked(caller, foundUsers);
 
@@ -67,18 +93,30 @@ public class ProfileService {
                         String.format("Profile for username '%s' doesn't exist!", username)
                 )
         );
+        bannedCheck(user);
         return user.isPrivate();
+    }
+
+    public boolean isBanned(String username) {
+        log.info("Checking if user '{}' has been banned.", username);
+        User user = repository.findById(username).orElseThrow(() ->
+                new EntityNotFoundException(
+                        String.format("Profile for username '%s' doesn't exist!", username)
+                )
+        );
+        return user.isBanned();
     }
 
     @Transactional(readOnly = true)
     public List<User> findTaggable(String usernameQuery, String caller) {
         log.info("Finding taggable users by username search query: '{}'", usernameQuery);
-        List<User> foundUsers = repository
-                .findAllByUsernameContains(usernameQuery)
-                .stream()
-                .filter(User::isTaggable)
-                .collect(Collectors.toList());
+        List<User> foundUsers = new ArrayList<>();
 
+        for (User user : repository.findAllByUsernameContains(usernameQuery)) {
+            if (user.isTaggable() && !user.isBanned()) {
+                foundUsers.add(user);
+            }
+        }
         foundUsers = filterBlocked(caller, foundUsers);
 
         return foundUsers;
@@ -87,7 +125,7 @@ public class ProfileService {
     @Transactional
     public User update(String username, PersonalData personalData) {
         User found = get(username);
-
+        bannedCheck(found);
         log.info("Updating personal data for user '{}'", username);
 
         found.setPersonalData(personalData);
@@ -97,7 +135,7 @@ public class ProfileService {
     @Transactional
     public User update(String username, PrivacyData privacyData) {
         User found = get(username);
-
+        bannedCheck(found);
         log.info("Updating privacy data for user '{}'", username);
 
         found.setPrivacyData(privacyData);
@@ -108,7 +146,7 @@ public class ProfileService {
     @Transactional
     public User update(String username, NotificationPreferences preferences) {
         User found = get(username);
-
+        bannedCheck(found);
         log.info("Updating privacy data for user '{}'", username);
 
         found.setNotificationPreferences(preferences);
@@ -121,10 +159,23 @@ public class ProfileService {
             throw new EntityNotFoundException(
                     String.format("User with username '%s' not found!", username));
         }
+
+        bannedCheck(username);
+
         FollowerStats followerStats = userGraphClient.getFollowerStats(username);
         PostStats postStats = postClient.getPostStats(username);
         log.info("Fetched user stats for user '{}'", username);
         return statsMapper.map(followerStats, postStats);
+    }
+
+    private void bannedCheck(String username) {
+        User found = get(username);
+        bannedCheck(found);
+    }
+
+    private void bannedCheck(User foundUser) {
+        if (foundUser.isBanned())
+            throw new BannedException(String.format("User '%s' is banned!", foundUser.getUsername()));
     }
 
     private List<User> filterBlocked(String caller, List<User> foundUsers) {
