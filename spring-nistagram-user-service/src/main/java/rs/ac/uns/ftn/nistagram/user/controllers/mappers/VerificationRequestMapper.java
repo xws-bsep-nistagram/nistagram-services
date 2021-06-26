@@ -2,9 +2,9 @@ package rs.ac.uns.ftn.nistagram.user.controllers.mappers;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.CategoryDTO;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.VerificationRequestDTO;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.VerificationRequestViewDTO;
+import rs.ac.uns.ftn.nistagram.user.controllers.dtos.verification.CategoryDTO;
+import rs.ac.uns.ftn.nistagram.user.controllers.dtos.verification.VerificationRequestDTO;
+import rs.ac.uns.ftn.nistagram.user.controllers.dtos.verification.VerificationRequestViewDTO;
 import rs.ac.uns.ftn.nistagram.user.domain.verification.Category;
 import rs.ac.uns.ftn.nistagram.user.domain.verification.VerificationRequest;
 
