@@ -103,8 +103,8 @@ public class External {
 
         public void assertFollow(String follower, String followed) {
             if (follower.equals(followed)) return;
-            boolean follows = graphClient.checkFollowing(followed, follower).getStatus();
-            if (!follows) throw new NotFollowException(followed, follower);
+            boolean follows = graphClient.checkFollowing(follower, followed).getStatus();
+            if (!follows) throw new NotFollowException(follower, followed);
         }
 
         public void assertCloseFriends(String follower, String followed) {

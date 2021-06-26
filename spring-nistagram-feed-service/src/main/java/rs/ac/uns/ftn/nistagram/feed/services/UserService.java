@@ -31,7 +31,7 @@ public class UserService {
     }
 
     public void delete(User user) {
-        userPresenceCheck(user);
+        userAbscenceCheck(user);
 
         log.info("User deletion request for an user '{}' received", user.getUsername());
 
