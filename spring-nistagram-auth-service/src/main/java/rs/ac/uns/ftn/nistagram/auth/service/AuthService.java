@@ -10,7 +10,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.auth.domain.*;
+import rs.ac.uns.ftn.nistagram.auth.http.user.UserClient;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.JwtEncoder;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.BannedException;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.JwtEncryptionException;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.JwtException;
 
@@ -29,15 +31,20 @@ public class AuthService {
     private final PasswordResetService passwordResetService;
     private final PasswordEncoder passwordEncoder;
     private final JwtEncoder encoder;
+    private final UserClient userClient;
 
     public String authenticate(AuthRequest authRequest) {
         authenticationManager.authenticate(authRequest.convert());
+
+        bannedCheck(authRequest.getUsername());
+
         UserDetails userDetails = getUser(authRequest.getUsername());
 
         log.info("Successfully authenticated user '{}' with roles: {}", userDetails.getUsername(), userDetails.getAuthorities());
 
         return encryptDetails(userDetails);
     }
+
 
     @Transactional(readOnly = true)
     public UserDetails getUser(String username) {
@@ -88,6 +95,11 @@ public class AuthService {
     private String getUsernameFromJwt(String jwt) {
         Map<String, Claim> claims = this.encoder.decode(jwt);
         return claims.get("username").asString();
+    }
+
+    private void bannedCheck(String username) {
+        if (userClient.isBanned(username).isProfileBanned())
+            throw new BannedException("Account is banned");
     }
 
     public void activate(String uuid) {

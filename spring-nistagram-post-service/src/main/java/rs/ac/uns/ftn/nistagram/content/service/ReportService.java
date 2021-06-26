@@ -14,6 +14,7 @@ import rs.ac.uns.ftn.nistagram.content.repository.report.StoryReportRepository;
 import rs.ac.uns.ftn.nistagram.content.repository.story.StoryRepository;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -59,4 +60,36 @@ public class ReportService {
         return storyReport;
 
     }
+
+    public List<PostReport> getReportedPosts() {
+        return postReportRepository.findAll();
+    }
+
+    public List<StoryReport> getReportedStories() {
+        return storyReportRepository.findAll();
+    }
+
+    public PostReport deletePostReport(Long postReportId) {
+        PostReport postReport = postReportRepository.findById(postReportId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Post report with an id '%d' doesn't exist", postReportId)
+                ));
+
+        postReportRepository.delete(postReport);
+
+        return postReport;
+    }
+
+    public StoryReport deleteStoryReport(Long storyReportId) {
+        StoryReport storyReport = storyReportRepository.findById(storyReportId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Post report with an id '%d' doesn't exist", storyReportId)
+                ));
+
+        storyReportRepository.delete(storyReport);
+
+        return storyReport;
+    }
+
+
 }

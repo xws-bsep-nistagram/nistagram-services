@@ -13,4 +13,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Query(value = "select n from Notification n where n.target = ?1 and n.seen = 0")
     List<Notification> findByUsername(String username);
 
+    @Query(value = "select n from Notification n where n.target = ?1 or n.subject = ?1")
+    List<Notification> findAllContaining(String username);
+
 }

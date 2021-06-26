@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
+    public static final String USER_BANNED_NOTIFICATION_SERVICE = "user.banned.notification-service";
     public static final String USERS_TAGGED_NOTIFICATION_SERVICE = "user.tagged.notification-service";
     public static final String POST_LIKED_NOTIFICATION_SERVICE = "post.liked.notification-service";
     public static final String POST_COMMENTED_NOTIFICATION_SERVICE = "post.commented.notification-service";
@@ -70,5 +71,10 @@ public class RabbitMQConfig {
     @Bean
     public Queue postSharedNotificationQueue() {
         return new Queue(POST_SHARED_NOTIFICATION_SERVICE);
+    }
+
+    @Bean
+    public Queue userBannedNotificationQueue() {
+        return new Queue(USER_BANNED_NOTIFICATION_SERVICE);
     }
 }

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.MediaStoryCreationDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.dto.input.ShareStoryCreationDTO;
-import rs.ac.uns.ftn.nistagram.content.controller.dto.input.StoryCreationDTO;
 import rs.ac.uns.ftn.nistagram.content.controller.mapper.DomainDTOMapper;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.StoryHighlight;
 import rs.ac.uns.ftn.nistagram.content.service.StoryService;
@@ -46,15 +45,21 @@ public class StoryController {
                                            @PathVariable String username) {
         return ResponseEntity.ok(
                 storyService.getByUsername(username, caller)
-                .stream().map(mapper::toDto).collect(Collectors.toList())
+                        .stream().map(mapper::toDto).collect(Collectors.toList())
         );
     }
 
     @GetMapping("{storyId}")
     public ResponseEntity<?> getById(@RequestHeader("username") String caller,
-                                     @PathVariable Long storyId){
+                                     @PathVariable Long storyId) {
         return ResponseEntity.ok(
                 mapper.toDto(storyService.getById(storyId, caller)));
+    }
+
+    @GetMapping("admin/{storyId}")
+    public ResponseEntity<?> getByIdAsAdmin(@PathVariable Long storyId) {
+        return ResponseEntity.ok(
+                mapper.toDto(storyService.getByIdAsAdmin(storyId)));
     }
 
     @GetMapping("user/{username}/restricted")
@@ -70,7 +75,7 @@ public class StoryController {
     public ResponseEntity<?> getOwnActive(@RequestHeader("username") String caller) {
         return ResponseEntity.ok(
                 storyService.getOwnActive(caller)
-                .stream().map(mapper::toDto).collect(Collectors.toList())
+                        .stream().map(mapper::toDto).collect(Collectors.toList())
         );
     }
 
@@ -78,7 +83,7 @@ public class StoryController {
     public ResponseEntity<?> getOwnAll(@RequestHeader("username") String caller) {
         return ResponseEntity.ok(
                 storyService.getOwnAll(caller)
-                .stream().map(mapper::toDto).collect(Collectors.toList())
+                        .stream().map(mapper::toDto).collect(Collectors.toList())
         );
     }
 
@@ -86,6 +91,12 @@ public class StoryController {
     public ResponseEntity<?> delete(@RequestHeader("username") String caller,
                                     @PathVariable String storyId) {
         storyService.delete(Long.parseLong(storyId), caller);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("admin/{storyId}")
+    public ResponseEntity<?> deleteAsAdmin(@PathVariable String storyId) {
+        storyService.delete(Long.parseLong(storyId));
         return ResponseEntity.ok().build();
     }
 
@@ -109,7 +120,7 @@ public class StoryController {
                                                      @PathVariable String username) {
         return ResponseEntity.ok(
                 storyService.getHighlightsByUsername(username, caller)
-                .stream().map(mapper::toDto).collect(Collectors.toList())
+                        .stream().map(mapper::toDto).collect(Collectors.toList())
         );
     }
 
@@ -126,7 +137,7 @@ public class StoryController {
                                                      @PathVariable String highlightId) {
         return ResponseEntity.ok(
                 storyService.getStoriesFromHighlight(Long.parseLong(highlightId), caller)
-                .stream().map(mapper::toDto).collect(Collectors.toList())
+                        .stream().map(mapper::toDto).collect(Collectors.toList())
         );
     }
 

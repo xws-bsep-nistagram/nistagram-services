@@ -11,6 +11,9 @@ import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
 public interface UserRepository extends Neo4jRepository<User, String> {
     Boolean existsByUsername(String username);
 
-    @Query("MATCH (u:User {username: $0}) SET u.profileType = $1 RETURN u")
+    @Query("MATCH (u:User { username: $0 }) SET u.profileType = $1 RETURN u")
     User update(String username, ProfileType profileType);
+
+    @Query("MATCH (u:User { username: $0 }) DETACH DELETE u")
+    void detachDelete(String username);
 }

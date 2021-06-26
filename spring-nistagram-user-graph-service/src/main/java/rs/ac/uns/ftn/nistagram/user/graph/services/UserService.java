@@ -18,12 +18,13 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void create(User user){
+    public void create(User user) {
         log.info("Received a user creation request for a user {}", user.getUsername());
         userUniquenessCheck(user);
         User createdUser = userRepository.save(user);
         log.info("User {} has been successfully created", createdUser.getUsername());
     }
+
     @Transactional
     public void update(User user) {
         log.info("Received a user update request for a user {}", user.getUsername());
@@ -32,15 +33,24 @@ public class UserService {
         log.info("User {} has been successfully updated", updatedUser.getUsername());
     }
 
+    @Transactional
+    public void delete(User user) {
+        log.info("Received a user delete request for a user {}", user.getUsername());
+        userPresenceCheck(user);
+        userRepository.detachDelete(user.getUsername());
+        log.info("User {} has been successfully deleted", user.getUsername());
+    }
+
     private void userUniquenessCheck(User user) {
-        if(userRepository.existsByUsername(user.getUsername())) {
+        if (userRepository.existsByUsername(user.getUsername())) {
             var message = String.format("User %s already exists", user.getUsername());
             log.warn(message);
             throw new EntityAlreadyExistsException(message);
         }
     }
+
     private void userPresenceCheck(User user) {
-        if(!userRepository.existsByUsername(user.getUsername())) {
+        if (!userRepository.existsByUsername(user.getUsername())) {
             var message = String.format("User %s doesn't exist", user.getUsername());
             log.warn(message);
             throw new EntityNotFoundException(message);

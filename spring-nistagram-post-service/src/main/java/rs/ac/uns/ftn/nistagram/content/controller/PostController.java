@@ -40,6 +40,12 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("admin/{postId}")
+    public ResponseEntity<?> deleteAsAdmin(@PathVariable String postId) {
+        postService.delete(Long.parseLong(postId));
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("user/{username}")
     public ResponseEntity<?> getByUsername(@RequestHeader("username") String caller,
                                            @PathVariable String username) {
@@ -71,6 +77,11 @@ public class PostController {
     public ResponseEntity<?> getById(@RequestHeader("username") String caller,
                                      @PathVariable String postId) {
         return ResponseEntity.ok(mapper.toDto(postService.getById(Long.parseLong(postId), caller)));
+    }
+
+    @GetMapping("admin/{postId}")
+    public ResponseEntity<?> getByIdAsAdmin(@PathVariable String postId) {
+        return ResponseEntity.ok(mapper.toDto(postService.getByIdAsAdmin(Long.parseLong(postId))));
     }
 
     @GetMapping("/public/{postId}")
@@ -108,8 +119,8 @@ public class PostController {
     @GetMapping("interactions")
     public ResponseEntity<?> getLikedAndDislikedPostsForUser(@RequestHeader("username") String caller) {
         return ResponseEntity.ok(
-            postService.getLikedAndDisliked(caller)
-                .stream().map(mapper::toDto).collect(Collectors.toList())
+                postService.getLikedAndDisliked(caller)
+                        .stream().map(mapper::toDto).collect(Collectors.toList())
         );
     }
 

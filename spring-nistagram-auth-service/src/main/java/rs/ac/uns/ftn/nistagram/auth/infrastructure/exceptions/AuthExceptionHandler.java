@@ -31,6 +31,14 @@ public class AuthExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(BannedException.class)
+    String handleBanned(BannedException e) {
+        log.info(e.getMessage());
+        log.trace(e.getMessage(), e);
+        return "Account is banned!";
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(AuthenticationException.class)
     String handleE(AuthenticationException e) {
         log.info(e.getMessage());
@@ -45,9 +53,9 @@ public class AuthExceptionHandler {
         log.trace(e.getMessage(), e);
         return e.getMessage();
     }
-    
+
     @ExceptionHandler(JWTDecodeException.class)
-    String handleJwtDecodeException(JWTDecodeException e){
+    String handleJwtDecodeException(JWTDecodeException e) {
         log.info(e.getMessage());
         log.trace(e.getMessage(), e);
         return "Jwt token invalid!";

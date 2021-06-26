@@ -46,6 +46,12 @@ public class UserController {
         return profileMapper.map(found);
     }
 
+    @DeleteMapping("ban/{username}")
+    public PublicDataDTO ban(@PathVariable String username) {
+        User bannedUser = profileService.ban(username);
+        return profileMapper.mapPersonalData(bannedUser);
+    }
+
     @GetMapping("{usernameQuery}")
     public List<PublicDataDTO> find(@RequestHeader("username") String caller,
                                     @PathVariable String usernameQuery) {
@@ -59,6 +65,11 @@ public class UserController {
     @GetMapping("/visibility/{username}")
     public ProfileVisibilityDTO isPrivate(@PathVariable String username) {
         return new ProfileVisibilityDTO(profileService.isPrivate(username));
+    }
+
+    @GetMapping("/banned/{username}")
+    public ProfileBannedResponse isBanned(@PathVariable String username) {
+        return new ProfileBannedResponse(profileService.isBanned(username));
     }
 
     @GetMapping("taggable/{usernameQuery}")

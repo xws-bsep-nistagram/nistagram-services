@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.feed.messaging.consumers;
+package rs.ac.uns.ftn.nistagram.content.messaging.consumers.user;
 
 import com.rabbitmq.client.Channel;
 import lombok.AllArgsConstructor;
@@ -7,10 +7,9 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
-import rs.ac.uns.ftn.nistagram.feed.messaging.config.RabbitMQConfig;
-import rs.ac.uns.ftn.nistagram.feed.messaging.mappers.user.UserTopicPayloadMapper;
-import rs.ac.uns.ftn.nistagram.feed.messaging.payload.user.UserTopicPayload;
-import rs.ac.uns.ftn.nistagram.feed.services.UserService;
+import rs.ac.uns.ftn.nistagram.content.messaging.config.RabbitMQConfig;
+import rs.ac.uns.ftn.nistagram.content.messaging.payload.user.UserTopicPayload;
+import rs.ac.uns.ftn.nistagram.content.service.MessagingEventHandler;
 
 import java.io.IOException;
 
@@ -19,20 +18,15 @@ import java.io.IOException;
 @AllArgsConstructor
 public class UserConsumer {
 
-    private final UserService userService;
+    MessagingEventHandler messagingEventHandler;
 
-    @RabbitListener(queues = RabbitMQConfig.USER_CREATED_FEED_SERVICE)
-    public void consumeUserCreated(UserTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
-        acknowledgeMessage(channel, tag);
-        userService.create(UserTopicPayloadMapper.toDomain(payload));
-    }
-
-    @RabbitListener(queues = RabbitMQConfig.USER_BANNED_FEED_SERVICE)
+    @RabbitListener(queues = RabbitMQConfig.USER_BANNED_POST_SERVICE)
     public void consumeUserBanned(UserTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
-        acknowledgeMessage(channel, tag);
-        userService.delete(UserTopicPayloadMapper.toDomain(payload));
-    }
 
+
+        acknowledgeMessage(channel, tag);
+        messagingEventHandler.handleUserBanned(payload.getUsername());
+    }
 
     private void acknowledgeMessage(Channel channel, long tag) throws IOException {
         try {

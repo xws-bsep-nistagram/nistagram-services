@@ -33,6 +33,12 @@ public class UserConsumer {
         userService.update(TopicPayloadMapper.toDomain(payload));
     }
 
+    @RabbitListener(queues = RabbitMQConfig.USER_BANNED_GRAPH_SERVICE)
+    public void consumeUserBanned(UserTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
+        acknowledgeMessage(channel, tag);
+        userService.delete(TopicPayloadMapper.toDomain(payload));
+    }
+
     private void acknowledgeMessage(Channel channel, long tag) throws IOException {
         try {
             channel.basicAck(tag, false);

@@ -15,27 +15,56 @@ public class UserProducer {
 
     private final RabbitTemplate rabbitTemplate;
 
-    public void publishUserCreated(User user){
+    public void publishUserCreated(User user) {
 
         var userTopicPayload = UserTopicPayloadMapper.toPayload(user);
+
         log.info("User create request for a user {} published to a {} ",
                 user.getUsername(), RabbitMQConfig.USER_CREATED_GRAPH_SERVICE);
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_CREATED_GRAPH_SERVICE,
                 userTopicPayload);
+
         log.info("User create request for a user {} published to a {} ",
                 user.getUsername(), RabbitMQConfig.USER_CREATED_FEED_SERVICE);
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_CREATED_FEED_SERVICE,
                 userTopicPayload);
     }
 
-    public void publishUserUpdated(User user){
+    public void publishUserUpdated(User user) {
         var userTopicPayload = UserTopicPayloadMapper.toPayload(user);
+
         log.info("User update request for a user {} published to a {} ",
                 user.getUsername(), RabbitMQConfig.USER_UPDATED_GRAPH_SERVICE);
+
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_UPDATED_GRAPH_SERVICE,
                 userTopicPayload);
     }
 
+    public void publishUserBanned(User user) {
+        var userTopicPayload = UserTopicPayloadMapper.toPayload(user);
+
+        log.info("User banned request for a user {} published to a {} ",
+                user.getUsername(), RabbitMQConfig.USER_BANNED_GRAPH_SERVICE);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.USER_BANNED_GRAPH_SERVICE,
+                userTopicPayload);
+
+        log.info("User banned request for a user {} published to a {} ",
+                user.getUsername(), RabbitMQConfig.USER_BANNED_FEED_SERVICE);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.USER_BANNED_FEED_SERVICE,
+                userTopicPayload);
+
+        log.info("User banned request for a user {} published to a {} ",
+                user.getUsername(), RabbitMQConfig.USER_BANNED_POST_SERVICE);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.USER_BANNED_POST_SERVICE,
+                userTopicPayload);
+
+        log.info("User banned request for a user {} published to a {} ",
+                user.getUsername(), RabbitMQConfig.USER_BANNED_NOTIFICATION_SERVICE);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.USER_BANNED_NOTIFICATION_SERVICE,
+                userTopicPayload);
+
+
+    }
 
 
 }
