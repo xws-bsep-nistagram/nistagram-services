@@ -48,6 +48,17 @@ public class ProfileService {
         return found;
     }
 
+    @Transactional(readOnly = true)
+    public List<User> getAll() {
+        List<User> users = repository
+                .findAll()
+                .stream()
+                .filter(user -> !user.isBanned())
+                .collect(Collectors.toList());
+        log.info("Found {} registered users", users.size());
+        return users;
+    }
+
 
     @Transactional
     public User ban(String username) {
