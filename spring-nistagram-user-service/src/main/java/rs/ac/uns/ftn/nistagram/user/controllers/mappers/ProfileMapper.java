@@ -1,7 +1,14 @@
 package rs.ac.uns.ftn.nistagram.user.controllers.mappers;
 
 import org.springframework.stereotype.Component;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.*;
+import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.NotificationPreferencesUpdateDTO;
+import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.NotificationPreferencesViewDTO;
+import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.PrivacyDataUpdateDTO;
+import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.PrivacyDataViewDTO;
+import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.ProfileStatsDTO;
+import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.ProfileUpdateDTO;
+import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.ProfileViewDTO;
+import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.PublicDataDTO;
 import rs.ac.uns.ftn.nistagram.user.domain.user.PersonalData;
 import rs.ac.uns.ftn.nistagram.user.domain.user.PrivacyData;
 import rs.ac.uns.ftn.nistagram.user.domain.user.User;

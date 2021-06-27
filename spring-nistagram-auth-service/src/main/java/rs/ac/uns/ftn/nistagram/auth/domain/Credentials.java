@@ -81,4 +81,13 @@ public class Credentials implements UserDetails {
         this.activated = true;
     }
 
+    public boolean hasAuthority(String authority) {
+        return getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(authority));
+    }
+
+    public void addAuthority(String authority) {
+        roles.add(new Role(authority));
+    }
+
 }

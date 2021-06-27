@@ -8,7 +8,7 @@ import rs.ac.uns.ftn.nistagram.user.domain.user.User;
 import rs.ac.uns.ftn.nistagram.user.domain.verification.VerificationRequest;
 import rs.ac.uns.ftn.nistagram.user.domain.verification.VerificationStatus;
 import rs.ac.uns.ftn.nistagram.user.infrastructure.exceptions.UserException;
-import rs.ac.uns.ftn.nistagram.user.repository.VerificationRequestRepository;
+import rs.ac.uns.ftn.nistagram.user.repository.verification.VerificationRequestRepository;
 
 import java.util.List;
 

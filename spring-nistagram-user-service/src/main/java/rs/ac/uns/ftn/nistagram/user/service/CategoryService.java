@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.domain.verification.Category;
-import rs.ac.uns.ftn.nistagram.user.repository.CategoryRepository;
+import rs.ac.uns.ftn.nistagram.user.repository.verification.CategoryRepository;
 
 import java.util.List;
 
