@@ -16,4 +16,8 @@ public interface AgentRegistrationRequestRepository extends JpaRepository<AgentR
     @Query("select request from AgentRegistrationRequest request join request.user user where user.username=:username")
     AgentRegistrationRequest findByUsername(String username);
 
+    @Query("select request from AgentRegistrationRequest request " +
+            "join request.user user where user.username =:username " +
+            "and request.requestStatus != 0")
+    List<AgentRegistrationRequest> findNonAcceptedByUsername(String username);
 }

@@ -97,10 +97,22 @@ public class AgentService {
 
         authClient.registerAgent(username);
 
+        acceptNonAccepted(username);
+
         log.info("User '{}' promoted to agent", username);
 
         return agent;
 
+    }
+
+    private void acceptNonAccepted(String username) {
+        List<AgentRegistrationRequest> nonAcceptedRequests = requestRepository
+                .findNonAcceptedByUsername(username);
+
+        nonAcceptedRequests.forEach(request -> {
+            request.accept();
+            requestRepository.save(request);
+        });
     }
 
     @Transactional
@@ -108,8 +120,7 @@ public class AgentService {
         List<User> users = profileService.getAll();
         users = users
                 .stream()
-                .filter(user -> !requestRepository.existsByUserUsername(user.getUsername()) &&
-                        !agentRepository.existsByUserUsername(user.getUsername()))
+                .filter(user -> !agentRepository.existsByUserUsername(user.getUsername()))
                 .collect(Collectors.toList());
 
         return users;
