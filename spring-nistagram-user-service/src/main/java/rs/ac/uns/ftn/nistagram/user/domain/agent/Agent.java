@@ -4,11 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import rs.ac.uns.ftn.nistagram.user.domain.user.User;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @AllArgsConstructor
 @Getter
@@ -22,6 +18,16 @@ public class Agent {
     private User user;
     private String website;
 
-    protected Agent() {}
+    protected Agent() {
+    }
 
+    public Agent(AgentRegistrationRequest request) {
+        this.user = request.getUser();
+        this.website = request.getWebsite();
+    }
+
+    public Agent(User user, String website) {
+        this.user = user;
+        this.website = website;
+    }
 }
