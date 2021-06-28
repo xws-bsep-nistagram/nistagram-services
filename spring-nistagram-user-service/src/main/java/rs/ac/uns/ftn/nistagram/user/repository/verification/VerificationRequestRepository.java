@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.user.repository;
+package rs.ac.uns.ftn.nistagram.user.repository.verification;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;

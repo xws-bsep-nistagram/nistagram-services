@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.user.controllers.dtos;
+package rs.ac.uns.ftn.nistagram.user.controllers.dtos.verification;
 
 import lombok.Data;
 

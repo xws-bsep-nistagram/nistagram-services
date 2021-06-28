@@ -111,8 +111,12 @@ public class AuthService {
     }
 
     public void resetPassword(PasswordResetBundle bundle) {
-        // TODO This is a pretty bad place to hash a password
         bundle.setPassword(passwordEncoder.encode(bundle.getPassword()));
         passwordResetService.resetPassword(bundle);
     }
+
+    public void registerAgent(String username) {
+        credentialsService.addUserRole(username, "ROLE_AGENT");
+    }
+
 }

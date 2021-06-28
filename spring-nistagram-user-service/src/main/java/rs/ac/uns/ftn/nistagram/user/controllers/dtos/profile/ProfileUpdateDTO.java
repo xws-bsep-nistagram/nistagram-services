@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.user.controllers.dtos;
+package rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile;
 
 import lombok.Getter;
 import rs.ac.uns.ftn.nistagram.user.controllers.constraints.EmailConstraint;
