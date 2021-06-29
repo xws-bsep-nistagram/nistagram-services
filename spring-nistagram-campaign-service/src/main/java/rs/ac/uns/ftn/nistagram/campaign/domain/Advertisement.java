@@ -21,6 +21,7 @@ public class Advertisement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String creator;
     private LocalDateTime createdOn;
     private String caption;
     private String mediaUrl;

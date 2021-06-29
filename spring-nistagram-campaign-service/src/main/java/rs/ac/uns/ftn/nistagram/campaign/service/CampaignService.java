@@ -25,6 +25,4 @@ public abstract class CampaignService<T extends Campaign> {
         return created;
     }
 
-
-
 }
