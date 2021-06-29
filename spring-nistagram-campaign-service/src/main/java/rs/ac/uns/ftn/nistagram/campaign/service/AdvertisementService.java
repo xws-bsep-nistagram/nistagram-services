@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.campaign.domain.Advertisement;
 import rs.ac.uns.ftn.nistagram.campaign.repository.AdvertisementRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,7 +19,6 @@ public class AdvertisementService {
 
     public Advertisement create(String username, Advertisement advertisement) {
         Objects.requireNonNull(advertisement);
-        Objects.requireNonNull(username);
         advertisement.setCreator(username);
         return create(advertisement);
     }
@@ -28,13 +26,11 @@ public class AdvertisementService {
     @Transactional
     public Advertisement create(Advertisement advertisement) {
         Objects.requireNonNull(advertisement);
-        Objects.requireNonNull(advertisement.getCreator());
         if (advertisement.getId() != null && repository.existsById(advertisement.getId())) {
             throw new RuntimeException();
         }
-        advertisement.setCreatedOn(LocalDateTime.now());
         Advertisement created = repository.save(advertisement);
-        log.info("User '{}' created advertisement with id {}", created.getCreator(), created.getId());
+        log.info("Agent '{}' created advertisement with id {}", created.getCreator(), created.getId());
         return created;
     }
 

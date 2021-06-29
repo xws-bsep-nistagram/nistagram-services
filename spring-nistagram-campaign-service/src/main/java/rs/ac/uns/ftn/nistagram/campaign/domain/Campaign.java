@@ -11,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -25,10 +27,14 @@ public class Campaign {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotBlank
     private String creator;
+    @NotBlank
     private String name;
+    @NotNull
     private CampaignType type;
-    private Long timesExposured;
+    @NotNull
+    private LocalDateTime createdOn;
     @OneToMany
     private List<Advertisement> advertisements;
     @OneToMany(mappedBy = "campaign")

@@ -8,7 +8,6 @@ public class AdvertisementViewDTO {
 
     private Long id;
     private String creator;
-    private LocalDateTime createdOn;
     private String caption;
     private String mediaUrl;
     private String websiteUrl;

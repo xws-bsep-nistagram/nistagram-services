@@ -1,5 +1,7 @@
 package rs.ac.uns.ftn.nistagram.campaign.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,6 +16,7 @@ public class Comment {
     private Long id;
     private String creator;
     private String content;
+    @JsonIgnore
     @ManyToOne
     private Campaign campaign;
 

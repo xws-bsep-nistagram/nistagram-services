@@ -9,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -22,7 +21,6 @@ public class Advertisement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String creator;
-    private LocalDateTime createdOn;
     private String caption;
     private String mediaUrl;
     private String websiteUrl;
