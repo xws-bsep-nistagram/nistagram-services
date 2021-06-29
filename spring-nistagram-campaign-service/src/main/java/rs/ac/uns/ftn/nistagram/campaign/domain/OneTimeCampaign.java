@@ -18,5 +18,6 @@ public class OneTimeCampaign extends Campaign {
 
     @NotNull
     private LocalDateTime exposureMoment;
+    private boolean exposured = false;
 
 }

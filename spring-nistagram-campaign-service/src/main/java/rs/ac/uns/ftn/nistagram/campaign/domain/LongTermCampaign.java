@@ -14,7 +14,9 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -28,9 +30,25 @@ public class LongTermCampaign extends Campaign {
     @CollectionTable(name = "exposure_moments", joinColumns = @JoinColumn(name = "campaign_id"))
     @Column(name = "exposure_moment")
     private List<LocalTime> exposureMoments;
+    @ElementCollection
+    @CollectionTable(name = "moments_exposured", joinColumns = @JoinColumn(name = "campaign_id"))
+    @Column(name = "moments_exposured")
+    private List<LocalTime> momentsExposured;
     @NotNull
     private LocalDate startsOn;
     @NotNull
     private LocalDate endsOn;
 
+    public void addMomentsExposured(List<LocalTime> momentsExposured) {
+        if (this.momentsExposured == null) {
+            this.momentsExposured = new ArrayList<>();
+        }
+        if (momentsExposured != null) {
+            this.momentsExposured.addAll(momentsExposured);
+        }
+    }
+
+    public void clearMomentsExposured() {
+        this.momentsExposured = new ArrayList<>();
+    }
 }

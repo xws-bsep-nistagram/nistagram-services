@@ -1,5 +1,7 @@
 package rs.ac.uns.ftn.nistagram.user.controllers;
 
+import feign.QueryMap;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,7 @@ import rs.ac.uns.ftn.nistagram.user.service.RegistrationService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -135,6 +138,14 @@ public class UserController {
     public ProfileStatsDTO getProfileStats(@PathVariable String username) {
         UserStats stats = profileService.getStats(username);
         return profileMapper.map(stats);
+    }
+
+    @GetMapping("query")
+    public List<String> queryUsers(@RequestParam Map<String, String> queryMap) {
+        List<User> found = profileService.getAll();
+        return found.stream()
+                .map(User::getUsername)
+                .collect(Collectors.toList());
     }
 
 }
