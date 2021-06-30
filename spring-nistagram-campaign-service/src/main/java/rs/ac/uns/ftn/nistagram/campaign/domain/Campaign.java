@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import rs.ac.uns.ftn.nistagram.campaign.domain.enums.CampaignType;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -41,5 +42,6 @@ public class Campaign {
     private List<UserInteraction> userInteractions;
     @OneToMany(mappedBy = "campaign")
     private List<Comment> comments;
-
+    @Embedded
+    private TargetedGroup targetedGroup;
 }

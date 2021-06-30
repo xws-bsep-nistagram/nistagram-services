@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.nistagram.campaign.controller.dto;
 
 import lombok.Data;
 import rs.ac.uns.ftn.nistagram.campaign.domain.Comment;
+import rs.ac.uns.ftn.nistagram.campaign.domain.TargetedGroup;
 import rs.ac.uns.ftn.nistagram.campaign.domain.UserInteraction;
 import rs.ac.uns.ftn.nistagram.campaign.domain.enums.CampaignType;
 
@@ -24,5 +25,6 @@ public class LongTermCampaignViewDTO {
     private LocalDateTime createdOn;
     private LocalDate startsOn;
     private LocalDate endsOn;
+    private TargetedGroup targetedGroup;
 
 }

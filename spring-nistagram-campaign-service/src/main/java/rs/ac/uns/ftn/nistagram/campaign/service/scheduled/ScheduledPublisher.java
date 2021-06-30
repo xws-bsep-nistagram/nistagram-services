@@ -27,7 +27,7 @@ public class ScheduledPublisher {
     private final OneTimeCampaignService oneTimeCampaignService;
     private final CampaignProducer producer;
 
-    @Scheduled(cron = "30 * * ? * * *")
+    @Scheduled(cron = "30 * * ? * *")
     public void publishDueCampaigns() {
         List<LongTermCampaign> longTermCampaigns = longTermCampaignService.getDueCampaigns();
         List<OneTimeCampaign> oneTimeCampaigns = oneTimeCampaignService.getDueCampaigns();
@@ -44,7 +44,7 @@ public class ScheduledPublisher {
         log.debug("Updated campaign exposures");
     }
 
-    @Scheduled(cron = "0 0 0 ? * * *")
+    @Scheduled(cron = "0 0 0 ? * *")
     public void resetLongTermCampaignExposuredMoments() {
         longTermCampaignService.resetCampaignExposuredMoments();
         log.info("Daily reset of active long-term campaign exposure moments complete");

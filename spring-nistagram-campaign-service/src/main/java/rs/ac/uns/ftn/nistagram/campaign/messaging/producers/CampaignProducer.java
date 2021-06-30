@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 import rs.ac.uns.ftn.nistagram.campaign.messaging.config.RabbitMQConfig;
-import rs.ac.uns.ftn.nistagram.campaign.messaging.mapper.TopicPayloadMapper;
 import rs.ac.uns.ftn.nistagram.campaign.messaging.payload.TargetedCampaignTopicPayload;
 
 import java.util.List;

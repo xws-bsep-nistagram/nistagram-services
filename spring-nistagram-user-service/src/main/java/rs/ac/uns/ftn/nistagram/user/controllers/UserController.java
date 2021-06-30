@@ -19,6 +19,7 @@ import rs.ac.uns.ftn.nistagram.user.controllers.mappers.ProfileMapper;
 import rs.ac.uns.ftn.nistagram.user.controllers.mappers.RegistrationRequestMapper;
 import rs.ac.uns.ftn.nistagram.user.domain.user.User;
 import rs.ac.uns.ftn.nistagram.user.domain.user.UserStats;
+import rs.ac.uns.ftn.nistagram.user.repository.specification.UserSpecification;
 import rs.ac.uns.ftn.nistagram.user.service.ProfileService;
 import rs.ac.uns.ftn.nistagram.user.service.RegistrationService;
 
@@ -142,7 +143,7 @@ public class UserController {
 
     @GetMapping("query")
     public List<String> queryUsers(@RequestParam Map<String, String> queryMap) {
-        List<User> found = profileService.getAll();
+        List<User> found = profileService.findBySpecification(new UserSpecification(queryMap));
         return found.stream()
                 .map(User::getUsername)
                 .collect(Collectors.toList());

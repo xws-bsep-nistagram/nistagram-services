@@ -1,6 +1,7 @@
 package rs.ac.uns.ftn.nistagram.campaign.controller.dto;
 
 import lombok.Getter;
+import rs.ac.uns.ftn.nistagram.campaign.domain.TargetedGroup;
 import rs.ac.uns.ftn.nistagram.campaign.domain.enums.CampaignType;
 
 import javax.validation.constraints.NotBlank;
@@ -24,5 +25,7 @@ public class NewLongTermCampaignDTO {
     private LocalDate startsOn;
     @NotNull
     private LocalDate endsOn;
+    @NotNull
+    private TargetedGroup targetedGroup;
 
 }
