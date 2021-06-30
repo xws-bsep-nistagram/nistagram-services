@@ -25,4 +25,12 @@ public class ApiTokenController {
     public ResponseEntity<ApiToken> decodeJWT(@PathVariable String apiTokenJWT) {
         return ResponseEntity.ok(apiTokenService.decode(apiTokenJWT));
     }
+
+    @GetMapping("test")
+    public ResponseEntity<String> testApiTokenHeader(
+            @RequestHeader("agent") String agent,
+            @RequestHeader("app") String packageName){
+
+        return ResponseEntity.ok("Received a call from an external application:\nAgent: " + agent + "\nApp: " + packageName);
+    }
 }

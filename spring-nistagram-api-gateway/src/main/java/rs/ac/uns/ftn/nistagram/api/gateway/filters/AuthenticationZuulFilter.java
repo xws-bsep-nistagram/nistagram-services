@@ -6,6 +6,7 @@ import com.netflix.zuul.exception.ZuulException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import rs.ac.uns.ftn.nistagram.api.gateway.domain.ApiToken;
 
 @Component
 @Slf4j
@@ -28,8 +29,18 @@ public class AuthenticationZuulFilter extends ZuulFilter {
     @Override
     public Object run() throws ZuulException {
         RequestContext ctx = RequestContext.getCurrentContext();
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        ctx.addZuulRequestHeader("username", username);
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal.getClass() == String.class)
+            ctx.addZuulRequestHeader("username", (String) principal);
+        else if (principal.getClass() == ApiToken.class) {
+            ApiToken apiToken = (ApiToken) principal;
+            log.info("ZUUL Registered an external application request from: {}", apiToken.getPackageName());
+            ctx.addZuulRequestHeader("agent", apiToken.getAgent());
+            ctx.addZuulRequestHeader("app", apiToken.getPackageName());
+        }
+
         return null;
     }
 }

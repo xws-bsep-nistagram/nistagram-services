@@ -1,5 +1,6 @@
 package rs.ac.uns.ftn.nistagram.api.gateway.config;
 
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -8,20 +9,19 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import rs.ac.uns.ftn.nistagram.api.gateway.domain.ApiToken;
+import rs.ac.uns.ftn.nistagram.api.gateway.filters.ApiTokenAuthorizationFilter;
 import rs.ac.uns.ftn.nistagram.api.gateway.filters.GatewayRequestLoggingFilter;
 import rs.ac.uns.ftn.nistagram.api.gateway.filters.JwtTokenAuthenticationFilter;
 
 import javax.servlet.http.HttpServletResponse;
 
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
     private final JwtTokenAuthenticationFilter authFilter;
-
-    public SecurityConfig(JwtTokenAuthenticationFilter authFilter) {
-        this.authFilter = authFilter;
-    }
-
+    private final ApiTokenAuthorizationFilter apiTokenFilter;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -40,9 +40,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .and()
                 .addFilterAfter(authFilter,
                         UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(apiTokenFilter,
+                        JwtTokenAuthenticationFilter.class)
                 .addFilterBefore(new GatewayRequestLoggingFilter(), JwtTokenAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/api/auth/agent/**").hasRole("ADMIN")
+                .antMatchers("/api/auth/api-token/test").hasRole(ApiToken.EXTERNAL_APP_ROLE)
                 .antMatchers("/api/auth/api-token/**").hasRole("AGENT")
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/notification/**").permitAll()
