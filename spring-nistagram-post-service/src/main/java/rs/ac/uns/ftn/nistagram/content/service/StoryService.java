@@ -2,9 +2,11 @@ package rs.ac.uns.ftn.nistagram.content.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.content.communication.External;
+import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.HighlightedStory;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.ShareStory;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.Story;
@@ -12,8 +14,13 @@ import rs.ac.uns.ftn.nistagram.content.domain.core.story.StoryHighlight;
 import rs.ac.uns.ftn.nistagram.content.exception.NistagramException;
 import rs.ac.uns.ftn.nistagram.content.exception.OwnershipException;
 import rs.ac.uns.ftn.nistagram.content.exception.ProfileNotPublicException;
-import rs.ac.uns.ftn.nistagram.content.messaging.producers.ContentProducer;
-import rs.ac.uns.ftn.nistagram.content.messaging.producers.NotificationProducer;
+import rs.ac.uns.ftn.nistagram.content.messaging.event.content.StoryCreatedEvent;
+import rs.ac.uns.ftn.nistagram.content.messaging.event.content.StoryDeletedEvent;
+import rs.ac.uns.ftn.nistagram.content.messaging.event.notification.PostSharedEvent;
+import rs.ac.uns.ftn.nistagram.content.messaging.mappers.EventPayloadMapper;
+import rs.ac.uns.ftn.nistagram.content.messaging.payload.notification.PostInteractionEventPayload;
+import rs.ac.uns.ftn.nistagram.content.messaging.payload.story.StoryPayloadType;
+import rs.ac.uns.ftn.nistagram.content.repository.post.PostRepository;
 import rs.ac.uns.ftn.nistagram.content.repository.story.StoryHighlightsRepository;
 import rs.ac.uns.ftn.nistagram.content.repository.story.StoryRepository;
 
@@ -21,6 +28,7 @@ import javax.persistence.EntityNotFoundException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,12 +37,11 @@ import java.util.stream.Collectors;
 public class StoryService {
 
     private final StoryRepository storyRepository;
+    private final PostRepository postRepository;
     private final StoryHighlightsRepository highlightsRepository;
     private final External.GraphClientWrapper graphClient;
     private final External.UserClientWrapper userClient;
-    private final ContentProducer contentProducer;
-    private final NotificationProducer notificationProducer;
-
+    private final ApplicationEventPublisher publisher;
 
     public void create(Story story) {
         // TODO For a reshare story, check whether the author of the share, follows the person who created the post!
@@ -44,11 +51,42 @@ public class StoryService {
         storyRepository.save(story);
         log.info("[STORY][C][C][CALL={}]", story.getAuthor());
 
-        contentProducer.publishStoryCreated(story);
+        publishStoryCreated(story);
+
         if (story.getClass().equals(ShareStory.class))
-            notificationProducer.publishPostShared(story);
+            publishPostShared(story);
 
         log.info("[STORY][C][P][CALL={}]", story.getAuthor());
+    }
+
+
+    public void publishStoryCreated(Story story) {
+
+        StoryCreatedEvent event = new StoryCreatedEvent(UUID.randomUUID().toString(),
+                EventPayloadMapper.toPayload(story, StoryPayloadType.STORY_CREATED));
+
+        log.debug("Publishing an story created event {}", event);
+
+        publisher.publishEvent(event);
+
+    }
+
+    public void publishPostShared(Story story) {
+
+        ShareStory shareStory = (ShareStory) story;
+
+        //When creating a share story, shared post is faked by setting a post id,
+        //so I had to manually fetch it here.
+        Post sharedPost = postRepository.getById(shareStory.getSharedPost().getId());
+
+        PostInteractionEventPayload payload = EventPayloadMapper.toPayload(sharedPost, shareStory.getTime(), shareStory.getAuthor());
+
+        PostSharedEvent event = new PostSharedEvent(UUID.randomUUID().toString(), payload);
+
+        log.debug("Publishing a post shared event {}", event);
+
+        publisher.publishEvent(event);
+
     }
 
     @Transactional
@@ -66,7 +104,7 @@ public class StoryService {
             storyRepository.delete(story);
             log.info("[STORY][D][C][CALL={}][ID={}]", caller, storyId);
 
-            contentProducer.publishStoryDeleted(story);
+            publishStoryDeleted(story);
             log.info("[STORY][D][P][CALL={}][ID={}]", caller, storyId);
         }
     }
@@ -82,8 +120,19 @@ public class StoryService {
         storyRepository.delete(story);
         log.info("[STORY][D][C][CALL=ADMIN][ID={}]", storyId);
 
-        contentProducer.publishStoryDeleted(story);
+        publishStoryDeleted(story);
         log.info("[STORY][D][P][CALL=ADMIN][ID={}]", storyId);
+    }
+
+    public void publishStoryDeleted(Story story) {
+
+        StoryDeletedEvent event = new StoryDeletedEvent(UUID.randomUUID().toString(),
+                EventPayloadMapper.toPayload(story, StoryPayloadType.STORY_DELETED));
+
+        log.debug("Publishing an story deleted event {}", event);
+
+        publisher.publishEvent(event);
+
     }
 
     public List<Story> getByUsername(String username, String caller) {
@@ -127,7 +176,7 @@ public class StoryService {
                 ));
 
         log.info("[STORY][G][C][CALL=ADMIN][ID={}]", storyId);
-        
+
         return story;
     }
 

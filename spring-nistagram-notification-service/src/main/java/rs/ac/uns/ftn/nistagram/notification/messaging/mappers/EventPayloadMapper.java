@@ -2,10 +2,10 @@ package rs.ac.uns.ftn.nistagram.notification.messaging.mappers;
 
 import rs.ac.uns.ftn.nistagram.notification.domain.Notification;
 import rs.ac.uns.ftn.nistagram.notification.domain.NotificationType;
-import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.PostCommentedTopicPayload;
-import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.PostInteractionTopicPayload;
-import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.UserRelationTopicPayload;
-import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.UsersTaggedTopicPayload;
+import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.PostCommentedEventPayload;
+import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.PostInteractionEventPayload;
+import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.UserRelationEventPayload;
+import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.UserTaggedEventPayload;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class EventPayloadMapper {
     private static final String NEW_FOLLOW_MESSAGE = "User %s is now following you.";
 
 
-    public static List<Notification> toDomain(UsersTaggedTopicPayload payload) {
+    public static List<Notification> toDomain(UserTaggedEventPayload payload) {
         List<Notification> notifications = new ArrayList<>();
         payload.getTargets().forEach(target -> notifications.add(Notification
                 .builder()
@@ -38,7 +38,7 @@ public class EventPayloadMapper {
         return notifications;
     }
 
-    public static Notification toDomain(PostInteractionTopicPayload payload, NotificationType type) {
+    public static Notification toDomain(PostInteractionEventPayload payload, NotificationType type) {
         return Notification
                 .builder()
                 .time(payload.getTime())
@@ -52,7 +52,7 @@ public class EventPayloadMapper {
                 .build();
     }
 
-    public static Notification toDomain(PostCommentedTopicPayload payload) {
+    public static Notification toDomain(PostCommentedEventPayload payload) {
         return Notification
                 .builder()
                 .time(payload.getTime())
@@ -65,7 +65,7 @@ public class EventPayloadMapper {
                 .build();
     }
 
-    public static Notification toDomain(UserRelationTopicPayload payload) {
+    public static Notification toDomain(UserRelationEventPayload payload) {
         return Notification
                 .builder()
                 .time(payload.getTime())

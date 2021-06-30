@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class NotificationTopicPayload {
+public class NotificationEventPayload {
 
     private Long contentId;
     @JsonSerialize(using = LocalDateTimeSerializer.class)

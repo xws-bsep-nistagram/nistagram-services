@@ -13,15 +13,16 @@ public class RabbitMQConfig {
 
     public static final String USER_BANNED_EVENT = "USER_BANNED_EVENT_NOTIFICATION_SERVICE";
 
-    public static final String USER_BANNED_NOTIFICATION_SERVICE = "user.banned.notification-service";
-    public static final String USERS_TAGGED_NOTIFICATION_SERVICE = "user.tagged.notification-service";
-    public static final String POST_LIKED_NOTIFICATION_SERVICE = "post.liked.notification-service";
-    public static final String POST_COMMENTED_NOTIFICATION_SERVICE = "post.commented.notification-service";
+    public static final String USERS_TAGGED_EVENT = "USERS_TAGGED_EVENT";
+    public static final String POST_LIKED_EVENT = "POST_LIKED_EVENT";
+    public static final String POST_DISLIKED_EVENT = "POST_DISLIKED_EVENT";
+    public static final String POST_SHARED_EVENT = "POST_SHARED_EVENT";
+    public static final String POST_COMMENTED_EVENT = "POST_COMMENTED_EVENT";
+
     public static final String FOLLOW_REQUESTED_NOTIFICATION_SERVICE = "follow.requested.notification-service";
     public static final String FOLLOW_ACCEPTED_NOTIFICATION_SERVICE = "follow.accepted.notification-service";
     public static final String NEW_FOLLOW_NOTIFICATION_SERVICE = "new.follow.notification-service";
-    public static final String POST_DISLIKED_NOTIFICATION_SERVICE = "post.disliked.notification-service";
-    public static final String POST_SHARED_NOTIFICATION_SERVICE = "post.shared.notification-service";
+
 
     @Bean
     public RabbitTemplate jsonRabbitTemplate(ConnectionFactory connectionFactory) {
@@ -33,21 +34,6 @@ public class RabbitMQConfig {
     @Bean
     public MessageConverter jsonConverter() {
         return new Jackson2JsonMessageConverter();
-    }
-
-    @Bean
-    public Queue usersTaggedNotificationQueue() {
-        return new Queue(USERS_TAGGED_NOTIFICATION_SERVICE);
-    }
-
-    @Bean
-    public Queue postLikedNotificationQueue() {
-        return new Queue(POST_LIKED_NOTIFICATION_SERVICE);
-    }
-
-    @Bean
-    public Queue postCommentedNotificationQueue() {
-        return new Queue(POST_COMMENTED_NOTIFICATION_SERVICE);
     }
 
     @Bean
@@ -65,18 +51,4 @@ public class RabbitMQConfig {
         return new Queue(NEW_FOLLOW_NOTIFICATION_SERVICE);
     }
 
-    @Bean
-    public Queue postDislikedNotificationQueue() {
-        return new Queue(POST_DISLIKED_NOTIFICATION_SERVICE);
-    }
-
-    @Bean
-    public Queue postSharedNotificationQueue() {
-        return new Queue(POST_SHARED_NOTIFICATION_SERVICE);
-    }
-
-    @Bean
-    public Queue userBannedNotificationQueue() {
-        return new Queue(USER_BANNED_NOTIFICATION_SERVICE);
-    }
 }

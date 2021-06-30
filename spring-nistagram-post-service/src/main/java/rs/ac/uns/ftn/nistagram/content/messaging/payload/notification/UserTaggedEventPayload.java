@@ -11,12 +11,12 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserTaggedTopicPayload extends NotificationTopicPayload {
+public class UserTaggedEventPayload extends NotificationEventPayload {
 
     private List<String> targets;
 
     @Builder
-    public UserTaggedTopicPayload(long contentId, LocalDateTime time, String subject) {
+    public UserTaggedEventPayload(long contentId, LocalDateTime time, String subject) {
         super(contentId, time, subject);
     }
 

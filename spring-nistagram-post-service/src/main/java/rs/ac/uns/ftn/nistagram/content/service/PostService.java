@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.nistagram.content.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.content.communication.External;
@@ -15,8 +16,16 @@ import rs.ac.uns.ftn.nistagram.content.exception.ExistingEntityException;
 import rs.ac.uns.ftn.nistagram.content.exception.NistagramException;
 import rs.ac.uns.ftn.nistagram.content.exception.OwnershipException;
 import rs.ac.uns.ftn.nistagram.content.exception.ProfileNotPublicException;
-import rs.ac.uns.ftn.nistagram.content.messaging.producers.ContentProducer;
-import rs.ac.uns.ftn.nistagram.content.messaging.producers.NotificationProducer;
+import rs.ac.uns.ftn.nistagram.content.messaging.event.content.PostCreatedEvent;
+import rs.ac.uns.ftn.nistagram.content.messaging.event.content.PostDeletedEvent;
+import rs.ac.uns.ftn.nistagram.content.messaging.event.notification.PostCommentedEvent;
+import rs.ac.uns.ftn.nistagram.content.messaging.event.notification.PostDislikedEvent;
+import rs.ac.uns.ftn.nistagram.content.messaging.event.notification.PostLikedEvent;
+import rs.ac.uns.ftn.nistagram.content.messaging.event.notification.UserTaggedEvent;
+import rs.ac.uns.ftn.nistagram.content.messaging.mappers.EventPayloadMapper;
+import rs.ac.uns.ftn.nistagram.content.messaging.payload.notification.PostCommentedEventPayload;
+import rs.ac.uns.ftn.nistagram.content.messaging.payload.notification.PostInteractionEventPayload;
+import rs.ac.uns.ftn.nistagram.content.messaging.payload.post.PostPayloadType;
 import rs.ac.uns.ftn.nistagram.content.repository.post.*;
 
 import javax.persistence.EntityNotFoundException;
@@ -24,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,8 +47,7 @@ public class PostService {
     private final SavedPostRepository savedPostRepository;
     private final CustomPostCollectionRepository collectionRepository;
     private final PostInCollectionRepository postInCollectionRepository;
-    private final ContentProducer contentProducer;
-    private final NotificationProducer notificationProducer;
+    private final ApplicationEventPublisher publisher;
     private final External.GraphClientWrapper graphClient;
     private final External.UserClientWrapper userClient;
 
@@ -60,12 +69,35 @@ public class PostService {
         log.info("[POST][C][C][CALL={}]", post.getAuthor());
 
         if (post.usersTagged())
-            notificationProducer.publishUserTagged(post);
+            publishUserTagged(post);
 
-        contentProducer.publishPostCreated(post);
+        publishPostCreated(post);
+
         log.info("[POST][C][P][CALL={}]", post.getAuthor());
 
         return savedPost;
+    }
+
+    public void publishUserTagged(Post post) {
+
+        UserTaggedEvent event = new UserTaggedEvent(UUID.randomUUID().toString(),
+                EventPayloadMapper.toPayload(post));
+
+        log.debug("Publishing an user tagged event {}", event);
+
+        publisher.publishEvent(event);
+
+    }
+
+    public void publishPostCreated(Post post) {
+
+        PostCreatedEvent event = new PostCreatedEvent(UUID.randomUUID().toString(),
+                EventPayloadMapper.toPayload(post, PostPayloadType.POST_CREATED));
+
+        log.debug("Publishing a post created event {}", event);
+
+        publisher.publishEvent(event);
+
     }
 
     public void delete(String caller, long postId) {
@@ -82,10 +114,12 @@ public class PostService {
             postRepository.delete(post);
             log.info("[POST][D][C][CALL={}][ID={}]", caller, postId);
 
-            contentProducer.publishPostDeleted(post);
+            publishPostDeleted(post);
+
             log.info("[POST][D][P][CALL={}][ID={}]", caller, postId);
         }
     }
+
 
     public void delete(long postId) {
         log.info("[POST][D][R][CALL=ADMIN][ID={}]", postId);
@@ -98,8 +132,20 @@ public class PostService {
         postRepository.delete(post);
         log.info("[POST][D][C][CALL=ADMIN][ID={}]", postId);
 
-        contentProducer.publishPostDeleted(post);
+        publishPostDeleted(post);
+
         log.info("[POST][D][P][CALL=ADMIN][ID={}]", postId);
+
+    }
+
+    public void publishPostDeleted(Post post) {
+
+        PostDeletedEvent event = new PostDeletedEvent(UUID.randomUUID().toString(),
+                EventPayloadMapper.toPayload(post, PostPayloadType.POST_DELETED));
+
+        log.debug("Publishing a post deleted event {}", event);
+
+        publisher.publishEvent(event);
 
     }
 
@@ -140,8 +186,7 @@ public class PostService {
         if (userClient.isPrivate(username)) {
             throw new ProfileNotPublicException(username);
         }
-        List<Post> publicPosts = getByUsername(username);
-        return publicPosts;
+        return getByUsername(username);
     }
 
     public List<Post> getByUsername(String caller, String username) {
@@ -206,9 +251,35 @@ public class PostService {
         }
 
         if (sentiment.equals(UserInteraction.Sentiment.LIKE))
-            notificationProducer.publishPostLiked(post, caller);
+            publishPostLiked(post, caller);
         else
-            notificationProducer.publishPostDisliked(post, caller);
+            publishPostDisliked(post, caller);
+
+    }
+
+    public void publishPostLiked(Post post, String caller) {
+
+        PostInteractionEventPayload payload = EventPayloadMapper.toPayload(post, caller);
+
+        PostLikedEvent event = new PostLikedEvent(UUID.randomUUID().toString(),
+                payload);
+
+        log.debug("Publishing a post liked event {}", event);
+
+        publisher.publishEvent(event);
+
+    }
+
+    public void publishPostDisliked(Post post, String caller) {
+
+        PostInteractionEventPayload payload = EventPayloadMapper.toPayload(post, caller);
+
+        PostDislikedEvent event = new PostDislikedEvent(UUID.randomUUID().toString(),
+                payload);
+
+        log.debug("Publishing a post disliked event {}", event);
+
+        publisher.publishEvent(event);
 
     }
 
@@ -240,8 +311,21 @@ public class PostService {
         comment.setTime(LocalDateTime.now());
 
         commentRepository.save(comment);
-        notificationProducer.publishPostCommented(commentedPost, comment);
+        publishPostCommented(commentedPost, comment);
         log.info("[COMMENT][C][C][CALL={}][ID={}]", comment.getAuthor(), postId);
+    }
+
+    public void publishPostCommented(Post post, Comment comment) {
+
+        PostCommentedEventPayload payload = EventPayloadMapper.toPayload(post, comment);
+
+        PostCommentedEvent event = new PostCommentedEvent(UUID.randomUUID().toString(),
+                payload);
+
+        log.debug("Publishing a post commented event {}", event);
+
+        publisher.publishEvent(event);
+
     }
 
     public void save(String caller, long postId) {

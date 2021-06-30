@@ -5,14 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UsersTaggedTopicPayload extends NotificationTopicPayload {
+public class PostCommentedEventPayload extends NotificationEventPayload {
 
-    private List<String> targets;
+    private String target;
+    private String text;
 
 }

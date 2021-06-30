@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.feed.messaging.payload.post;
+package rs.ac.uns.ftn.nistagram.content.messaging.payload.post;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
-public class PostTopicPayload {
+public class PostEventPayload {
 
     private String author;
     @JsonSerialize(using = LocalDateTimeSerializer.class)

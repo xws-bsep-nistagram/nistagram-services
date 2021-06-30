@@ -3,19 +3,19 @@ package rs.ac.uns.ftn.nistagram.content.messaging.mappers;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Comment;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.Story;
-import rs.ac.uns.ftn.nistagram.content.messaging.payload.notification.PostCommentedTopicPayload;
-import rs.ac.uns.ftn.nistagram.content.messaging.payload.notification.PostInteractionTopicPayload;
-import rs.ac.uns.ftn.nistagram.content.messaging.payload.notification.UserTaggedTopicPayload;
+import rs.ac.uns.ftn.nistagram.content.messaging.payload.notification.PostCommentedEventPayload;
+import rs.ac.uns.ftn.nistagram.content.messaging.payload.notification.PostInteractionEventPayload;
+import rs.ac.uns.ftn.nistagram.content.messaging.payload.notification.UserTaggedEventPayload;
+import rs.ac.uns.ftn.nistagram.content.messaging.payload.post.PostEventPayload;
 import rs.ac.uns.ftn.nistagram.content.messaging.payload.post.PostPayloadType;
-import rs.ac.uns.ftn.nistagram.content.messaging.payload.post.PostTopicPayload;
+import rs.ac.uns.ftn.nistagram.content.messaging.payload.story.StoryEventPayload;
 import rs.ac.uns.ftn.nistagram.content.messaging.payload.story.StoryPayloadType;
-import rs.ac.uns.ftn.nistagram.content.messaging.payload.story.StoryTopicPayload;
 
 import java.time.LocalDateTime;
 
 public class EventPayloadMapper {
-    public static PostTopicPayload toPayload(Post post, PostPayloadType postPayloadType) {
-        return PostTopicPayload
+    public static PostEventPayload toPayload(Post post, PostPayloadType postPayloadType) {
+        return PostEventPayload
                 .builder()
                 .contentId(post.getId())
                 .author(post.getAuthor())
@@ -24,8 +24,8 @@ public class EventPayloadMapper {
                 .build();
     }
 
-    public static StoryTopicPayload toPayload(Story story, StoryPayloadType storyPayloadType) {
-        return StoryTopicPayload
+    public static StoryEventPayload toPayload(Story story, StoryPayloadType storyPayloadType) {
+        return StoryEventPayload
                 .builder()
                 .contentId(story.getId())
                 .author(story.getAuthor())
@@ -35,8 +35,8 @@ public class EventPayloadMapper {
                 .build();
     }
 
-    public static UserTaggedTopicPayload toPayload(Post post) {
-        UserTaggedTopicPayload payload = UserTaggedTopicPayload
+    public static UserTaggedEventPayload toPayload(Post post) {
+        UserTaggedEventPayload payload = UserTaggedEventPayload
                 .builder()
                 .contentId(post.getId())
                 .time(post.getTime())
@@ -47,8 +47,8 @@ public class EventPayloadMapper {
         return payload;
     }
 
-    public static PostInteractionTopicPayload toPayload(Post post, String subject) {
-        return PostInteractionTopicPayload
+    public static PostInteractionEventPayload toPayload(Post post, String subject) {
+        return PostInteractionEventPayload
                 .builder()
                 .contentId(post.getId())
                 .subject(subject)
@@ -58,8 +58,8 @@ public class EventPayloadMapper {
 
     }
 
-    public static PostInteractionTopicPayload toPayload(Post post, LocalDateTime time, String subject) {
-        return PostInteractionTopicPayload
+    public static PostInteractionEventPayload toPayload(Post post, LocalDateTime time, String subject) {
+        return PostInteractionEventPayload
                 .builder()
                 .contentId(post.getId())
                 .subject(subject)
@@ -69,8 +69,8 @@ public class EventPayloadMapper {
 
     }
 
-    public static PostCommentedTopicPayload toPayload(Post post, Comment comment) {
-        return PostCommentedTopicPayload
+    public static PostCommentedEventPayload toPayload(Post post, Comment comment) {
+        return PostCommentedEventPayload
                 .builder()
                 .contentId(post.getId())
                 .subject(comment.getAuthor())

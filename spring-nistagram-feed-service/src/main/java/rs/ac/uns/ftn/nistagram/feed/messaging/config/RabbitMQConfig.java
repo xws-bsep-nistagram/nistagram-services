@@ -13,10 +13,11 @@ public class RabbitMQConfig {
     public static final String USER_CREATED_EVENT = "USER_CREATED_EVENT_FEED_SERVICE";
     public static final String USER_BANNED_EVENT = "USER_BANNED_EVENT_FEED_SERVICE";
 
-    public static final String POST_CREATED_FEED_SERVICE = "post.created.feed-service";
-    public static final String POST_DELETED_FEED_SERVICE = "post.deleted.feed-service";
-    public static final String STORY_CREATED_FEED_SERVICE = "story.created.feed-service";
-    public static final String STORY_DELETED_FEED_SERVICE = "story.deleted.feed-service";
+    public static final String POST_CREATED_EVENT = "POST_CREATED_EVENT";
+    public static final String POST_DELETED_EVENT = "POST_DELETED_EVENT";
+    public static final String STORY_CREATED_EVENT = "STORY_CREATED_EVENT";
+    public static final String STORY_DELETED_EVENT = "STORY_DELETED_EVENT";
+
     public static final String USER_FOLLOWED_FEED_SERVICE = "user.followed.feed-service";
     public static final String USER_UNFOLLOWED_FEED_SERVICE = "user.unfollowed.feed-service";
     public static final String USER_MUTED_FEED_SERVICE = "user.unfollowed.feed-service";
@@ -32,26 +33,6 @@ public class RabbitMQConfig {
     @Bean
     public MessageConverter jsonConverter() {
         return new Jackson2JsonMessageConverter();
-    }
-
-    @Bean
-    public Queue postCreatedFeedQueue() {
-        return new Queue(POST_CREATED_FEED_SERVICE);
-    }
-
-    @Bean
-    public Queue postDeletedFeedQueue() {
-        return new Queue(POST_DELETED_FEED_SERVICE);
-    }
-
-    @Bean
-    public Queue storyCreatedFeedQueue() {
-        return new Queue(STORY_CREATED_FEED_SERVICE);
-    }
-
-    @Bean
-    public Queue storyDeletedFeedQueue() {
-        return new Queue(STORY_DELETED_FEED_SERVICE);
     }
 
     @Bean

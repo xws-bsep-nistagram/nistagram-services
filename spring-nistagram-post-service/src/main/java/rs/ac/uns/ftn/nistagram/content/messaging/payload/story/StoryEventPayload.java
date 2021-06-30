@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StoryTopicPayload {
+@ToString
+public class StoryEventPayload {
 
     private String author;
     @JsonSerialize(using = LocalDateTimeSerializer.class)

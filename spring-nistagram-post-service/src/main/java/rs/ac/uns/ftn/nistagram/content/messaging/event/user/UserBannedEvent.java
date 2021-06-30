@@ -1,7 +1,7 @@
-package rs.ac.uns.ftn.nistagram.notification.messaging.event;
+package rs.ac.uns.ftn.nistagram.content.messaging.event.user;
 
 import lombok.*;
-import rs.ac.uns.ftn.nistagram.notification.messaging.payload.user.UserEventPayload;
+import rs.ac.uns.ftn.nistagram.content.messaging.payload.user.UserEventPayload;
 
 @AllArgsConstructor
 @NoArgsConstructor

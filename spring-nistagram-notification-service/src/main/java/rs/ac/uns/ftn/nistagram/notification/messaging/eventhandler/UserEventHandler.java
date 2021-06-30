@@ -6,7 +6,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import rs.ac.uns.ftn.nistagram.notification.messaging.config.RabbitMQConfig;
-import rs.ac.uns.ftn.nistagram.notification.messaging.event.UserBannedEvent;
+import rs.ac.uns.ftn.nistagram.notification.messaging.event.user.UserBannedEvent;
 import rs.ac.uns.ftn.nistagram.notification.messaging.payload.user.UserEventPayload;
 import rs.ac.uns.ftn.nistagram.notification.messaging.util.Converter;
 import rs.ac.uns.ftn.nistagram.notification.messaging.util.TransactionIdHolder;

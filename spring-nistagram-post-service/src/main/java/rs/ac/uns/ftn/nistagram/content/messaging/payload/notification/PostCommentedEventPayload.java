@@ -8,13 +8,17 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostInteractionTopicPayload extends NotificationTopicPayload {
+public class PostCommentedEventPayload extends NotificationEventPayload {
 
     private String target;
+    private String text;
 
     @Builder
-    public PostInteractionTopicPayload(long contentId, LocalDateTime time, String subject, String target) {
+    public PostCommentedEventPayload(long contentId, LocalDateTime time, String subject,
+                                     String target, String text) {
         super(contentId, time, subject);
         this.target = target;
+        this.text = text;
     }
+
 }
