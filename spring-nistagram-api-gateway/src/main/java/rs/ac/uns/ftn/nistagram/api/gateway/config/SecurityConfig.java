@@ -43,6 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .addFilterBefore(new GatewayRequestLoggingFilter(), JwtTokenAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/api/auth/agent/**").hasRole("ADMIN")
+                .antMatchers("/api/auth/api-token/**").hasRole("AGENT")
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/notification/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/users/**").permitAll()

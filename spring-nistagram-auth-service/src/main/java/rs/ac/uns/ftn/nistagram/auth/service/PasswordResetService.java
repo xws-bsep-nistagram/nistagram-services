@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.auth.domain.Credentials;
 import rs.ac.uns.ftn.nistagram.auth.domain.PasswordResetBundle;
 import rs.ac.uns.ftn.nistagram.auth.domain.PasswordResetRequest;
-import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.PasswordResetException;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.auth.PasswordResetException;
 import rs.ac.uns.ftn.nistagram.auth.repository.CredentialsRepository;
 import rs.ac.uns.ftn.nistagram.auth.repository.PasswordResetRequestRepository;
 

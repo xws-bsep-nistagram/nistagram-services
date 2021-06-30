@@ -2,6 +2,8 @@ package rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -9,10 +11,15 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.apitokens.ApplicationAlreadyRegisteredException;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.auth.BannedException;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.auth.PasswordResetException;
 
 @Slf4j
 @RestControllerAdvice
-public class AuthExceptionHandler {
+public class ControllerAdvisor {
+
+    // AUTH
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(BadCredentialsException.class)
@@ -61,11 +68,20 @@ public class AuthExceptionHandler {
         return "Jwt token invalid!";
     }
 
+    // API TOKEN
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ApplicationAlreadyRegisteredException.class)
+    String entityNotFoundHandler(ApplicationAlreadyRegisteredException e) {
+        return e.getMessage();
+    }
+
+    // GENERAL
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
     String handleExceptionDefault(RuntimeException e) {
         log.error(e.getMessage(), e);
         return "Internal server error has occurred!";
     }
-
 }

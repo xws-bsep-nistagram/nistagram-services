@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions;
+package rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.auth;
 
 public class JwtDecryptionException extends JwtException {
 
