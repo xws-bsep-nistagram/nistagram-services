@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.apitokens.ApplicationAlreadyRegisteredException;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.apitokens.InvalidApiTokenJWT;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.auth.BannedException;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.auth.PasswordResetException;
 
@@ -73,6 +74,12 @@ public class ControllerAdvisor {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ApplicationAlreadyRegisteredException.class)
     String entityNotFoundHandler(ApplicationAlreadyRegisteredException e) {
+        return e.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidApiTokenJWT.class)
+    String entityNotFoundHandler(InvalidApiTokenJWT e) {
         return e.getMessage();
     }
 

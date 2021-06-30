@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.auth.service;
+package rs.ac.uns.ftn.nistagram.auth.service.apitokens;
 
 import lombok.AllArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
@@ -16,14 +16,16 @@ import java.util.Optional;
 public class ApiTokenService {
 
     private final ApiTokenRepository apiTokenRepository;
+    private final ApiTokenJWTService jwtService;
 
     @Transactional
-    public ApiToken create(String packageName, String agent) {
+    public String createAndEncode(String packageName, String agent) {
         assertApplicationNotRegistered(packageName);
         ApiToken apiToken = new ApiToken();
         apiToken.setAgent(agent);
         apiToken.setPackageName(packageName);
-        return apiTokenRepository.save(apiToken);
+        ApiToken savedApiToken = apiTokenRepository.save(apiToken);
+        return jwtService.encode(savedApiToken);
     }
 
     private void assertApplicationNotRegistered(String packageName) {
@@ -35,5 +37,9 @@ public class ApiTokenService {
     @Transactional
     public void revokeApiToken(String packageName) {
         apiTokenRepository.deleteByPackageName(packageName);
+    }
+
+    public ApiToken decode(String apiTokenJWT) {
+        return jwtService.decode(apiTokenJWT);
     }
 }
