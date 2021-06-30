@@ -26,7 +26,7 @@ public class UserEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onCreateEvent(UserCreatedEvent event) {
 
-        log.debug("Sending user created event to {}, event: {}", RabbitMQConfig.USER_CREATED_TOPIC, event);
+        log.info("Sending user created event to {}, event: {}", RabbitMQConfig.USER_CREATED_TOPIC, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_CREATED_TOPIC, ROUTING_KEY, converter.toJSON(event));
 
@@ -36,7 +36,7 @@ public class UserEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onUpdateEvent(UserUpdatedEvent event) {
 
-        log.debug("Sending user updated event to {}, event: {}", RabbitMQConfig.USER_UPDATED_TOPIC, event);
+        log.info("Sending user updated event to {}, event: {}", RabbitMQConfig.USER_UPDATED_TOPIC, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_UPDATED_TOPIC, ROUTING_KEY, converter.toJSON(event));
 
@@ -46,7 +46,7 @@ public class UserEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onBanEvent(UserBannedEvent event) {
 
-        log.debug("Sending user banned event to {}, event: {}", RabbitMQConfig.USER_BANNED_TOPIC, event);
+        log.info("Sending user banned event to {}, event: {}", RabbitMQConfig.USER_BANNED_TOPIC, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_BANNED_TOPIC, ROUTING_KEY, converter.toJSON(event));
 

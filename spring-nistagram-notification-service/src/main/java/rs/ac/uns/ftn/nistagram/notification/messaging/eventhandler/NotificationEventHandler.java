@@ -26,7 +26,7 @@ public class NotificationEventHandler {
     @RabbitListener(queues = {RabbitMQConfig.USERS_TAGGED_EVENT})
     public void handleUserTagged(@Payload String payload) {
 
-        log.debug("Handling a user tagged event {}", payload);
+        log.info("Handling a user tagged event {}", payload);
 
         UserTaggedEvent event = converter.toObject(payload, UserTaggedEvent.class);
 
@@ -38,7 +38,7 @@ public class NotificationEventHandler {
     @RabbitListener(queues = {RabbitMQConfig.POST_LIKED_EVENT})
     public void handlePostLiked(@Payload String payload) {
 
-        log.debug("Handling a post liked event {}", payload);
+        log.info("Handling a post liked event {}", payload);
 
         PostLikedEvent event = converter.toObject(payload, PostLikedEvent.class);
 
@@ -50,7 +50,7 @@ public class NotificationEventHandler {
     @RabbitListener(queues = {RabbitMQConfig.POST_DISLIKED_EVENT})
     public void handlePostDisliked(@Payload String payload) {
 
-        log.debug("Handling a post disliked event {}", payload);
+        log.info("Handling a post disliked event {}", payload);
 
         PostDislikedEvent event = converter.toObject(payload, PostDislikedEvent.class);
 
@@ -62,7 +62,7 @@ public class NotificationEventHandler {
     @RabbitListener(queues = {RabbitMQConfig.POST_SHARED_EVENT})
     public void handlePostShared(@Payload String payload) {
 
-        log.debug("Handling a post shared event {}", payload);
+        log.info("Handling a post shared event {}", payload);
 
         PostSharedEvent event = converter.toObject(payload, PostSharedEvent.class);
 
@@ -74,7 +74,7 @@ public class NotificationEventHandler {
     @RabbitListener(queues = {RabbitMQConfig.POST_COMMENTED_EVENT})
     public void handlePostCommented(@Payload String payload) {
 
-        log.debug("Handling a post commented event {}", payload);
+        log.info("Handling a post commented event {}", payload);
 
         PostCommentedEvent event = converter.toObject(payload, PostCommentedEvent.class);
 
@@ -86,7 +86,7 @@ public class NotificationEventHandler {
     @RabbitListener(queues = {RabbitMQConfig.FOLLOW_REQUEST_EVENT})
     public void handleFollowRequested(@Payload String payload) {
 
-        log.debug("Handling a follow requested event {}", payload);
+        log.info("Handling a follow requested event {}", payload);
 
         FollowRequestedEvent event = converter.toObject(payload, FollowRequestedEvent.class);
 
@@ -98,7 +98,7 @@ public class NotificationEventHandler {
     @RabbitListener(queues = {RabbitMQConfig.FOLLOW_REQUEST_ACCEPTED_EVENT})
     public void handleFollowRequestAccepted(@Payload String payload) {
 
-        log.debug("Handling a follow request accepted event {}", payload);
+        log.info("Handling a follow request accepted event {}", payload);
 
         FollowAcceptedEvent event = converter.toObject(payload, FollowAcceptedEvent.class);
 
@@ -110,7 +110,7 @@ public class NotificationEventHandler {
     @RabbitListener(queues = {RabbitMQConfig.NEW_FOLLOW_EVENT})
     public void handleNewFollow(@Payload String payload) {
 
-        log.debug("Handling a new follow request event {}", payload);
+        log.info("Handling a new follow request event {}", payload);
 
         NewFollowEvent event = converter.toObject(payload, NewFollowEvent.class);
 

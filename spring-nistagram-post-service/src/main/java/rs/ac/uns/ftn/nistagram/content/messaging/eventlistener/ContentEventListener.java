@@ -26,7 +26,7 @@ public class ContentEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onPostCreateEvent(PostCreatedEvent event) {
 
-        log.debug("Sending post created event to {}, event: {}", RabbitMQConfig.POST_CREATED_EVENT, event);
+        log.info("Sending post created event to {}, event: {}", RabbitMQConfig.POST_CREATED_EVENT, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.POST_CREATED_EVENT, converter.toJSON(event));
 
@@ -36,7 +36,7 @@ public class ContentEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onPostDeleteEvent(PostDeletedEvent event) {
 
-        log.debug("Sending post deleted event to {}, event: {}", RabbitMQConfig.POST_DELETED_EVENT, event);
+        log.info("Sending post deleted event to {}, event: {}", RabbitMQConfig.POST_DELETED_EVENT, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.POST_DELETED_EVENT, converter.toJSON(event));
 
@@ -46,7 +46,7 @@ public class ContentEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onStoryCreateEvent(StoryCreatedEvent event) {
 
-        log.debug("Sending story created event to {}, event: {}", RabbitMQConfig.STORY_CREATED_EVENT, event);
+        log.info("Sending story created event to {}, event: {}", RabbitMQConfig.STORY_CREATED_EVENT, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.STORY_CREATED_EVENT, converter.toJSON(event));
 
@@ -56,7 +56,7 @@ public class ContentEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onStoryDeleteEvent(StoryDeletedEvent event) {
 
-        log.debug("Sending story deleted event to {}, event: {}", RabbitMQConfig.STORY_DELETED_EVENT, event);
+        log.info("Sending story deleted event to {}, event: {}", RabbitMQConfig.STORY_DELETED_EVENT, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.STORY_DELETED_EVENT, converter.toJSON(event));
 

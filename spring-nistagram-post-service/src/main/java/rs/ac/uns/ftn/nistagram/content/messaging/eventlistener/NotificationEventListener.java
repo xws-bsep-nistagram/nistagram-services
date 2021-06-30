@@ -23,7 +23,7 @@ public class NotificationEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onUserTaggedEvent(UserTaggedEvent event) {
 
-        log.debug("Sending user tagged event to {}, event: {}", RabbitMQConfig.USERS_TAGGED_EVENT, event);
+        log.info("Sending user tagged event to {}, event: {}", RabbitMQConfig.USERS_TAGGED_EVENT, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.USERS_TAGGED_EVENT, converter.toJSON(event));
 
@@ -33,7 +33,7 @@ public class NotificationEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onPostLikedEvent(PostLikedEvent event) {
 
-        log.debug("Sending post liked event to {}, event: {}", RabbitMQConfig.POST_LIKED_EVENT, event);
+        log.info("Sending post liked event to {}, event: {}", RabbitMQConfig.POST_LIKED_EVENT, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.POST_LIKED_EVENT, converter.toJSON(event));
 
@@ -43,7 +43,7 @@ public class NotificationEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onPostDislikedEvent(PostDislikedEvent event) {
 
-        log.debug("Sending post disliked event to {}, event: {}", RabbitMQConfig.POST_DISLIKED_EVENT, event);
+        log.info("Sending post disliked event to {}, event: {}", RabbitMQConfig.POST_DISLIKED_EVENT, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.POST_DISLIKED_EVENT, converter.toJSON(event));
 
@@ -53,7 +53,7 @@ public class NotificationEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onPostSharedEvent(PostSharedEvent event) {
 
-        log.debug("Sending post shared event to {}, event: {}", RabbitMQConfig.POST_SHARED_EVENT, event);
+        log.info("Sending post shared event to {}, event: {}", RabbitMQConfig.POST_SHARED_EVENT, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.POST_SHARED_EVENT, converter.toJSON(event));
 
@@ -63,7 +63,7 @@ public class NotificationEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onPostCommentedEvent(PostCommentedEvent event) {
 
-        log.debug("Sending post commented event to {}, event: {}", RabbitMQConfig.POST_COMMENTED_EVENT, event);
+        log.info("Sending post commented event to {}, event: {}", RabbitMQConfig.POST_COMMENTED_EVENT, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.POST_COMMENTED_EVENT, converter.toJSON(event));
 

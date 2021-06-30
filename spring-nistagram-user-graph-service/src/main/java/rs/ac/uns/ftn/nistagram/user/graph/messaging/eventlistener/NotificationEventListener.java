@@ -25,7 +25,7 @@ public class NotificationEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onFollowAcceptedEvent(FollowAcceptedEvent event) {
 
-        log.debug("Sending follow accepted event to {}, event: {}", RabbitMQConfig.FOLLOW_REQUEST_ACCEPTED_EVENT, event);
+        log.info("Sending follow accepted event to {}, event: {}", RabbitMQConfig.FOLLOW_REQUEST_ACCEPTED_EVENT, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.FOLLOW_REQUEST_ACCEPTED_EVENT, converter.toJSON(event));
 
@@ -35,7 +35,7 @@ public class NotificationEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onFollowRequestedEvent(FollowRequestedEvent event) {
 
-        log.debug("Sending follow requested event to {}, event: {}", RabbitMQConfig.FOLLOW_REQUEST_EVENT, event);
+        log.info("Sending follow requested event to {}, event: {}", RabbitMQConfig.FOLLOW_REQUEST_EVENT, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.FOLLOW_REQUEST_EVENT, converter.toJSON(event));
 
@@ -45,7 +45,7 @@ public class NotificationEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onNewFollowEvent(NewFollowEvent event) {
 
-        log.debug("Sending new follow event to {}, event: {}", RabbitMQConfig.NEW_FOLLOW_EVENT, event);
+        log.info("Sending new follow event to {}, event: {}", RabbitMQConfig.NEW_FOLLOW_EVENT, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.NEW_FOLLOW_EVENT, converter.toJSON(event));
 

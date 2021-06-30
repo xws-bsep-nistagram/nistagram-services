@@ -37,7 +37,7 @@ public class RegistrationService {
 
         User created = repository.save(createNewUser(request));
 
-        log.debug("Created new user profile for an username '{}'", created.getUsername());
+        log.info("Created new user profile for an username '{}'", created.getUsername());
 
         String jwt = sendRegistrationRequest(credentials);
 
@@ -65,7 +65,7 @@ public class RegistrationService {
         UserCreatedEvent event = new UserCreatedEvent(UUID.randomUUID().toString(),
                 UserEventPayloadMapper.toPayload(user));
 
-        log.debug("Publishing an user created event {}", event);
+        log.info("Publishing an user created event {}", event);
 
         publisher.publishEvent(event);
     }

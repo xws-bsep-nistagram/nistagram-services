@@ -85,7 +85,7 @@ public class ProfileService {
         UserBannedEvent event = new UserBannedEvent(UUID.randomUUID().toString(),
                 UserEventPayloadMapper.toPayload(user));
 
-        log.debug("Publishing an user banned event {}", event);
+        log.info("Publishing an user banned event {}", event);
 
         publisher.publishEvent(event);
     }
@@ -171,7 +171,7 @@ public class ProfileService {
         UserUpdatedEvent event = new UserUpdatedEvent(UUID.randomUUID().toString(),
                 UserEventPayloadMapper.toPayload(user));
 
-        log.debug("Publishing an user updated event {}", event);
+        log.info("Publishing an user updated event {}", event);
 
         publisher.publishEvent(event);
     }

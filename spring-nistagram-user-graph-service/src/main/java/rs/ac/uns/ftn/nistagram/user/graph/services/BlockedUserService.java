@@ -25,6 +25,7 @@ public class BlockedUserService {
     private final FollowerRepository followerRepository;
     private final ApplicationEventPublisher publisher;
 
+    @Transactional
     public List<User> findBlocked(String username) {
         constraintChecker.userPresenceCheck(username);
         if (!blockedUserRepository.hasBlockedUsers(username)) {
@@ -38,6 +39,7 @@ public class BlockedUserService {
         return blockedUsers;
     }
 
+    @Transactional
     public Boolean hasBlocked(String subject, String target) {
         log.info("Checking if {} has blocked {}", subject, target);
         return blockedUserRepository.hasBlocked(subject, target);
@@ -103,7 +105,7 @@ public class BlockedUserService {
 
         UserUnfollowedEvent event = new UserUnfollowedEvent(UUID.randomUUID().toString(), new UserRelationshipRequest(subject, target));
 
-        log.debug("Publishing a user unfollowed event {}", event);
+        log.info("Publishing a user unfollowed event {}", event);
 
         publisher.publishEvent(event);
 

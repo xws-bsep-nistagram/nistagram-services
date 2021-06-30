@@ -100,7 +100,7 @@ public class FollowerService {
 
         UserFollowedEvent event = new UserFollowedEvent(UUID.randomUUID().toString(), new UserRelationshipRequest(subject, target));
 
-        log.debug("Publishing a user followed event {}", event);
+        log.info("Publishing a user followed event {}", event);
 
         publisher.publishEvent(event);
 
@@ -111,7 +111,7 @@ public class FollowerService {
         FollowAcceptedEvent event = new FollowAcceptedEvent(UUID.randomUUID().toString(),
                 EventPayloadMapper.toDomain(target, subject, NotificationType.FOLLOW_REQUEST_ACCEPTED));
 
-        log.debug("Publishing a follow accepted event {}", event);
+        log.info("Publishing a follow accepted event {}", event);
 
         publisher.publishEvent(event);
 
@@ -174,9 +174,9 @@ public class FollowerService {
     private void publishFollowRequested(String subject, String target) {
 
         FollowRequestedEvent event = new FollowRequestedEvent(UUID.randomUUID().toString(),
-                EventPayloadMapper.toDomain(target, subject, NotificationType.NEW_FOLLOW_REQUEST));
+                EventPayloadMapper.toDomain(subject, target, NotificationType.NEW_FOLLOW_REQUEST));
 
-        log.debug("Publishing a follow requested event {}", event);
+        log.info("Publishing a follow requested event {}", event);
 
         publisher.publishEvent(event);
 
@@ -185,9 +185,9 @@ public class FollowerService {
     private void publishNewFollow(String subject, String target) {
 
         NewFollowEvent event = new NewFollowEvent(UUID.randomUUID().toString(),
-                EventPayloadMapper.toDomain(target, subject, NotificationType.NEW_FOLLOWER));
+                EventPayloadMapper.toDomain(subject, target, NotificationType.NEW_FOLLOWER));
 
-        log.debug("Publishing a new follow event {}", event);
+        log.info("Publishing a new follow event {}", event);
 
         publisher.publishEvent(event);
 
@@ -221,7 +221,7 @@ public class FollowerService {
 
         UserUnfollowedEvent event = new UserUnfollowedEvent(UUID.randomUUID().toString(), new UserRelationshipRequest(subject, target));
 
-        log.debug("Publishing a user unfollowed event {}", event);
+        log.info("Publishing a user unfollowed event {}", event);
 
         publisher.publishEvent(event);
 

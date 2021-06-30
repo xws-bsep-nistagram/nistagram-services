@@ -40,6 +40,7 @@ public class MutedUserService {
 
     }
 
+    @Transactional
     public Boolean hasMuted(String subject, String target) {
         log.info("Checking if {} has muted {}", subject, target);
         return mutedUserRepository.hasMuted(subject, target);
@@ -66,7 +67,7 @@ public class MutedUserService {
 
         UserMutedEvent event = new UserMutedEvent(UUID.randomUUID().toString(), new UserRelationshipRequest(subject, target));
 
-        log.debug("Publishing a user muted event {}", event);
+        log.info("Publishing a user muted event {}", event);
 
         publisher.publishEvent(event);
 
@@ -93,7 +94,7 @@ public class MutedUserService {
 
         UserUnmutedEvent event = new UserUnmutedEvent(UUID.randomUUID().toString(), new UserRelationshipRequest(subject, target));
 
-        log.debug("Publishing a user unmuted event {}", event);
+        log.info("Publishing a user unmuted event {}", event);
 
         publisher.publishEvent(event);
 

@@ -26,7 +26,7 @@ public class UserEventHandler {
     @RabbitListener(queues = {RabbitMQConfig.USER_CREATED_EVENT})
     public void handleUserCreated(@Payload String payload) {
 
-        log.debug("Handling a created user event {}", payload);
+        log.info("Handling a created user event {}", payload);
 
         UserCreatedEvent event = converter.toObject(payload, UserCreatedEvent.class);
 
@@ -39,20 +39,20 @@ public class UserEventHandler {
     @RabbitListener(queues = {RabbitMQConfig.USER_UPDATED_EVENT})
     public void handleUserUpdated(@Payload String payload) {
 
-        log.debug("Handling a created user event {}", payload);
+        log.info("Handling a created user event {}", payload);
 
         UserUpdatedEvent event = converter.toObject(payload, UserUpdatedEvent.class);
 
         transactionIdHolder.setCurrentTransactionId(event.getTransactionId());
 
-        userService.create(EventPayloadMapper.toDomain(event.getUserEventPayload()));
+        userService.update(EventPayloadMapper.toDomain(event.getUserEventPayload()));
 
     }
 
     @RabbitListener(queues = {RabbitMQConfig.USER_BANNED_EVENT})
     public void handleUserBanned(@Payload String payload) {
 
-        log.debug("Handling a banned user event {}", payload);
+        log.info("Handling a banned user event {}", payload);
 
         UserBannedEvent event = converter.toObject(payload, UserBannedEvent.class);
 

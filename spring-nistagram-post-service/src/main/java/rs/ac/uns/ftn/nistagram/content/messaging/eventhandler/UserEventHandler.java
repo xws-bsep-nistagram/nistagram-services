@@ -24,7 +24,7 @@ public class UserEventHandler {
     @RabbitListener(queues = {RabbitMQConfig.USER_BANNED_EVENT})
     public void handleUserCreated(@Payload String payload) {
 
-        log.debug("Handling a banned user event {}", payload);
+        log.info("Handling a banned user event {}", payload);
 
         UserBannedEvent event = converter.toObject(payload, UserBannedEvent.class);
 

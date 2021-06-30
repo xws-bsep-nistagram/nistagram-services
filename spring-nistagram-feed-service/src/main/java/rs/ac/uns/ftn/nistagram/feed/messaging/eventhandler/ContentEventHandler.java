@@ -26,7 +26,7 @@ public class ContentEventHandler {
     @RabbitListener(queues = RabbitMQConfig.POST_CREATED_EVENT)
     public void handlePostCreated(@Payload String payload) {
 
-        log.debug("Handling a post created event {}", payload);
+        log.info("Handling a post created event {}", payload);
 
         PostCreatedEvent event = converter.toObject(payload, PostCreatedEvent.class);
 
@@ -38,7 +38,7 @@ public class ContentEventHandler {
     @RabbitListener(queues = RabbitMQConfig.POST_DELETED_EVENT)
     public void handlePostDeleted(@Payload String payload) {
 
-        log.debug("Handling a post deleted event {}", payload);
+        log.info("Handling a post deleted event {}", payload);
 
         PostDeletedEvent event = converter.toObject(payload, PostDeletedEvent.class);
 
@@ -50,7 +50,7 @@ public class ContentEventHandler {
     @RabbitListener(queues = RabbitMQConfig.STORY_CREATED_EVENT)
     public void handleStoryCreated(@Payload String payload) {
 
-        log.debug("Handling a story created event {}", payload);
+        log.info("Handling a story created event {}", payload);
 
         StoryCreatedEvent event = converter.toObject(payload, StoryCreatedEvent.class);
 
@@ -62,7 +62,7 @@ public class ContentEventHandler {
     @RabbitListener(queues = RabbitMQConfig.STORY_DELETED_EVENT)
     public void handleStoryDeleted(@Payload String payload) {
 
-        log.debug("Handling a story deleted event {}", payload);
+        log.info("Handling a story deleted event {}", payload);
 
         StoryDeletedEvent event = converter.toObject(payload, StoryDeletedEvent.class);
 

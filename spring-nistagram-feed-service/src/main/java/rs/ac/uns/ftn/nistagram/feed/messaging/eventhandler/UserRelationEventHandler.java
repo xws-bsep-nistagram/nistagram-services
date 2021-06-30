@@ -25,7 +25,7 @@ public class UserRelationEventHandler {
     @RabbitListener(queues = {RabbitMQConfig.USER_FOLLOWED_EVENT})
     public void handleUserFollowed(@Payload String payload) {
 
-        log.debug("Handling a user followed event {}", payload);
+        log.info("Handling a user followed event {}", payload);
 
         UserFollowedEvent event = converter.toObject(payload, UserFollowedEvent.class);
 
@@ -38,7 +38,7 @@ public class UserRelationEventHandler {
     @RabbitListener(queues = {RabbitMQConfig.USER_UNFOLLOWED_EVENT})
     public void handleUserUnfollowed(@Payload String payload) {
 
-        log.debug("Handling a user unfollowed event {}", payload);
+        log.info("Handling a user unfollowed event {}", payload);
 
         UserUnfollowedEvent event = converter.toObject(payload, UserUnfollowedEvent.class);
 
@@ -51,27 +51,25 @@ public class UserRelationEventHandler {
     @RabbitListener(queues = {RabbitMQConfig.USER_MUTED_EVENT})
     public void handleUserMuted(@Payload String payload) {
 
-        log.debug("Handling a user muted event {}", payload);
+        log.info("Handling a user muted event {}", payload);
 
         UserMutedEvent event = converter.toObject(payload, UserMutedEvent.class);
 
         UserRelationshipRequest eventPayload = event.getUserMutedPayload();
 
-        feedService.addTargetsContent(eventPayload.getSubject(), eventPayload.getTarget());
-
+        feedService.removeTargetsContent(eventPayload.getSubject(), eventPayload.getTarget());
     }
 
     @RabbitListener(queues = {RabbitMQConfig.USER_UNMUTED_EVENT})
     public void handleUserUnmuted(@Payload String payload) {
 
-        log.debug("Handling a user unmuted event {}", payload);
+        log.info("Handling a user unmuted event {}", payload);
 
         UserUnmutedEvent event = converter.toObject(payload, UserUnmutedEvent.class);
 
         UserRelationshipRequest eventPayload = event.getUserUnmutedPayload();
 
-        feedService.removeTargetsContent(eventPayload.getSubject(), eventPayload.getTarget());
-
+        feedService.addTargetsContent(eventPayload.getSubject(), eventPayload.getTarget());
     }
 
 }

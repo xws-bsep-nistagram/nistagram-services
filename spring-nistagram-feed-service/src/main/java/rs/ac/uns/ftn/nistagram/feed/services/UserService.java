@@ -3,6 +3,7 @@ package rs.ac.uns.ftn.nistagram.feed.services;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.feed.domain.entry.feed.PostFeedEntry;
 import rs.ac.uns.ftn.nistagram.feed.domain.entry.feed.StoryFeedEntry;
 import rs.ac.uns.ftn.nistagram.feed.domain.user.User;
@@ -23,6 +24,7 @@ public class UserService {
     private final PostFeedRepository postFeedRepository;
     private final StoryFeedRepository storyFeedRepository;
 
+    @Transactional
     public void create(User user) {
         userPresenceCheck(user);
         log.info("User creation request for an user '{}' received", user.getUsername());
@@ -30,6 +32,7 @@ public class UserService {
         log.info("User '{}' has been successfully created", user.getUsername());
     }
 
+    @Transactional
     public void delete(User user) {
         userAbscenceCheck(user);
 
@@ -56,7 +59,6 @@ public class UserService {
 
         List<StoryFeedEntry> storyFeedEntries = storyFeedRepository.findAllByPublisher(user.getUsername());
         storyFeedEntries.forEach(storyFeedRepository::delete);
-
 
     }
 

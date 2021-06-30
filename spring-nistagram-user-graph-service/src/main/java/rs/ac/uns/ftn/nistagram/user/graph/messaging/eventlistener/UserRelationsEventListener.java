@@ -26,7 +26,7 @@ public class UserRelationsEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onUserFollowedEvent(UserFollowedEvent event) {
 
-        log.debug("Sending user followed event to {}, event: {}", RabbitMQConfig.USER_FOLLOWED_EVENT, event);
+        log.info("Sending user followed event to {}, event: {}", RabbitMQConfig.USER_FOLLOWED_EVENT, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_FOLLOWED_EVENT, converter.toJSON(event));
 
@@ -36,7 +36,7 @@ public class UserRelationsEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onUserUnfollowedEvent(UserUnfollowedEvent event) {
 
-        log.debug("Sending user unfollowed event to {}, event: {}", RabbitMQConfig.USER_UNFOLLOWED_EVENT, event);
+        log.info("Sending user unfollowed event to {}, event: {}", RabbitMQConfig.USER_UNFOLLOWED_EVENT, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_UNFOLLOWED_EVENT, converter.toJSON(event));
 
@@ -46,7 +46,7 @@ public class UserRelationsEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onUserMutedEvent(UserMutedEvent event) {
 
-        log.debug("Sending user muted event to {}, event: {}", RabbitMQConfig.USER_MUTED_EVENT, event);
+        log.info("Sending user muted event to {}, event: {}", RabbitMQConfig.USER_MUTED_EVENT, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_MUTED_EVENT, converter.toJSON(event));
 
@@ -56,7 +56,7 @@ public class UserRelationsEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onUserUnmutedEvent(UserUnmutedEvent event) {
 
-        log.debug("Sending user unmuted event to {}, event: {}", RabbitMQConfig.USER_UNMUTED_EVENT, event);
+        log.info("Sending user unmuted event to {}, event: {}", RabbitMQConfig.USER_UNMUTED_EVENT, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_UNMUTED_EVENT, converter.toJSON(event));
 

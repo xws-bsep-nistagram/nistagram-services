@@ -43,6 +43,7 @@ public class StoryService {
     private final External.UserClientWrapper userClient;
     private final ApplicationEventPublisher publisher;
 
+    @Transactional
     public void create(Story story) {
         // TODO For a reshare story, check whether the author of the share, follows the person who created the post!
         log.info("[STORY][C][R][CALL={}]", story.getAuthor());
@@ -60,18 +61,18 @@ public class StoryService {
     }
 
 
-    public void publishStoryCreated(Story story) {
+    private void publishStoryCreated(Story story) {
 
         StoryCreatedEvent event = new StoryCreatedEvent(UUID.randomUUID().toString(),
                 EventPayloadMapper.toPayload(story, StoryPayloadType.STORY_CREATED));
 
-        log.debug("Publishing an story created event {}", event);
+        log.info("Publishing an story created event {}", event);
 
         publisher.publishEvent(event);
 
     }
 
-    public void publishPostShared(Story story) {
+    private void publishPostShared(Story story) {
 
         ShareStory shareStory = (ShareStory) story;
 
@@ -83,7 +84,7 @@ public class StoryService {
 
         PostSharedEvent event = new PostSharedEvent(UUID.randomUUID().toString(), payload);
 
-        log.debug("Publishing a post shared event {}", event);
+        log.info("Publishing a post shared event {}", event);
 
         publisher.publishEvent(event);
 
@@ -109,6 +110,7 @@ public class StoryService {
         }
     }
 
+    @Transactional
     public void delete(long storyId) {
         log.info("[STORY][D][R][CALL=ADMIN][ID={}]", storyId);
 
@@ -124,17 +126,19 @@ public class StoryService {
         log.info("[STORY][D][P][CALL=ADMIN][ID={}]", storyId);
     }
 
+    @Transactional
     public void publishStoryDeleted(Story story) {
 
         StoryDeletedEvent event = new StoryDeletedEvent(UUID.randomUUID().toString(),
                 EventPayloadMapper.toPayload(story, StoryPayloadType.STORY_DELETED));
 
-        log.debug("Publishing an story deleted event {}", event);
+        log.info("Publishing an story deleted event {}", event);
 
         publisher.publishEvent(event);
 
     }
 
+    @Transactional(readOnly = true)
     public List<Story> getByUsername(String username, String caller) {
         log.info("[STORY][G][R][CALL={}][TGT={}]", caller, username);
         graphClient.assertFollow(caller, username);
@@ -150,6 +154,7 @@ public class StoryService {
         return storyRepository.getAllByUsernameAfterDate(username, twentyFourHoursAgo());
     }
 
+    @Transactional(readOnly = true)
     public Story getById(Long storyId, String caller) {
         log.info("[STORY][G][R][CALL={}][ID={}]", caller, storyId);
 
@@ -167,6 +172,7 @@ public class StoryService {
         return story;
     }
 
+    @Transactional(readOnly = true)
     public Story getByIdAsAdmin(Long storyId) {
         log.info("[STORY][G][R][CALL=ADMIN][ID={}]", storyId);
 
@@ -180,17 +186,19 @@ public class StoryService {
         return story;
     }
 
-
+    @Transactional(readOnly = true)
     public List<Story> getByUsername(String username) {
         log.info("[STORY][G][RC][TGT={}]", username);
         return storyRepository.getNonCloseFriendsByUsernameAfterDate(username, twentyFourHoursAgo());
     }
 
+    @Transactional(readOnly = true)
     public List<Story> getOwnActive(String caller) {
         log.info("[STORY][G][RC][CALL={}][TGT={}]", caller, caller);
         return storyRepository.getAllByUsernameAfterDate(caller, twentyFourHoursAgo());
     }
 
+    @Transactional(readOnly = true)
     public List<Story> getOwnAll(String caller) {
         log.info("[STORY][G][RC][CALL={}][TGT={}]", caller, caller);
         return storyRepository.getAllByUsername(caller);
@@ -200,6 +208,7 @@ public class StoryService {
         return LocalDateTime.now().minus(Duration.ofDays(1));
     }
 
+    @Transactional
     public StoryHighlight createStoryHighlights(String name, String caller) {
         log.info("[HIGH][C][R][CALL={}][ID={}]", caller, name);
 
@@ -212,6 +221,7 @@ public class StoryService {
         return created;
     }
 
+    @Transactional
     public void addStoryToHighlights(long highlightsId, long storyId, String username) {
         log.info("[HIGH-STORY][C][R][IDS={}][IDH={}]", storyId, highlightsId);
 
@@ -242,6 +252,7 @@ public class StoryService {
         log.info("[HIGH-STORY][C][C][IDS={}][IDH={}]", storyId, highlightsId);
     }
 
+    @Transactional(readOnly = true)
     public List<StoryHighlight> getHighlightsByUsername(String username, String caller) {
         log.info("[HIGH][G][R][CALL={}][TGT={}]", caller, username);
 
@@ -254,6 +265,7 @@ public class StoryService {
         return highlights;
     }
 
+    @Transactional(readOnly = true)
     public List<StoryHighlight> getHighlightsByUsername(String username) {
         log.info("[HIGH][G][R][TGT={}]", username);
 
@@ -267,6 +279,7 @@ public class StoryService {
         return highlights;
     }
 
+    @Transactional(readOnly = true)
     public List<Story> getStoriesFromHighlight(long highlightId, String caller) {
         log.info("[HIGH-STORY][G][R][CALL={}][ID={}]", caller, highlightId);
 
@@ -291,6 +304,7 @@ public class StoryService {
         return highlightStories;
     }
 
+    @Transactional
     public void deleteHighlight(long highlightId, String caller) {
         log.info("[HIGH][D][R][CALL={}][ID={}]", caller, highlightId);
 
