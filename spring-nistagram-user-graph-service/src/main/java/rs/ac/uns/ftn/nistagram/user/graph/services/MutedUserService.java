@@ -2,14 +2,18 @@ package rs.ac.uns.ftn.nistagram.user.graph.services;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserRelationshipRequest;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
-import rs.ac.uns.ftn.nistagram.user.graph.messaging.producers.UserRelationsProducer;
+import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.userrelations.UserMutedEvent;
+import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.userrelations.UserUnmutedEvent;
 import rs.ac.uns.ftn.nistagram.user.graph.repositories.MutedUserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -18,7 +22,7 @@ public class MutedUserService {
 
     private final MutedUserRepository mutedUserRepository;
     private final UserConstraintChecker constraintChecker;
-    private final UserRelationsProducer userRelationsProducer;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
     public List<User> findMutedUsers(String username) {
@@ -51,11 +55,21 @@ public class MutedUserService {
 
         mutedUserRepository.mute(subject, target);
 
-        userRelationsProducer.publishUserMuted(subject, target);
+        publishUserMuted(subject, target);
 
         log.info("User {} has muted {}",
                 subject,
                 target);
+    }
+
+    private void publishUserMuted(String subject, String target) {
+
+        UserMutedEvent event = new UserMutedEvent(UUID.randomUUID().toString(), new UserRelationshipRequest(subject, target));
+
+        log.debug("Publishing a user muted event {}", event);
+
+        publisher.publishEvent(event);
+
     }
 
     @Transactional
@@ -68,11 +82,21 @@ public class MutedUserService {
 
         mutedUserRepository.unmute(subject, target);
 
-        userRelationsProducer.publishUserUnmuted(subject, target);
+        publishUserUnmuted(subject, target);
 
         log.info("User {} has unmuted {}",
                 subject,
                 target);
+    }
+
+    private void publishUserUnmuted(String subject, String target) {
+
+        UserUnmutedEvent event = new UserUnmutedEvent(UUID.randomUUID().toString(), new UserRelationshipRequest(subject, target));
+
+        log.debug("Publishing a user unmuted event {}", event);
+
+        publisher.publishEvent(event);
+
     }
 
 

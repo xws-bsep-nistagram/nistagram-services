@@ -2,9 +2,9 @@ package rs.ac.uns.ftn.nistagram.notification.messaging.mappers;
 
 import rs.ac.uns.ftn.nistagram.notification.domain.Notification;
 import rs.ac.uns.ftn.nistagram.notification.domain.NotificationType;
+import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.NotificationEventPayload;
 import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.PostCommentedEventPayload;
 import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.PostInteractionEventPayload;
-import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.UserRelationEventPayload;
 import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.UserTaggedEventPayload;
 
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public class EventPayloadMapper {
                 .build();
     }
 
-    public static Notification toDomain(UserRelationEventPayload payload) {
+    public static Notification toDomain(NotificationEventPayload payload) {
         return Notification
                 .builder()
                 .time(payload.getTime())

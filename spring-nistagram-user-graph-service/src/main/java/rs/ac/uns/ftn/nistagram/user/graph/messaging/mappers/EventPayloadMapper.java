@@ -3,7 +3,7 @@ package rs.ac.uns.ftn.nistagram.user.graph.messaging.mappers;
 
 import rs.ac.uns.ftn.nistagram.user.graph.domain.ProfileType;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
-import rs.ac.uns.ftn.nistagram.user.graph.messaging.payload.notification.NotificationTopicPayload;
+import rs.ac.uns.ftn.nistagram.user.graph.messaging.payload.notification.NotificationEventPayload;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.payload.notification.NotificationType;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.payload.user.UserEventPayload;
 
@@ -19,8 +19,8 @@ public class EventPayloadMapper {
                 .build();
     }
 
-    public static NotificationTopicPayload toDomain(String subject, String target, NotificationType type) {
-        return NotificationTopicPayload
+    public static NotificationEventPayload toDomain(String subject, String target, NotificationType type) {
+        return NotificationEventPayload
                 .builder()
                 .subject(subject)
                 .target(target)

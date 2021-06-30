@@ -7,7 +7,10 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import rs.ac.uns.ftn.nistagram.notification.domain.NotificationType;
 import rs.ac.uns.ftn.nistagram.notification.messaging.config.RabbitMQConfig;
-import rs.ac.uns.ftn.nistagram.notification.messaging.event.notification.*;
+import rs.ac.uns.ftn.nistagram.notification.messaging.event.content.*;
+import rs.ac.uns.ftn.nistagram.notification.messaging.event.notifications.FollowAcceptedEvent;
+import rs.ac.uns.ftn.nistagram.notification.messaging.event.notifications.FollowRequestedEvent;
+import rs.ac.uns.ftn.nistagram.notification.messaging.event.notifications.NewFollowEvent;
 import rs.ac.uns.ftn.nistagram.notification.messaging.mappers.EventPayloadMapper;
 import rs.ac.uns.ftn.nistagram.notification.messaging.util.Converter;
 import rs.ac.uns.ftn.nistagram.notification.services.NotificationService;
@@ -77,6 +80,42 @@ public class NotificationEventHandler {
 
         notificationService.handlePostComments(EventPayloadMapper
                 .toDomain(event.getPostCommentedEventPayload()));
+
+    }
+
+    @RabbitListener(queues = {RabbitMQConfig.FOLLOW_REQUEST_EVENT})
+    public void handleFollowRequested(@Payload String payload) {
+
+        log.debug("Handling a follow requested event {}", payload);
+
+        FollowRequestedEvent event = converter.toObject(payload, FollowRequestedEvent.class);
+
+        notificationService.handleFollowRequested(EventPayloadMapper
+                .toDomain(event.getFollowRequestedPayload()));
+
+    }
+
+    @RabbitListener(queues = {RabbitMQConfig.FOLLOW_REQUEST_ACCEPTED_EVENT})
+    public void handleFollowRequestAccepted(@Payload String payload) {
+
+        log.debug("Handling a follow request accepted event {}", payload);
+
+        FollowAcceptedEvent event = converter.toObject(payload, FollowAcceptedEvent.class);
+
+        notificationService.handleFollowAccepted(EventPayloadMapper
+                .toDomain(event.getFollowAcceptedPayload()));
+
+    }
+
+    @RabbitListener(queues = {RabbitMQConfig.NEW_FOLLOW_EVENT})
+    public void handleNewFollow(@Payload String payload) {
+
+        log.debug("Handling a new follow request event {}", payload);
+
+        NewFollowEvent event = converter.toObject(payload, NewFollowEvent.class);
+
+        notificationService.handleNewFollow(EventPayloadMapper
+                .toDomain(event.getNewFollowPayload()));
 
     }
 

@@ -2,15 +2,18 @@ package rs.ac.uns.ftn.nistagram.user.graph.services;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserRelationshipRequest;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
-import rs.ac.uns.ftn.nistagram.user.graph.messaging.producers.UserRelationsProducer;
+import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.userrelations.UserUnfollowedEvent;
 import rs.ac.uns.ftn.nistagram.user.graph.repositories.BlockedUserRepository;
 import rs.ac.uns.ftn.nistagram.user.graph.repositories.FollowerRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -20,7 +23,7 @@ public class BlockedUserService {
     private final BlockedUserRepository blockedUserRepository;
     private final UserConstraintChecker constraintChecker;
     private final FollowerRepository followerRepository;
-    private final UserRelationsProducer relationsProducer;
+    private final ApplicationEventPublisher publisher;
 
     public List<User> findBlocked(String username) {
         constraintChecker.userPresenceCheck(username);
@@ -89,11 +92,21 @@ public class BlockedUserService {
     private void unfollowIfFollowing(String subject, String target) {
         if (followerRepository.isFollowing(subject, target)) {
             followerRepository.unfollow(subject, target);
-            relationsProducer.publishUserUnfollowed(subject, target);
+            publishUserUnfollowed(subject, target);
             log.info("User {} is no longer following {}",
                     subject,
                     target);
         }
+    }
+
+    private void publishUserUnfollowed(String subject, String target) {
+
+        UserUnfollowedEvent event = new UserUnfollowedEvent(UUID.randomUUID().toString(), new UserRelationshipRequest(subject, target));
+
+        log.debug("Publishing a user unfollowed event {}", event);
+
+        publisher.publishEvent(event);
+
     }
 
 

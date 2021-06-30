@@ -1,11 +1,10 @@
-package rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification;
+package rs.ac.uns.ftn.nistagram.user.graph.messaging.payload.notification;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.*;
-import rs.ac.uns.ftn.nistagram.notification.domain.NotificationType;
 
 import java.time.LocalDateTime;
 
@@ -16,12 +15,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class NotificationEventPayload {
 
-    private Long contentId;
+    private String subject;
+    private String target;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime time;
-    private String subject;
-    private String target;
     private NotificationType notificationType;
 
 }

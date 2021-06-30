@@ -6,12 +6,12 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import rs.ac.uns.ftn.nistagram.feed.messaging.config.RabbitMQConfig;
+import rs.ac.uns.ftn.nistagram.feed.messaging.event.post.PostCreatedEvent;
+import rs.ac.uns.ftn.nistagram.feed.messaging.event.post.PostDeletedEvent;
+import rs.ac.uns.ftn.nistagram.feed.messaging.event.story.StoryCreatedEvent;
+import rs.ac.uns.ftn.nistagram.feed.messaging.event.story.StoryDeletedEvent;
 import rs.ac.uns.ftn.nistagram.feed.messaging.mappers.post.PostTopicPayloadMapper;
 import rs.ac.uns.ftn.nistagram.feed.messaging.mappers.story.StoryTopicPayloadMapper;
-import rs.ac.uns.ftn.nistagram.feed.messaging.payload.post.PostCreatedEvent;
-import rs.ac.uns.ftn.nistagram.feed.messaging.payload.post.PostDeletedEvent;
-import rs.ac.uns.ftn.nistagram.feed.messaging.payload.story.StoryCreatedEvent;
-import rs.ac.uns.ftn.nistagram.feed.messaging.payload.story.StoryDeletedEvent;
 import rs.ac.uns.ftn.nistagram.feed.messaging.util.Converter;
 import rs.ac.uns.ftn.nistagram.feed.services.FeedService;
 
