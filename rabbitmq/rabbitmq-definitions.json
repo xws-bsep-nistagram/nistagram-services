@@ -1,0 +1,172 @@
+{
+  "rabbit_version": "3.8.16",
+  "users": [
+    {
+      "name": "guest",
+      "password_hash": "p2g0WJlCkTB+RKaAa7nyDhvBV38je4b+tU4NvrjansvMG5TA",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": "administrator"
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "guest",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "topic_permissions": [],
+  "parameters": [],
+  "global_parameters": [
+    {
+      "name": "cluster_name",
+      "value": "rabbit@saga-example-rabbit"
+    }
+  ],
+  "policies": [],
+  "queues": [
+    {
+      "name": "USER_CREATED_EVENT_FEED_SERVICE",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "USER_CREATED_EVENT_GRAPH_SERVICE",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "USER_UPDATED_EVENT_GRAPH_SERVICE",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "USER_BANNED_EVENT_GRAPH_SERVICE",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "USER_BANNED_EVENT_FEED_SERVICE",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "USER_BANNED_EVENT_NOTIFICATION_SERVICE",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "USER_BANNED_EVENT_POST_SERVICE",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "USER_CREATED_TOPIC",
+      "vhost": "/",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "USER_UPDATED_TOPIC",
+      "vhost": "/",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "USER_BANNED_TOPIC",
+      "vhost": "/",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "USER_CREATED_TOPIC",
+      "vhost": "/",
+      "destination": "USER_CREATED_EVENT_FEED_SERVICE",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {}
+    },
+    {
+      "source": "USER_CREATED_TOPIC",
+      "vhost": "/",
+      "destination": "USER_CREATED_EVENT_GRAPH_SERVICE",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {}
+    },
+    {
+      "source": "USER_UPDATED_TOPIC",
+      "vhost": "/",
+      "destination": "USER_UPDATED_EVENT_GRAPH_SERVICE",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {}
+    },
+    {
+      "source": "USER_BANNED_TOPIC",
+      "vhost": "/",
+      "destination": "USER_BANNED_EVENT_GRAPH_SERVICE",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {}
+    },
+    {
+      "source": "USER_BANNED_TOPIC",
+      "vhost": "/",
+      "destination": "USER_BANNED_EVENT_FEED_SERVICE",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {}
+    },
+    {
+      "source": "USER_BANNED_TOPIC",
+      "vhost": "/",
+      "destination": "USER_BANNED_EVENT_NOTIFICATION_SERVICE",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {}
+    },
+    {
+      "source": "USER_BANNED_TOPIC",
+      "vhost": "/",
+      "destination": "USER_BANNED_EVENT_POST_SERVICE",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {}
+    }
+  ]
+}

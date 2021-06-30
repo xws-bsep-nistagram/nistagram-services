@@ -9,6 +9,8 @@ services :
       - 15672:15672
     networks :
       - backend
+    volumes :
+      - ./rabbitmq/rabbitmq-definitions.json:/etc/rabbitmq/definitions.json
 
   neo4j-db :
     image : neo4j:latest
