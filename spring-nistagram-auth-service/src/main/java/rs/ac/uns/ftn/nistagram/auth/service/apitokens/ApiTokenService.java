@@ -6,6 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.auth.domain.ApiToken;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.apitokens.ApiTokenNotFoundException;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.apitokens.ApplicationAlreadyRegisteredException;
 import rs.ac.uns.ftn.nistagram.auth.repository.ApiTokenRepository;
 
@@ -41,5 +42,10 @@ public class ApiTokenService {
 
     public ApiToken decode(String apiTokenJWT) {
         return jwtService.decode(apiTokenJWT);
+    }
+
+    public String get(String agent) {
+        ApiToken foundApiToken = apiTokenRepository.getByAgent(agent).orElseThrow(ApiTokenNotFoundException::new);
+        return jwtService.encode(foundApiToken);
     }
 }

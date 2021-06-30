@@ -26,6 +26,12 @@ public class ApiTokenController {
         return ResponseEntity.ok(apiTokenService.decode(apiTokenJWT));
     }
 
+    @GetMapping
+    public ResponseEntity<String> get(@RequestHeader("username") String agent) {
+        return ResponseEntity.ok(apiTokenService.get(agent));
+    }
+
+
     @GetMapping("test")
     public ResponseEntity<String> testApiTokenHeader(
             @RequestHeader("agent") String agent,

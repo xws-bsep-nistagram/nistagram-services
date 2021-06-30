@@ -59,4 +59,8 @@ public class AgentController {
                 .map(service.promoteToAgent(request.getUsername(), request.getWebsite()));
     }
 
+    @GetMapping("agents/application")
+    public String getApplicationPackageName(@RequestHeader("username") String agent) {
+        return service.getApplicationPackageName(agent);
+    }
 }

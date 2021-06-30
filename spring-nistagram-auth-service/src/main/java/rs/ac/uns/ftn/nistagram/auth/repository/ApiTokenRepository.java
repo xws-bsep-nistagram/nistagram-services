@@ -19,4 +19,7 @@ public interface ApiTokenRepository extends JpaRepository<ApiToken, Long> {
 
     @Query(value = "select API from ApiToken API where API.packageName = :packageName")
     Optional<ApiToken> findByPackageName(@Param("packageName") String packageName);
+
+    @Query(value = "select API from ApiToken API where API.agent = :agent")
+    Optional<ApiToken> getByAgent(@Param("agent") String agent);
 }

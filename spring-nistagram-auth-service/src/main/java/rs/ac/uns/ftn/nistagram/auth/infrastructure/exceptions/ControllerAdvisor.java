@@ -11,6 +11,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.apitokens.ApiTokenNotFoundException;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.apitokens.ApplicationAlreadyRegisteredException;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.apitokens.InvalidApiTokenJWT;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.auth.BannedException;
@@ -80,6 +81,12 @@ public class ControllerAdvisor {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidApiTokenJWT.class)
     String entityNotFoundHandler(InvalidApiTokenJWT e) {
+        return e.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(ApiTokenNotFoundException.class)
+    String entityNotFoundHandler(ApiTokenNotFoundException e) {
         return e.getMessage();
     }
 

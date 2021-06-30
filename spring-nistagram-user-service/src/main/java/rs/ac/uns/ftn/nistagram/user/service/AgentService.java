@@ -126,4 +126,7 @@ public class AgentService {
         return users;
     }
 
+    public String getApplicationPackageName(String agent) {
+        return agentRepository.getByName(agent).getWebsite();
+    }
 }
