@@ -10,7 +10,7 @@ import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.Users
 import java.util.ArrayList;
 import java.util.List;
 
-public class TopicPayloadMapper {
+public class EventPayloadMapper {
 
     private static final String USER_TAGGED_MESSAGE = "User %s tagged you on his photo.";
     private static final String NEW_LIKE_MESSAGE = "User %s liked your photo.";

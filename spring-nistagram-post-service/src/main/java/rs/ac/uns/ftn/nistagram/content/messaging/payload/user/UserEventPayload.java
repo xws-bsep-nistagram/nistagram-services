@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.feed.messaging.payload.user;
+package rs.ac.uns.ftn.nistagram.content.messaging.payload.user;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserTopicPayload {
+public class UserEventPayload {
 
     private String username;
 

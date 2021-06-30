@@ -10,8 +10,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-    public static final String USER_CREATED_FEED_SERVICE = "user.created.feed-service";
-    public static final String USER_BANNED_FEED_SERVICE = "user.banned.feed-service";
+    public static final String USER_CREATED_EVENT = "USER_CREATED_EVENT_FEED_SERVICE";
+    public static final String USER_BANNED_EVENT = "USER_BANNED_EVENT_FEED_SERVICE";
+
     public static final String POST_CREATED_FEED_SERVICE = "post.created.feed-service";
     public static final String POST_DELETED_FEED_SERVICE = "post.deleted.feed-service";
     public static final String STORY_CREATED_FEED_SERVICE = "story.created.feed-service";
@@ -31,11 +32,6 @@ public class RabbitMQConfig {
     @Bean
     public MessageConverter jsonConverter() {
         return new Jackson2JsonMessageConverter();
-    }
-
-    @Bean
-    public Queue userCreatedFeedQueue() {
-        return new Queue(USER_CREATED_FEED_SERVICE);
     }
 
     @Bean
@@ -76,10 +72,5 @@ public class RabbitMQConfig {
     @Bean
     public Queue userUnmutedFeedQueue() {
         return new Queue(USER_UNMUTED_FEED_SERVICE);
-    }
-
-    @Bean
-    public Queue userBannedFeedQueue() {
-        return new Queue(USER_BANNED_FEED_SERVICE);
     }
 }

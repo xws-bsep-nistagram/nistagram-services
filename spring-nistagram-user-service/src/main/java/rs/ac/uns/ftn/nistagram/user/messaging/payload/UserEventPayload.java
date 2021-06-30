@@ -9,7 +9,7 @@ import rs.ac.uns.ftn.nistagram.user.domain.user.preferences.NotificationPreferen
 
 @Data
 @Builder
-public class UserTopicPayload {
+public class UserEventPayload {
 
     private String username;
     private PrivacyData privacyData;

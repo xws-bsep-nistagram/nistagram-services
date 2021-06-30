@@ -1,13 +1,13 @@
 package rs.ac.uns.ftn.nistagram.user.domain.user.preferences;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 
-@Getter
-@Setter
+@Data
 @Embeddable
 public class NotificationPreferences {
 

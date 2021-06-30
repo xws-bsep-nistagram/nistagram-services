@@ -9,7 +9,7 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.nistagram.notification.domain.NotificationType;
 import rs.ac.uns.ftn.nistagram.notification.messaging.config.RabbitMQConfig;
-import rs.ac.uns.ftn.nistagram.notification.messaging.mappers.TopicPayloadMapper;
+import rs.ac.uns.ftn.nistagram.notification.messaging.mappers.EventPayloadMapper;
 import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.PostCommentedTopicPayload;
 import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.PostInteractionTopicPayload;
 import rs.ac.uns.ftn.nistagram.notification.messaging.payload.notification.UserRelationTopicPayload;
@@ -28,49 +28,49 @@ public class NotificationConsumer {
     @RabbitListener(queues = RabbitMQConfig.USERS_TAGGED_NOTIFICATION_SERVICE)
     public void consumeUsersTagged(UsersTaggedTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
         acknowledgeMessage(channel, tag);
-        notificationService.handleTaggedUsers(TopicPayloadMapper.toDomain(payload));
+        notificationService.handleTaggedUsers(EventPayloadMapper.toDomain(payload));
     }
 
     @RabbitListener(queues = RabbitMQConfig.POST_COMMENTED_NOTIFICATION_SERVICE)
     public void consumePostCommented(PostCommentedTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
         acknowledgeMessage(channel, tag);
-        notificationService.handlePostComments(TopicPayloadMapper.toDomain(payload));
+        notificationService.handlePostComments(EventPayloadMapper.toDomain(payload));
     }
 
     @RabbitListener(queues = RabbitMQConfig.POST_LIKED_NOTIFICATION_SERVICE)
     public void consumePostLiked(PostInteractionTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
         acknowledgeMessage(channel, tag);
-        notificationService.handlePostLiked(TopicPayloadMapper.toDomain(payload, NotificationType.NEW_LIKE));
+        notificationService.handlePostLiked(EventPayloadMapper.toDomain(payload, NotificationType.NEW_LIKE));
     }
 
     @RabbitListener(queues = RabbitMQConfig.POST_DISLIKED_NOTIFICATION_SERVICE)
     public void consumePostDisliked(PostInteractionTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
         acknowledgeMessage(channel, tag);
-        notificationService.handlePostDisliked(TopicPayloadMapper.toDomain(payload, NotificationType.NEW_DISLIKE));
+        notificationService.handlePostDisliked(EventPayloadMapper.toDomain(payload, NotificationType.NEW_DISLIKE));
     }
 
     @RabbitListener(queues = RabbitMQConfig.POST_SHARED_NOTIFICATION_SERVICE)
     public void consumePostShared(PostInteractionTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
         acknowledgeMessage(channel, tag);
-        notificationService.handlePostShared(TopicPayloadMapper.toDomain(payload, NotificationType.NEW_SHARE));
+        notificationService.handlePostShared(EventPayloadMapper.toDomain(payload, NotificationType.NEW_SHARE));
     }
 
     @RabbitListener(queues = RabbitMQConfig.NEW_FOLLOW_NOTIFICATION_SERVICE)
     public void consumeUserTagged(UserRelationTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
         acknowledgeMessage(channel, tag);
-        notificationService.handleNewFollow(TopicPayloadMapper.toDomain(payload));
+        notificationService.handleNewFollow(EventPayloadMapper.toDomain(payload));
     }
 
     @RabbitListener(queues = RabbitMQConfig.FOLLOW_REQUESTED_NOTIFICATION_SERVICE)
     public void consumeFollowRequested(UserRelationTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
         acknowledgeMessage(channel, tag);
-        notificationService.handleFollowRequested(TopicPayloadMapper.toDomain(payload));
+        notificationService.handleFollowRequested(EventPayloadMapper.toDomain(payload));
     }
 
     @RabbitListener(queues = RabbitMQConfig.FOLLOW_ACCEPTED_NOTIFICATION_SERVICE)
     public void consumeFollowAccepted(UserRelationTopicPayload payload, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
         acknowledgeMessage(channel, tag);
-        notificationService.handleFollowAccepted(TopicPayloadMapper.toDomain(payload));
+        notificationService.handleFollowAccepted(EventPayloadMapper.toDomain(payload));
     }
 
     private void acknowledgeMessage(Channel channel, long tag) throws IOException {

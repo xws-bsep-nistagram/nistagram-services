@@ -3,6 +3,7 @@ package rs.ac.uns.ftn.nistagram.user.service;
 import feign.FeignException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.domain.user.RegistrationRequest;
@@ -10,10 +11,12 @@ import rs.ac.uns.ftn.nistagram.user.domain.user.User;
 import rs.ac.uns.ftn.nistagram.user.http.auth.AuthClient;
 import rs.ac.uns.ftn.nistagram.user.http.auth.Credentials;
 import rs.ac.uns.ftn.nistagram.user.infrastructure.exceptions.RegistrationException;
-import rs.ac.uns.ftn.nistagram.user.messaging.producers.UserProducer;
+import rs.ac.uns.ftn.nistagram.user.messaging.event.UserCreatedEvent;
+import rs.ac.uns.ftn.nistagram.user.messaging.mappers.UserEventPayloadMapper;
 import rs.ac.uns.ftn.nistagram.user.repository.UserRepository;
 
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -22,7 +25,7 @@ public class RegistrationService {
 
     private final AuthClient authClient;
     private final UserRepository repository;
-    private final UserProducer producer;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
     public String register(RegistrationRequest request) {
@@ -33,9 +36,13 @@ public class RegistrationService {
         );
 
         User created = repository.save(createNewUser(request));
-        log.debug("Created user new user profile for username '{}'", created.getUsername());
+
+        log.debug("Created new user profile for an username '{}'", created.getUsername());
+
         String jwt = sendRegistrationRequest(credentials);
-        producer.publishUserCreated(created);
+
+        publish(created);
+
         return jwt;
     }
 
@@ -52,6 +59,17 @@ public class RegistrationService {
             }
         }
     }
+
+    private void publish(User user) {
+
+        UserCreatedEvent event = new UserCreatedEvent(UUID.randomUUID().toString(),
+                UserEventPayloadMapper.toPayload(user));
+
+        log.debug("Publishing an user created event {}", event);
+
+        publisher.publishEvent(event);
+    }
+
 
     private User createNewUser(RegistrationRequest request) {
         return new User(request.getUsername(), request.getPersonalData());

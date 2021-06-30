@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.nistagram.user.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.domain.user.PersonalData;
@@ -16,11 +17,14 @@ import rs.ac.uns.ftn.nistagram.user.http.post.PostClient;
 import rs.ac.uns.ftn.nistagram.user.http.post.PostStats;
 import rs.ac.uns.ftn.nistagram.user.infrastructure.exceptions.BannedException;
 import rs.ac.uns.ftn.nistagram.user.infrastructure.exceptions.EntityNotFoundException;
-import rs.ac.uns.ftn.nistagram.user.messaging.producers.UserProducer;
+import rs.ac.uns.ftn.nistagram.user.messaging.event.UserBannedEvent;
+import rs.ac.uns.ftn.nistagram.user.messaging.event.UserUpdatedEvent;
+import rs.ac.uns.ftn.nistagram.user.messaging.mappers.UserEventPayloadMapper;
 import rs.ac.uns.ftn.nistagram.user.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,7 +33,7 @@ import java.util.stream.Collectors;
 public class ProfileService {
 
     private final UserRepository repository;
-    private final UserProducer userProducer;
+    private final ApplicationEventPublisher publisher;
     private final UserGraphClient userGraphClient;
     private final PostClient postClient;
     private final UserStatsMapper statsMapper;
@@ -69,12 +73,21 @@ public class ProfileService {
         found.ban();
         repository.save(found);
 
-        userProducer.publishUserBanned(found);
+        publishUserBanned(found);
 
         log.info("User: '{}' successfully banned.", username);
 
         return found;
 
+    }
+
+    private void publishUserBanned(User user) {
+        UserBannedEvent event = new UserBannedEvent(UUID.randomUUID().toString(),
+                UserEventPayloadMapper.toPayload(user));
+
+        log.debug("Publishing an user banned event {}", event);
+
+        publisher.publishEvent(event);
     }
 
     @Transactional
@@ -150,8 +163,17 @@ public class ProfileService {
         log.info("Updating privacy data for user '{}'", username);
 
         found.setPrivacyData(privacyData);
-        userProducer.publishUserUpdated(found);
+        publishUserUpdated(found);
         return repository.save(found);
+    }
+
+    private void publishUserUpdated(User user) {
+        UserUpdatedEvent event = new UserUpdatedEvent(UUID.randomUUID().toString(),
+                UserEventPayloadMapper.toPayload(user));
+
+        log.debug("Publishing an user updated event {}", event);
+
+        publisher.publishEvent(event);
     }
 
     @Transactional

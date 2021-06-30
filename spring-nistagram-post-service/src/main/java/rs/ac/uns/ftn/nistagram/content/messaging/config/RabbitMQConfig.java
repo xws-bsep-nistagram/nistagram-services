@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
+    public static final String USER_BANNED_EVENT = "USER_BANNED_EVENT_POST_SERVICE";
+
     public static final String POST_CREATED_FEED_SERVICE = "post.created.feed-service";
     public static final String POST_DELETED_FEED_SERVICE = "post.deleted.feed-service";
     public static final String STORY_CREATED_FEED_SERVICE = "story.created.feed-service";

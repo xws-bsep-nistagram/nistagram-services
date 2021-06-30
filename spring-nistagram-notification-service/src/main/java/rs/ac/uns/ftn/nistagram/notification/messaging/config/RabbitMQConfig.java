@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
+    public static final String USER_BANNED_EVENT = "USER_BANNED_EVENT_NOTIFICATION_SERVICE";
+
     public static final String USER_BANNED_NOTIFICATION_SERVICE = "user.banned.notification-service";
     public static final String USERS_TAGGED_NOTIFICATION_SERVICE = "user.tagged.notification-service";
     public static final String POST_LIKED_NOTIFICATION_SERVICE = "post.liked.notification-service";

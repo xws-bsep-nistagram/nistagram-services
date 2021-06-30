@@ -13,7 +13,7 @@ import rs.ac.uns.ftn.nistagram.content.messaging.payload.story.StoryTopicPayload
 
 import java.time.LocalDateTime;
 
-public class TopicPayloadMapper {
+public class EventPayloadMapper {
     public static PostTopicPayload toPayload(Post post, PostPayloadType postPayloadType) {
         return PostTopicPayload
                 .builder()

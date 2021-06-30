@@ -5,12 +5,12 @@ import rs.ac.uns.ftn.nistagram.user.graph.domain.ProfileType;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.payload.notification.NotificationTopicPayload;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.payload.notification.NotificationType;
-import rs.ac.uns.ftn.nistagram.user.graph.messaging.payload.user.UserTopicPayload;
+import rs.ac.uns.ftn.nistagram.user.graph.messaging.payload.user.UserEventPayload;
 
 import java.time.LocalDateTime;
 
-public class TopicPayloadMapper {
-    public static User toDomain(UserTopicPayload payload) {
+public class EventPayloadMapper {
+    public static User toDomain(UserEventPayload payload) {
         return User
                 .builder()
                 .username(payload.getUsername())

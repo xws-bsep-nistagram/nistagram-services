@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserTopicPayload {
+public class UserEventPayload {
 
     private String username;
     private PrivacyData privacyData;

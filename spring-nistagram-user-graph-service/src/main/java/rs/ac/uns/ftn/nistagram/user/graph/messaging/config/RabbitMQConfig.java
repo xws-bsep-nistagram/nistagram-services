@@ -10,8 +10,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-    public static final String USER_CREATED_GRAPH_SERVICE = "user.created.graph-service";
-    public static final String USER_UPDATED_GRAPH_SERVICE = "user.updated.graph-service";
+    public static final String USER_CREATED_EVENT = "USER_CREATED_EVENT_GRAPH_SERVICE";
+    public static final String USER_UPDATED_EVENT = "USER_UPDATED_EVENT_GRAPH_SERVICE";
+    public static final String USER_BANNED_EVENT = "USER_BANNED_EVENT_GRAPH_SERVICE";
+
     public static final String USER_FOLLOWED_FEED_SERVICE = "user.followed.feed-service";
     public static final String USER_UNFOLLOWED_FEED_SERVICE = "user.unfollowed.feed-service";
     public static final String USER_MUTED_FEED_SERVICE = "user.unfollowed.feed-service";
@@ -19,7 +21,6 @@ public class RabbitMQConfig {
     public static final String FOLLOW_REQUESTED_NOTIFICATION_SERVICE = "follow.requested.notification-service";
     public static final String FOLLOW_ACCEPTED_NOTIFICATION_SERVICE = "follow.accepted.notification-service";
     public static final String NEW_FOLLOW_NOTIFICATION_SERVICE = "new.follow.notification-service";
-    public static final String USER_BANNED_GRAPH_SERVICE = "user.banned.graph-service";
 
     @Bean
     public RabbitTemplate jsonRabbitTemplate(ConnectionFactory connectionFactory) {
@@ -33,10 +34,6 @@ public class RabbitMQConfig {
         return new Jackson2JsonMessageConverter();
     }
 
-    @Bean
-    public Queue userCreatedGraphQueue() {
-        return new Queue(USER_CREATED_GRAPH_SERVICE);
-    }
 
     @Bean
     public Queue userFollowedFeedQueue() {
@@ -59,11 +56,6 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue userUpdatedGraphQueue() {
-        return new Queue(USER_UPDATED_GRAPH_SERVICE);
-    }
-
-    @Bean
     public Queue followRequestedNotificationQueue() {
         return new Queue(FOLLOW_REQUESTED_NOTIFICATION_SERVICE);
     }
@@ -78,8 +70,4 @@ public class RabbitMQConfig {
         return new Queue(NEW_FOLLOW_NOTIFICATION_SERVICE);
     }
 
-    @Bean
-    public Queue userBannedGraphQueue() {
-        return new Queue(USER_BANNED_GRAPH_SERVICE);
-    }
 }
