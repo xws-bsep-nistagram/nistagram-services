@@ -21,7 +21,7 @@ public class UserEventHandler {
     private final AuthClient authClient;
     private final Converter converter;
 
-    @RabbitListener(queues = {RabbitMQConfig.USER_REGISTRATION_FAILED_EVENT})
+    @RabbitListener(queues = {RabbitMQConfig.REGISTRATION_FAILED_EVENT})
     public void handleRegistrationFailed(@Payload String payload) {
 
         log.info("Handling a registration failed event {}", payload);

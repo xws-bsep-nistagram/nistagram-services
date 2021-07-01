@@ -228,7 +228,7 @@
       "arguments": {}
     },
     {
-      "name": "USER_REGISTRATION_FAILED_TOPIC",
+      "name": "REGISTRATION_FAILED_TOPIC",
       "vhost": "/",
       "type": "fanout",
       "durable": true,
@@ -239,17 +239,17 @@
   ],
   "bindings": [
     {
-      "source": "USER_REGISTRATION_FAILED_TOPIC",
+      "source": "REGISTRATION_FAILED_TOPIC",
       "vhost": "/",
-      "destination": "USER_REGISTRATION_FAILED_USER_SERVICE",
+      "destination": "REGISTRATION_FAILED_USER_SERVICE",
       "destination_type": "queue",
       "routing_key": "",
       "arguments": {}
     },
     {
-      "source": "USER_REGISTRATION_FAILED_TOPIC",
+      "source": "REGISTRATION_FAILED_TOPIC",
       "vhost": "/",
-      "destination": "USER_REGISTRATION_FAILED_GRAPH_SERVICE",
+      "destination": "REGISTRATION_FAILED_GRAPH_SERVICE",
       "destination_type": "queue",
       "routing_key": "",
       "arguments": {}

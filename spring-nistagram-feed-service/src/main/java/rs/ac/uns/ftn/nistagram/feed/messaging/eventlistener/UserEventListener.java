@@ -23,9 +23,9 @@ public class UserEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_ROLLBACK)
     public void onRegistrationFailedEvent(RegistrationFailedEvent event) {
 
-        log.info("Sending registration failed event to {}, event: {}", RabbitMQConfig.USER_REGISTRATION_FAILED_TOPIC, event);
+        log.info("Sending registration failed event to {}, event: {}", RabbitMQConfig.REGISTRATION_FAILED_TOPIC, event);
 
-        rabbitTemplate.convertAndSend(RabbitMQConfig.USER_REGISTRATION_FAILED_TOPIC, converter.toJSON(event));
+        rabbitTemplate.convertAndSend(RabbitMQConfig.REGISTRATION_FAILED_TOPIC, converter.toJSON(event));
 
     }
 
