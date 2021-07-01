@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.domain.agent.Agent;
 import rs.ac.uns.ftn.nistagram.user.domain.agent.AgentRegistrationRequest;
+import rs.ac.uns.ftn.nistagram.user.domain.agent.RegistrationRequestStatus;
 import rs.ac.uns.ftn.nistagram.user.domain.user.User;
 import rs.ac.uns.ftn.nistagram.user.http.auth.AuthClient;
 import rs.ac.uns.ftn.nistagram.user.infrastructure.exceptions.UserException;
@@ -126,4 +127,14 @@ public class AgentService {
         return users;
     }
 
+    public String getApplicationPackageName(String agent) {
+        return agentRepository.getByName(agent).getWebsite();
+    }
+
+    public Boolean isRequestRejected(String agent) {
+        AgentRegistrationRequest foundRequest = requestRepository.findByUsername(agent);
+        if (foundRequest == null)
+            return false;
+        return foundRequest.getRequestStatus() == RegistrationRequestStatus.DECLINED;
+    }
 }

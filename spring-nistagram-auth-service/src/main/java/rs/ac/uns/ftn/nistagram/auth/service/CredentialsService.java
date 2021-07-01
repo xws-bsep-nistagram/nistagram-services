@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.auth.domain.Credentials;
 import rs.ac.uns.ftn.nistagram.auth.domain.RegistrationRequest;
-import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.AuthException;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.auth.AuthException;
 import rs.ac.uns.ftn.nistagram.auth.repository.CredentialsRepository;
 
 @Service

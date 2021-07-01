@@ -12,9 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.auth.domain.*;
 import rs.ac.uns.ftn.nistagram.auth.http.user.UserClient;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.JwtEncoder;
-import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.BannedException;
-import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.JwtEncryptionException;
-import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.JwtException;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.auth.BannedException;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.auth.JwtEncryptionException;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.auth.JwtException;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
