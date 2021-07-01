@@ -1,10 +1,9 @@
-package rs.ac.uns.ftn.nistagram.campaign.messaging.payload;
+package rs.ac.uns.ftn.nistagram.feed.messaging.payload.campaign;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import rs.ac.uns.ftn.nistagram.campaign.domain.enums.CampaignType;
 
 import java.util.List;
 
@@ -17,4 +16,5 @@ public class TargetedCampaignTopicPayload {
     private Long campaignId;
     private List<String> users;
     private CampaignType type;
+
 }

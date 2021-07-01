@@ -7,12 +7,13 @@ import rs.ac.uns.ftn.nistagram.feed.domain.user.User;
 
 import javax.persistence.Entity;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
 @Getter
 @Setter
-public class StoryFeedEntry extends FeedEntry{
+public class StoryFeedEntry extends FeedEntry {
 
     private Long storyId;
     private Boolean closeFriends;
@@ -21,6 +22,12 @@ public class StoryFeedEntry extends FeedEntry{
         super(publisher, createdAt);
         this.storyId = storyId;
         this.closeFriends = closeFriends;
+    }
+
+    public StoryFeedEntry(Long storyId) {
+        super(null, LocalDateTime.now());
+        this.storyId = storyId;
+        super.setAd(true);
     }
 
     @Override

@@ -5,13 +5,13 @@ import rs.ac.uns.ftn.nistagram.feed.domain.user.User;
 
 import javax.persistence.Entity;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 public class PostFeedEntry extends FeedEntry {
 
@@ -20,6 +20,12 @@ public class PostFeedEntry extends FeedEntry {
     public PostFeedEntry(String publisher, LocalDateTime createdAt, Long postId){
         super(publisher, createdAt);
         this.postId = postId;
+    }
+
+    public PostFeedEntry(Long postId) {
+        super(null, LocalDateTime.now());
+        this.postId = postId;
+        super.setAd(true);
     }
 
     public void addUser(User user) {

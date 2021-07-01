@@ -94,6 +94,12 @@ public class FeedService {
     }
 
     @Transactional
+    public void addCampaignToPostFeeds(List<UserPayload> users, PostFeedEntry postFeedEntry) {
+        log.info("Campaign being added to targeted user groups");
+        populatePostFeeds(users, postFeedEntry);
+    }
+
+    @Transactional
     public void addToStoryFeeds(StoryFeedEntry storyFeedEntry) {
         log.info("Story by '{}' are being added to the all of his follower feeds",
                 storyFeedEntry.getPublisher());
@@ -105,6 +111,12 @@ public class FeedService {
             followers = userGraphClient.getFollowers(storyFeedEntry.getPublisher());
 
         populateStoryFeeds(followers, storyFeedEntry);
+    }
+
+    @Transactional
+    public void addCampaignToStoryFeeds(List<UserPayload> users, StoryFeedEntry storyFeedEntry) {
+        log.info("Campaign being added to targeted user group");
+        populateStoryFeeds(users, storyFeedEntry);
     }
 
     @Transactional

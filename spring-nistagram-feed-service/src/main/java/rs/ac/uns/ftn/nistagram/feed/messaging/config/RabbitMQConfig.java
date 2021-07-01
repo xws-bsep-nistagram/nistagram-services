@@ -20,6 +20,7 @@ public class RabbitMQConfig {
     public static final String USER_UNFOLLOWED_FEED_SERVICE = "user.unfollowed.feed-service";
     public static final String USER_MUTED_FEED_SERVICE = "user.unfollowed.feed-service";
     public static final String USER_UNMUTED_FEED_SERVICE = "user.unfollowed.feed-service";
+    public static final String TARGETED_CAMPAIGN_SHOW_FEED_SERVICE = "campaign.feed-service";
 
     @Bean
     public RabbitTemplate jsonRabbitTemplate(ConnectionFactory connectionFactory) {
@@ -81,5 +82,10 @@ public class RabbitMQConfig {
     @Bean
     public Queue userBannedFeedQueue() {
         return new Queue(USER_BANNED_FEED_SERVICE);
+    }
+
+    @Bean
+    public Queue campaignShowQueue() {
+        return new Queue(TARGETED_CAMPAIGN_SHOW_FEED_SERVICE);
     }
 }
