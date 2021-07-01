@@ -12,6 +12,7 @@ rs/ac/uns/ftn/nistagram/feed/exceptions/BusinessException.class
 rs/ac/uns/ftn/nistagram/feed/messaging/event/post/PostDeletedEvent.class
 rs/ac/uns/ftn/nistagram/feed/controllers/payload/FeedResponseGroupEntry.class
 rs/ac/uns/ftn/nistagram/feed/messaging/mappers/story/StoryTopicPayloadMapper.class
+rs/ac/uns/ftn/nistagram/feed/messaging/event/user/RegistrationSucceededEvent.class
 rs/ac/uns/ftn/nistagram/feed/SpringNistagramFeedServiceApplication.class
 rs/ac/uns/ftn/nistagram/feed/http/payload/story/StoryResponse.class
 rs/ac/uns/ftn/nistagram/feed/messaging/payload/story/StoryEventPayload$StoryEventPayloadBuilder.class

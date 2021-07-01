@@ -241,7 +241,7 @@
     {
       "source": "REGISTRATION_FAILED_TOPIC",
       "vhost": "/",
-      "destination": "REGISTRATION_FAILED_USER_SERVICE",
+      "destination": "REGISTRATION_FAILED_EVENT_USER_SERVICE",
       "destination_type": "queue",
       "routing_key": "",
       "arguments": {}
@@ -249,7 +249,7 @@
     {
       "source": "REGISTRATION_FAILED_TOPIC",
       "vhost": "/",
-      "destination": "REGISTRATION_FAILED_GRAPH_SERVICE",
+      "destination": "REGISTRATION_FAILED_EVENT_GRAPH_SERVICE",
       "destination_type": "queue",
       "routing_key": "",
       "arguments": {}

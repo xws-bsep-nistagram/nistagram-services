@@ -10,7 +10,7 @@ import rs.ac.uns.ftn.nistagram.feed.domain.entry.feed.StoryFeedEntry;
 import rs.ac.uns.ftn.nistagram.feed.domain.user.User;
 import rs.ac.uns.ftn.nistagram.feed.exceptions.EntityAlreadyExistsException;
 import rs.ac.uns.ftn.nistagram.feed.exceptions.EntityNotFoundException;
-import rs.ac.uns.ftn.nistagram.feed.messaging.event.user.RegistrationFailedEvent;
+import rs.ac.uns.ftn.nistagram.feed.messaging.event.user.RegistrationSucceededEvent;
 import rs.ac.uns.ftn.nistagram.feed.messaging.util.TransactionIdHolder;
 import rs.ac.uns.ftn.nistagram.feed.repositories.PostFeedRepository;
 import rs.ac.uns.ftn.nistagram.feed.repositories.StoryFeedRepository;
@@ -26,16 +26,28 @@ public class UserService {
     private final UserRepository userRepository;
     private final PostFeedRepository postFeedRepository;
     private final StoryFeedRepository storyFeedRepository;
-    private final TransactionIdHolder transactionIdHolder;
     private final ApplicationEventPublisher publisher;
+    private final TransactionIdHolder transactionIdHolder;
 
     @Transactional
     public void create(User user) {
         userPresenceCheck(user);
         log.info("User creation request for an user '{}' received", user.getUsername());
         userRepository.save(user);
+        publishRegistrationSucceeded(user);
         log.info("User '{}' has been successfully created", user.getUsername());
     }
+
+    private void publishRegistrationSucceeded(User user) {
+
+        RegistrationSucceededEvent event = new RegistrationSucceededEvent(transactionIdHolder.getCurrentTransactionId(), user.getUsername());
+
+        log.info("Publishing a registration succeeded event {}", event);
+
+        publisher.publishEvent(event);
+
+    }
+
 
     @Transactional
     public void delete(User user) {
@@ -71,21 +83,10 @@ public class UserService {
         if (userRepository.existsById(user.getUsername())) {
             var message = String.format("User '%s' already exist", user.getUsername());
             log.warn(message);
-            publishRegistrationFailed(user);
             throw new EntityAlreadyExistsException(message);
         }
     }
 
-    private void publishRegistrationFailed(User user) {
-
-        RegistrationFailedEvent event = new RegistrationFailedEvent(transactionIdHolder.getCurrentTransactionId(),
-                user.getUsername());
-
-        log.info("Publishing a registration failed event {}", event);
-
-        publisher.publishEvent(event);
-
-    }
 
     private void userAbsenceCheck(User user) {
         if (!userRepository.existsById(user.getUsername())) {

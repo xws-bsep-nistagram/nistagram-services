@@ -46,7 +46,7 @@ public class RegistrationService {
         return jwt;
     }
 
-    private String sendRegistrationRequest(Credentials credentials) {
+    public String sendRegistrationRequest(Credentials credentials) {
         try {
             log.info("Sending registration request from user-service to auth-service for username '{}'", credentials.getUsername());
             return authClient.register(credentials);

@@ -74,4 +74,7 @@ public class CredentialsService implements UserDetailsService {
         repository.save(found);
     }
 
+    public boolean existsByUuid(String uuid) {
+        return repository.existsByUuid(uuid);
+    }
 }

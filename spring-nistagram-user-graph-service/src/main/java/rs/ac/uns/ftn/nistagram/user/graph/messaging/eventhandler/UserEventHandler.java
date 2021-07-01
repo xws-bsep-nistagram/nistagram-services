@@ -6,6 +6,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
+import rs.ac.uns.ftn.nistagram.user.graph.exceptions.EntityAlreadyExistsException;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.config.RabbitMQConfig;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.user.RegistrationFailedEvent;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.user.UserBannedEvent;
@@ -35,11 +36,26 @@ public class UserEventHandler {
 
         transactionIdHolder.setCurrentTransactionId(event.getTransactionId());
 
-        userService.create(EventPayloadMapper.toDomain(event.getUserEventPayload()));
-
-        publishCreated(event);
+        try {
+            userService.create(EventPayloadMapper.toDomain(event.getUserEventPayload()));
+            publishCreated(event);
+        } catch (EntityAlreadyExistsException e) {
+            publishRegistrationFailed(event.getUserEventPayload().getUsername());
+        }
 
     }
+
+    private void publishRegistrationFailed(String username) {
+
+        RegistrationFailedEvent event = new RegistrationFailedEvent(transactionIdHolder.getCurrentTransactionId(),
+                username);
+
+        log.info("Publishing a registration failed event {}", event);
+
+        publisher.publishEvent(event);
+
+    }
+
 
     @RabbitListener(queues = {RabbitMQConfig.REGISTRATION_FAILED_EVENT_GRAPH_SERVICE})
     public void handleRegistrationFailed(@Payload String payload) {

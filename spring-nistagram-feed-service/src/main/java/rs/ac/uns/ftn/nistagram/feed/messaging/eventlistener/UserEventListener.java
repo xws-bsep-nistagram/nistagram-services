@@ -3,10 +3,9 @@ package rs.ac.uns.ftn.nistagram.feed.messaging.eventlistener;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 import rs.ac.uns.ftn.nistagram.feed.messaging.config.RabbitMQConfig;
 import rs.ac.uns.ftn.nistagram.feed.messaging.event.user.RegistrationFailedEvent;
 import rs.ac.uns.ftn.nistagram.feed.messaging.util.Converter;
@@ -16,18 +15,18 @@ import rs.ac.uns.ftn.nistagram.feed.messaging.util.Converter;
 @AllArgsConstructor
 public class UserEventListener {
 
+    private static final String ROUTING_KEY = "";
     private final RabbitTemplate rabbitTemplate;
     private final Converter converter;
 
     @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_ROLLBACK)
+    @EventListener
     public void onRegistrationFailedEvent(RegistrationFailedEvent event) {
 
         log.info("Sending registration failed event to {}, event: {}", RabbitMQConfig.REGISTRATION_FAILED_TOPIC, event);
 
-        rabbitTemplate.convertAndSend(RabbitMQConfig.REGISTRATION_FAILED_TOPIC, converter.toJSON(event));
+        rabbitTemplate.convertAndSend(RabbitMQConfig.REGISTRATION_FAILED_TOPIC, ROUTING_KEY, converter.toJSON(event));
 
     }
-
 
 }

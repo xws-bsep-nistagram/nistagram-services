@@ -16,6 +16,7 @@ import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.BannedException;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.JwtEncryptionException;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.JwtException;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -104,6 +105,9 @@ public class AuthService {
     }
 
     public void activate(String uuid) {
+        if (!credentialsService.existsByUuid(uuid))
+            throw new EntityNotFoundException("An error occurred while registering your account. Please try again");
+
         credentialsService.activate(uuid);
     }
 

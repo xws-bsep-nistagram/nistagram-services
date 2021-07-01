@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
 import rs.ac.uns.ftn.nistagram.user.graph.exceptions.EntityAlreadyExistsException;
 import rs.ac.uns.ftn.nistagram.user.graph.exceptions.EntityNotFoundException;
-import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.user.RegistrationFailedEvent;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.util.TransactionIdHolder;
 import rs.ac.uns.ftn.nistagram.user.graph.repositories.UserRepository;
 
@@ -68,21 +67,8 @@ public class UserService {
         if (!userRepository.existsByUsername(user.getUsername())) {
             var message = String.format("User %s doesn't exist", user.getUsername());
             log.warn(message);
-            publishRegistrationFailed(user);
             throw new EntityNotFoundException(message);
         }
     }
-
-    private void publishRegistrationFailed(User user) {
-
-        RegistrationFailedEvent event = new RegistrationFailedEvent(transactionIdHolder.getCurrentTransactionId(),
-                user.getUsername());
-
-        log.info("Publishing a registration failed event {}", event);
-
-        publisher.publishEvent(event);
-
-    }
-
 
 }

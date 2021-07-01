@@ -3,10 +3,9 @@ package rs.ac.uns.ftn.nistagram.user.graph.messaging.eventlistener;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.config.RabbitMQConfig;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.user.RegistrationFailedEvent;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.user.UserCreatedEvent;
@@ -21,7 +20,7 @@ public class UserEventListener {
     private final Converter converter;
 
     @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_ROLLBACK)
+    @EventListener
     public void onRegistrationFailedEvent(RegistrationFailedEvent event) {
 
         log.info("Sending registration failed event to {}, event: {}", RabbitMQConfig.REGISTRATION_FAILED_EVENT_USER_SERVICE, event);
@@ -31,7 +30,7 @@ public class UserEventListener {
     }
 
     @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @EventListener
     public void onUserCreatedEvent(UserCreatedEvent event) {
 
         log.info("Sending a user created event to {}, event: {}", RabbitMQConfig.USER_CREATED_EVENT_FEED_SERVICE, event);
