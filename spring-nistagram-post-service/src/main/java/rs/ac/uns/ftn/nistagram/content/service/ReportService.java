@@ -3,6 +3,7 @@ package rs.ac.uns.ftn.nistagram.content.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 import rs.ac.uns.ftn.nistagram.content.domain.core.report.BaseReport;
 import rs.ac.uns.ftn.nistagram.content.domain.core.report.PostReport;
@@ -27,6 +28,7 @@ public class ReportService {
     private final StoryRepository storyRepository;
 
 
+    @Transactional
     public PostReport reportPost(BaseReport report, Long postId) {
         log.info("Reporting a post with an id: {}", postId);
 
@@ -43,6 +45,7 @@ public class ReportService {
         return postReport;
     }
 
+    @Transactional
     public StoryReport reportStory(BaseReport report, Long storyId) {
         log.info("Reporting a story with an id: {}", storyId);
 
@@ -61,14 +64,17 @@ public class ReportService {
 
     }
 
+    @Transactional(readOnly = true)
     public List<PostReport> getReportedPosts() {
         return postReportRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public List<StoryReport> getReportedStories() {
         return storyReportRepository.findAll();
     }
 
+    @Transactional
     public PostReport deletePostReport(Long postReportId) {
         PostReport postReport = postReportRepository.findById(postReportId)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -80,6 +86,7 @@ public class ReportService {
         return postReport;
     }
 
+    @Transactional
     public StoryReport deleteStoryReport(Long storyReportId) {
         StoryReport storyReport = storyReportRepository.findById(storyReportId)
                 .orElseThrow(() -> new EntityNotFoundException(

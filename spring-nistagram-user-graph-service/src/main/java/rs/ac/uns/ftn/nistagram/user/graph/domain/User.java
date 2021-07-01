@@ -22,6 +22,7 @@ public class User {
     @EqualsAndHashCode.Include
     private String username;
     private ProfileType profileType;
+    private RegistrationStatus registrationStatus;
     @Relationship(type = "FOLLOWS")
     private Set<User> follows;
     @Relationship(type = "SENT_FOLLOW_REQUEST")
@@ -77,8 +78,8 @@ public class User {
         return follows.contains(user);
     }
 
-
     public Boolean hasPrivateProfile() {
         return profileType.equals(ProfileType.PRIVATE);
     }
+
 }

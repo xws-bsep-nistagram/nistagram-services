@@ -3,6 +3,7 @@ package rs.ac.uns.ftn.nistagram.content.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.social.Tag;
 import rs.ac.uns.ftn.nistagram.content.domain.core.story.Story;
@@ -21,6 +22,7 @@ public class MessagingEventHandler {
     private final StoryRepository storyRepository;
     private final TagRepository tagRepository;
 
+    @Transactional
     public void handleUserBanned(String username) {
         log.info("Handling user banned request for an user {}", username);
 

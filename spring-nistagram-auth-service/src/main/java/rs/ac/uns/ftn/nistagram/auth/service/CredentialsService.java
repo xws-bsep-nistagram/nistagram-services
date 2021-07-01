@@ -31,6 +31,16 @@ public class CredentialsService implements UserDetailsService {
         return repository.save(generateCredentials(request));
     }
 
+    @Transactional
+    public Credentials delete(String username) {
+        Credentials found = repository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Invalid credentials."));
+
+        repository.delete(found);
+
+        return found;
+    }
+
     private Credentials generateCredentials(RegistrationRequest request) {
         Credentials credentials = new Credentials(request.getUsername(), request.getPassword(), request.getEmail());
         validateRegistration(credentials);
@@ -64,4 +74,7 @@ public class CredentialsService implements UserDetailsService {
         repository.save(found);
     }
 
+    public boolean existsByUuid(String uuid) {
+        return repository.existsByUuid(uuid);
+    }
 }
