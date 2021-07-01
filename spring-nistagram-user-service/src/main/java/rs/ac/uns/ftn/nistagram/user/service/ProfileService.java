@@ -81,6 +81,17 @@ public class ProfileService {
 
     }
 
+    @Transactional
+    public User delete(String username) {
+
+        User found = get(username);
+
+        repository.delete(found);
+
+        return found;
+
+    }
+
     private void publishUserBanned(User user) {
         UserBannedEvent event = new UserBannedEvent(UUID.randomUUID().toString(),
                 UserEventPayloadMapper.toPayload(user));
@@ -218,6 +229,5 @@ public class ProfileService {
                         && !userGraphClient.isBlockedBy(caller, user.getUsername()).isBlocked())
                 .collect(Collectors.toList());
     }
-
 
 }

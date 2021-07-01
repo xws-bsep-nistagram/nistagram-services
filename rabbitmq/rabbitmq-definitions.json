@@ -47,6 +47,20 @@
       "arguments": {}
     },
     {
+      "name": "REGISTRATION_FAILED_EVENT_USER_SERVICE",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "REGISTRATION_FAILED_EVENT_GRAPH_SERVICE",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
       "name": "USER_UPDATED_EVENT_GRAPH_SERVICE",
       "vhost": "/",
       "durable": true,
@@ -196,15 +210,6 @@
   ],
   "exchanges": [
     {
-      "name": "USER_CREATED_TOPIC",
-      "vhost": "/",
-      "type": "fanout",
-      "durable": true,
-      "auto_delete": false,
-      "internal": false,
-      "arguments": {}
-    },
-    {
       "name": "USER_UPDATED_TOPIC",
       "vhost": "/",
       "type": "fanout",
@@ -221,21 +226,30 @@
       "auto_delete": false,
       "internal": false,
       "arguments": {}
+    },
+    {
+      "name": "USER_REGISTRATION_FAILED_TOPIC",
+      "vhost": "/",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
     }
   ],
   "bindings": [
     {
-      "source": "USER_CREATED_TOPIC",
+      "source": "USER_REGISTRATION_FAILED_TOPIC",
       "vhost": "/",
-      "destination": "USER_CREATED_EVENT_FEED_SERVICE",
+      "destination": "USER_REGISTRATION_FAILED_USER_SERVICE",
       "destination_type": "queue",
       "routing_key": "",
       "arguments": {}
     },
     {
-      "source": "USER_CREATED_TOPIC",
+      "source": "USER_REGISTRATION_FAILED_TOPIC",
       "vhost": "/",
-      "destination": "USER_CREATED_EVENT_GRAPH_SERVICE",
+      "destination": "USER_REGISTRATION_FAILED_GRAPH_SERVICE",
       "destination_type": "queue",
       "routing_key": "",
       "arguments": {}

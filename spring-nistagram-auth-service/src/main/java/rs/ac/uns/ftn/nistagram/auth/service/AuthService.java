@@ -51,6 +51,7 @@ public class AuthService {
         return credentialsService.loadUserByUsername(username);
     }
 
+
     @Transactional
     public String register(RegistrationRequest registrationRequest) {
         log.info("New registration request with username '{}'", registrationRequest.getUsername());
@@ -118,5 +119,6 @@ public class AuthService {
     public void registerAgent(String username) {
         credentialsService.addUserRole(username, "ROLE_AGENT");
     }
+
 
 }

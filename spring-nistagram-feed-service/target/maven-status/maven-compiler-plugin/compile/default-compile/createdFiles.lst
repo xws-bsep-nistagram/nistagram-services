@@ -1,6 +1,7 @@
 rs/ac/uns/ftn/nistagram/feed/domain/entry/feed/StoryFeedEntry.class
 rs/ac/uns/ftn/nistagram/feed/controllers/mappers/FeedPayloadMapper.class
 rs/ac/uns/ftn/nistagram/feed/controllers/payload/FeedResponseGroupEntry$FeedResponseGroupEntryBuilder.class
+rs/ac/uns/ftn/nistagram/feed/messaging/event/user/RegistrationFailedEvent.class
 rs/ac/uns/ftn/nistagram/feed/messaging/event/user/UserCreatedEvent.class
 rs/ac/uns/ftn/nistagram/feed/messaging/payload/story/StoryPayloadType.class
 rs/ac/uns/ftn/nistagram/feed/messaging/eventhandler/ContentEventHandler.class
@@ -20,6 +21,7 @@ rs/ac/uns/ftn/nistagram/feed/messaging/payload/post/PostEventPayload.class
 rs/ac/uns/ftn/nistagram/feed/domain/entry/feed/PostFeedEntry.class
 rs/ac/uns/ftn/nistagram/feed/messaging/mappers/user/UserEventPayloadMapper.class
 rs/ac/uns/ftn/nistagram/feed/messaging/event/userrelations/UserFollowedEvent.class
+rs/ac/uns/ftn/nistagram/feed/messaging/eventlistener/UserEventListener.class
 rs/ac/uns/ftn/nistagram/feed/messaging/payload/story/StoryEventPayload.class
 rs/ac/uns/ftn/nistagram/feed/http/mappers/UserContentMapper.class
 rs/ac/uns/ftn/nistagram/feed/domain/entry/campaign/StoryCampaignEntry.class

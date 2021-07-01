@@ -3,6 +3,7 @@ package rs.ac.uns.ftn.nistagram.feed.messaging.eventhandler;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import rs.ac.uns.ftn.nistagram.feed.messaging.config.RabbitMQConfig;
@@ -21,19 +22,21 @@ public class UserEventHandler {
     private final UserService userService;
     private final Converter converter;
     private final TransactionIdHolder transactionIdHolder;
+    private final ApplicationEventPublisher publisher;
 
-    @RabbitListener(queues = {RabbitMQConfig.USER_CREATED_EVENT})
+    @RabbitListener(queues = {RabbitMQConfig.USER_CREATED_EVENT_FEED_SERVICE})
     public void handleUserCreated(@Payload String payload) {
 
         log.info("Handling a created user event {}", payload);
 
-        UserCreatedEvent event = converter.toObject(payload, UserCreatedEvent.class);
+        UserCreatedEvent userCreatedEvent = converter.toObject(payload, UserCreatedEvent.class);
 
-        transactionIdHolder.setCurrentTransactionId(event.getTransactionId());
+        transactionIdHolder.setCurrentTransactionId(userCreatedEvent.getTransactionId());
 
-        userService.create(UserEventPayloadMapper.toDomain(event.getUserEventPayload()));
+        userService.create(UserEventPayloadMapper.toDomain(userCreatedEvent.getUserEventPayload()));
 
     }
+
 
     @RabbitListener(queues = {RabbitMQConfig.USER_BANNED_EVENT})
     public void handleUserBanned(@Payload String payload) {

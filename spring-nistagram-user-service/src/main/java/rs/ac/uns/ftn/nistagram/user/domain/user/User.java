@@ -57,4 +57,5 @@ public class User {
     public boolean isBanned() {
         return administrativeData.isBanned();
     }
+
 }

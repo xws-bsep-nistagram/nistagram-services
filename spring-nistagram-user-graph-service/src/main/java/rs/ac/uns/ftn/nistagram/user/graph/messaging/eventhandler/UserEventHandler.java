@@ -3,9 +3,11 @@ package rs.ac.uns.ftn.nistagram.user.graph.messaging.eventhandler;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.config.RabbitMQConfig;
+import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.user.RegistrationFailedEvent;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.user.UserBannedEvent;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.user.UserCreatedEvent;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.user.UserUpdatedEvent;
@@ -22,8 +24,9 @@ public class UserEventHandler {
     private final UserService userService;
     private final Converter converter;
     private final TransactionIdHolder transactionIdHolder;
+    private final ApplicationEventPublisher publisher;
 
-    @RabbitListener(queues = {RabbitMQConfig.USER_CREATED_EVENT})
+    @RabbitListener(queues = {RabbitMQConfig.USER_CREATED_EVENT_GRAPH_SERVICE})
     public void handleUserCreated(@Payload String payload) {
 
         log.info("Handling a created user event {}", payload);
@@ -33,6 +36,28 @@ public class UserEventHandler {
         transactionIdHolder.setCurrentTransactionId(event.getTransactionId());
 
         userService.create(EventPayloadMapper.toDomain(event.getUserEventPayload()));
+
+        publishCreated(event);
+
+    }
+
+    @RabbitListener(queues = {RabbitMQConfig.REGISTRATION_FAILED_EVENT_GRAPH_SERVICE})
+    public void handleRegistrationFailed(@Payload String payload) {
+
+        log.info("Handling a registration failed event {}", payload);
+
+        RegistrationFailedEvent event = converter.toObject(payload, RegistrationFailedEvent.class);
+
+        userService.delete(event.getUsername());
+
+    }
+
+
+    private void publishCreated(UserCreatedEvent event) {
+
+        log.info("Publishing a user created event {}", event);
+
+        publisher.publishEvent(event);
 
     }
 

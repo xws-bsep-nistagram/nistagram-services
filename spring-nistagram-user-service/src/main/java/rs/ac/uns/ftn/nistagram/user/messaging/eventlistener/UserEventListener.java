@@ -26,9 +26,11 @@ public class UserEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onCreateEvent(UserCreatedEvent event) {
 
-        log.info("Sending user created event to {}, event: {}", RabbitMQConfig.USER_CREATED_TOPIC, event);
+        log.info("Sending user created event to {}, event: {}",
+                RabbitMQConfig.USER_CREATED_EVENT_GRAPH_SERVICE, event);
 
-        rabbitTemplate.convertAndSend(RabbitMQConfig.USER_CREATED_TOPIC, ROUTING_KEY, converter.toJSON(event));
+        rabbitTemplate.convertAndSend(RabbitMQConfig.USER_CREATED_EVENT_GRAPH_SERVICE,
+                converter.toJSON(event));
 
     }
 

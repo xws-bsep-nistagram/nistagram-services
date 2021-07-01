@@ -4,7 +4,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-    public static final String USER_CREATED_EVENT = "USER_CREATED_EVENT_GRAPH_SERVICE";
+    public static final String USER_CREATED_EVENT_GRAPH_SERVICE = "USER_CREATED_EVENT_GRAPH_SERVICE";
+    public static final String USER_CREATED_EVENT_FEED_SERVICE = "USER_CREATED_EVENT_FEED_SERVICE";
+    public static final String REGISTRATION_FAILED_EVENT_USER_SERVICE = "REGISTRATION_FAILED_EVENT_USER_SERVICE";
+    public static final String REGISTRATION_FAILED_EVENT_GRAPH_SERVICE = "REGISTRATION_FAILED_EVENT_GRAPH_SERVICE";
     public static final String USER_UPDATED_EVENT = "USER_UPDATED_EVENT_GRAPH_SERVICE";
     public static final String USER_BANNED_EVENT = "USER_BANNED_EVENT_GRAPH_SERVICE";
 
