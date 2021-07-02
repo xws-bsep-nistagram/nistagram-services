@@ -1,20 +1,10 @@
 package rs.ac.uns.ftn.nistagram.user.controllers;
 
-import feign.QueryMap;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.*;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.NotificationPreferencesUpdateDTO;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.NotificationPreferencesViewDTO;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.PrivacyDataUpdateDTO;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.PrivacyDataViewDTO;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.ProfileStatsDTO;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.ProfileUpdateDTO;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.ProfileViewDTO;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.ProfileVisibilityDTO;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.PublicDataDTO;
+import rs.ac.uns.ftn.nistagram.user.controllers.dtos.ProfileBannedResponse;
+import rs.ac.uns.ftn.nistagram.user.controllers.dtos.RegistrationRequestDTO;
+import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.*;
 import rs.ac.uns.ftn.nistagram.user.controllers.mappers.ProfileMapper;
 import rs.ac.uns.ftn.nistagram.user.controllers.mappers.RegistrationRequestMapper;
 import rs.ac.uns.ftn.nistagram.user.domain.user.User;
@@ -48,9 +38,9 @@ public class UserController {
     }
 
     @PostMapping("register")
-    public ResponseEntity<Void> register(@Valid @RequestBody RegistrationRequestDTO request) {
-        String jwt = registrationService.register(registrationRequestMapper.toDomain(request));
-        return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, jwt).build();
+    public ResponseEntity<String> register(@Valid @RequestBody RegistrationRequestDTO request) {
+        registrationService.register(registrationRequestMapper.toDomain(request));
+        return ResponseEntity.ok("User successfully registered");
     }
 
     @GetMapping("profile")

@@ -17,6 +17,8 @@ public interface CredentialsRepository extends JpaRepository<Credentials, String
 
     boolean existsByEmail(String email);
 
+    boolean existsByUuid(String uuid);
+
     Optional<Credentials> findByUuid(String uuid);
 
 }

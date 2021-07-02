@@ -1,9 +1,5 @@
 package rs.ac.uns.ftn.nistagram.auth.domain;
 
-import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.AuthException;
-
-import java.util.function.Function;
-
 
 public class RegistrationRequest {
 

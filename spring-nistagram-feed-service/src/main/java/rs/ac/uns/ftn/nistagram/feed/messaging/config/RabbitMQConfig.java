@@ -10,16 +10,19 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-    public static final String USER_CREATED_FEED_SERVICE = "user.created.feed-service";
-    public static final String USER_BANNED_FEED_SERVICE = "user.banned.feed-service";
-    public static final String POST_CREATED_FEED_SERVICE = "post.created.feed-service";
-    public static final String POST_DELETED_FEED_SERVICE = "post.deleted.feed-service";
-    public static final String STORY_CREATED_FEED_SERVICE = "story.created.feed-service";
-    public static final String STORY_DELETED_FEED_SERVICE = "story.deleted.feed-service";
-    public static final String USER_FOLLOWED_FEED_SERVICE = "user.followed.feed-service";
-    public static final String USER_UNFOLLOWED_FEED_SERVICE = "user.unfollowed.feed-service";
-    public static final String USER_MUTED_FEED_SERVICE = "user.unfollowed.feed-service";
-    public static final String USER_UNMUTED_FEED_SERVICE = "user.unfollowed.feed-service";
+    public static final String USER_CREATED_EVENT_FEED_SERVICE = "USER_CREATED_EVENT_FEED_SERVICE";
+    public static final String REGISTRATION_FAILED_TOPIC = "REGISTRATION_FAILED_TOPIC";
+    public static final String USER_BANNED_EVENT = "USER_BANNED_EVENT_FEED_SERVICE";
+
+    public static final String POST_CREATED_EVENT = "POST_CREATED_EVENT";
+    public static final String POST_DELETED_EVENT = "POST_DELETED_EVENT";
+    public static final String STORY_CREATED_EVENT = "STORY_CREATED_EVENT";
+    public static final String STORY_DELETED_EVENT = "STORY_DELETED_EVENT";
+
+    public static final String USER_FOLLOWED_EVENT = "USER_FOLLOWED_EVENT";
+    public static final String USER_UNFOLLOWED_EVENT = "USER_UNFOLLOWED_EVENT";
+    public static final String USER_MUTED_EVENT = "USER_MUTED_EVENT";
+    public static final String USER_UNMUTED_EVENT = "USER_UNMUTED_EVENT";
     public static final String TARGETED_CAMPAIGN_SHOW_FEED_SERVICE = "campaign.feed-service";
 
     @Bean
@@ -35,57 +38,8 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue userCreatedFeedQueue() {
-        return new Queue(USER_CREATED_FEED_SERVICE);
-    }
-
-    @Bean
-    public Queue postCreatedFeedQueue() {
-        return new Queue(POST_CREATED_FEED_SERVICE);
-    }
-
-    @Bean
-    public Queue postDeletedFeedQueue() {
-        return new Queue(POST_DELETED_FEED_SERVICE);
-    }
-
-    @Bean
-    public Queue storyCreatedFeedQueue() {
-        return new Queue(STORY_CREATED_FEED_SERVICE);
-    }
-
-    @Bean
-    public Queue storyDeletedFeedQueue() {
-        return new Queue(STORY_DELETED_FEED_SERVICE);
-    }
-
-    @Bean
-    public Queue userFollowedFeedQueue() {
-        return new Queue(USER_FOLLOWED_FEED_SERVICE);
-    }
-
-    @Bean
-    public Queue userUnfollowedFeedQueue() {
-        return new Queue(USER_UNFOLLOWED_FEED_SERVICE);
-    }
-
-    @Bean
-    public Queue userMutedFeedQueue() {
-        return new Queue(USER_MUTED_FEED_SERVICE);
-    }
-
-    @Bean
-    public Queue userUnmutedFeedQueue() {
-        return new Queue(USER_UNMUTED_FEED_SERVICE);
-    }
-
-    @Bean
-    public Queue userBannedFeedQueue() {
-        return new Queue(USER_BANNED_FEED_SERVICE);
-    }
-
-    @Bean
     public Queue campaignShowQueue() {
         return new Queue(TARGETED_CAMPAIGN_SHOW_FEED_SERVICE);
     }
+
 }

@@ -33,6 +33,7 @@ public class FeedService {
     private final PostFeedRepository postFeedRepository;
     private final StoryFeedRepository storyFeedRepository;
 
+    @Transactional(readOnly = true)
     public List<PostFeedEntry> getPostFeedByUsername(String username) {
         log.info("Request for getting all the post feed entries for {} received", username);
 
@@ -47,6 +48,7 @@ public class FeedService {
         return postFeedEntries;
     }
 
+    @Transactional(readOnly = true)
     public List<StoryFeedEntry> getStoryFeedByUsername(String username) {
         log.info("Request for getting all the story feed entries for an user '{}' received", username);
 
@@ -64,6 +66,7 @@ public class FeedService {
         return storyFeedEntries;
     }
 
+    @Transactional(readOnly = true)
     public List<StoryFeedEntry> getCloseFriendStoryFeedByUsername(String username) {
 
         log.info("Request for getting all the close friend story feed entries for an user '{}' received",

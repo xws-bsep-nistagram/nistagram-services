@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.notification.controllers.mappers.NotificationMapper;
 import rs.ac.uns.ftn.nistagram.notification.domain.Notification;
 import rs.ac.uns.ftn.nistagram.notification.exceptions.OperationNotPermittedException;
@@ -26,10 +27,12 @@ public class NotificationService {
     private final UserGraphClient userGraphClient;
     private final SimpMessagingTemplate template;
 
+    @Transactional
     public void handleTaggedUsers(List<Notification> taggedUserNotifications) {
         taggedUserNotifications.forEach(this::handleTaggedUser);
     }
 
+    @Transactional
     public List<Notification> get(String username) {
         List<Notification> notifications = notificationRepository.findByUsername(username);
         if (notifications == null)
@@ -37,6 +40,7 @@ public class NotificationService {
         return notifications;
     }
 
+    @Transactional
     public Notification hide(String username, Long notificationId) {
         log.info("Hiding notification with an id: {} for an user '{}'", notificationId, username);
 
@@ -52,6 +56,7 @@ public class NotificationService {
         return notification;
     }
 
+    @Transactional
     public void handleUserBanned(String username) {
         log.info("Handling user banned event for an user '{}'",
                 username);
@@ -65,6 +70,7 @@ public class NotificationService {
 
     }
 
+    @Transactional
     public void handleNewFollow(Notification newFollowNotification) {
         log.info("Handling new follow notification for an user '{}'",
                 newFollowNotification.getTarget());
@@ -76,6 +82,7 @@ public class NotificationService {
 
     }
 
+    @Transactional
     public void handleFollowRequested(Notification followRequestedNotification) {
         log.info("Handling follow requested notification for an user '{}'",
                 followRequestedNotification.getTarget());
@@ -86,6 +93,7 @@ public class NotificationService {
 
     }
 
+    @Transactional
     public void handleFollowAccepted(Notification followAcceptedNotification) {
         log.info("Handling follow accepted notification for an user '{}'",
                 followAcceptedNotification.getTarget());
@@ -97,6 +105,7 @@ public class NotificationService {
 
     }
 
+    @Transactional
     public void handlePostComments(Notification postCommentedNotification) {
         log.info("Handling post commented notification for an user '{}'",
                 postCommentedNotification.getTarget());
@@ -108,6 +117,7 @@ public class NotificationService {
 
     }
 
+    @Transactional
     public void handlePostLiked(Notification postLikedNotification) {
         log.info("Handling post liked notification for an user '{}'", postLikedNotification.getTarget());
 
@@ -117,6 +127,7 @@ public class NotificationService {
                 postLikedPreferencesSatisfied(postLikedNotification, preferences));
     }
 
+    @Transactional
     public void handlePostDisliked(Notification postDislikedNotification) {
         log.info("Handling post disliked notification for an user '{}'", postDislikedNotification.getTarget());
 
@@ -127,7 +138,7 @@ public class NotificationService {
 
     }
 
-
+    @Transactional
     public void handlePostShared(Notification postSharedNotification) {
         log.info("Handling post shared notification for an user '{}'", postSharedNotification.getTarget());
 
@@ -137,7 +148,7 @@ public class NotificationService {
                 postSharedPreferencesSatisfied(postSharedNotification, preferences));
     }
 
-
+    @Transactional
     public void handleTaggedUser(Notification taggedUserNotification) {
         log.info("Handling tagged on post notification for an user '{}'", taggedUserNotification.getTarget());
 

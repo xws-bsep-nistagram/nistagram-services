@@ -1,6 +1,7 @@
 package rs.ac.uns.ftn.nistagram.user.controllers;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.nistagram.user.controllers.dtos.agent.AgentRegistrationRequestDTO;
 import rs.ac.uns.ftn.nistagram.user.controllers.dtos.agent.UserPromotionRequest;
@@ -25,6 +26,11 @@ public class AgentController {
                                   @Valid @RequestBody AgentRegistrationRequestDTO request) {
         service.registerRequest(username, request.getWebsite());
         return "Request successfully registered.";
+    }
+
+    @GetMapping("agents/isRejected")
+    public ResponseEntity<Boolean> isRequestRejected(@RequestHeader("username") String agent) {
+        return ResponseEntity.ok(service.isRequestRejected(agent));
     }
 
     @GetMapping("agents/pending")
@@ -59,4 +65,8 @@ public class AgentController {
                 .map(service.promoteToAgent(request.getUsername(), request.getWebsite()));
     }
 
+    @GetMapping("agents/application")
+    public String getApplicationPackageName(@RequestHeader("username") String agent) {
+        return service.getApplicationPackageName(agent);
+    }
 }

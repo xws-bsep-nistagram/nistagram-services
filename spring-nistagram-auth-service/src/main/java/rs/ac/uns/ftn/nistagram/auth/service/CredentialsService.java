@@ -1,15 +1,13 @@
 package rs.ac.uns.ftn.nistagram.auth.service;
 
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.auth.domain.Credentials;
 import rs.ac.uns.ftn.nistagram.auth.domain.RegistrationRequest;
-import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.AuthException;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.auth.AuthException;
 import rs.ac.uns.ftn.nistagram.auth.repository.CredentialsRepository;
 
 @Service
@@ -31,6 +29,16 @@ public class CredentialsService implements UserDetailsService {
     @Transactional
     public Credentials registerUser(RegistrationRequest request) {
         return repository.save(generateCredentials(request));
+    }
+
+    @Transactional
+    public Credentials delete(String username) {
+        Credentials found = repository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Invalid credentials."));
+
+        repository.delete(found);
+
+        return found;
     }
 
     private Credentials generateCredentials(RegistrationRequest request) {
@@ -66,4 +74,7 @@ public class CredentialsService implements UserDetailsService {
         repository.save(found);
     }
 
+    public boolean existsByUuid(String uuid) {
+        return repository.existsByUuid(uuid);
+    }
 }

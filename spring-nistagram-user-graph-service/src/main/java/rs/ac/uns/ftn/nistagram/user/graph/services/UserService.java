@@ -3,11 +3,13 @@ package rs.ac.uns.ftn.nistagram.user.graph.services;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
 import rs.ac.uns.ftn.nistagram.user.graph.exceptions.EntityAlreadyExistsException;
 import rs.ac.uns.ftn.nistagram.user.graph.exceptions.EntityNotFoundException;
+import rs.ac.uns.ftn.nistagram.user.graph.messaging.util.TransactionIdHolder;
 import rs.ac.uns.ftn.nistagram.user.graph.repositories.UserRepository;
 
 @AllArgsConstructor
@@ -16,6 +18,8 @@ import rs.ac.uns.ftn.nistagram.user.graph.repositories.UserRepository;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final TransactionIdHolder transactionIdHolder;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
     public void create(User user) {
@@ -41,6 +45,16 @@ public class UserService {
         log.info("User {} has been successfully deleted", user.getUsername());
     }
 
+    @Transactional
+    public void delete(String username) {
+        log.info("Received a user delete request for a user {}", username);
+
+        userRepository.detachDelete(username);
+
+        log.info("User {} has been successfully deleted", username);
+
+    }
+
     private void userUniquenessCheck(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
             var message = String.format("User %s already exists", user.getUsername());
@@ -56,6 +70,5 @@ public class UserService {
             throw new EntityNotFoundException(message);
         }
     }
-
 
 }
