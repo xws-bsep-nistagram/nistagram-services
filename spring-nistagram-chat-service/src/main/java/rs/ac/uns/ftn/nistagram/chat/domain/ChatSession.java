@@ -19,6 +19,7 @@ public class ChatSession {
     private Long id;
     private String initiatorUsername;
     private String recipientUsername;
+    private SessionStatus sessionStatus;
     @OneToMany
     private List<Message> messages;
 
@@ -34,5 +35,20 @@ public class ChatSession {
 
     public boolean hasParticipant(String username) {
         return this.initiatorUsername.equals(username) || this.recipientUsername.equals(username);
+    }
+
+    public void decline() {
+        this.sessionStatus = SessionStatus.DECLINED;
+    }
+
+    public void accept() {
+        this.sessionStatus = SessionStatus.ACCEPTED;
+    }
+
+
+    public enum SessionStatus {
+        PENDING,
+        ACCEPTED,
+        DECLINED,
     }
 }

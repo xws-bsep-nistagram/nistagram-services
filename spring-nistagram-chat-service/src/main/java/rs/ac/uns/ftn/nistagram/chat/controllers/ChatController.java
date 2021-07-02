@@ -10,6 +10,7 @@ import rs.ac.uns.ftn.nistagram.chat.controllers.payload.requests.TemporaryMediaM
 import rs.ac.uns.ftn.nistagram.chat.controllers.payload.requests.TextMessageRequest;
 import rs.ac.uns.ftn.nistagram.chat.controllers.payload.responses.ChatSessionResponse;
 import rs.ac.uns.ftn.nistagram.chat.controllers.payload.responses.MessageResponse;
+import rs.ac.uns.ftn.nistagram.chat.domain.ChatSession;
 import rs.ac.uns.ftn.nistagram.chat.domain.Message;
 import rs.ac.uns.ftn.nistagram.chat.services.ChatSessionService;
 import rs.ac.uns.ftn.nistagram.chat.services.MessageService;
@@ -74,6 +75,27 @@ public class ChatController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(responses);
+    }
+
+    @PutMapping("session/{sessionId}/decline")
+    public ResponseEntity<ChatSessionResponse> decline(@PathVariable("sessionId") Long sessionId,
+                                                       @RequestHeader("username") String username) {
+        ChatSession declinedSession = chatSessionService.decline(username, sessionId);
+        return ResponseEntity.ok(chatSessionMapper.toDto(declinedSession, username));
+    }
+
+    @PutMapping("session/{sessionId}/accept")
+    public ResponseEntity<ChatSessionResponse> accept(@PathVariable("sessionId") Long sessionId,
+                                                      @RequestHeader("username") String username) {
+        ChatSession acceptedSession = chatSessionService.accept(username, sessionId);
+        return ResponseEntity.ok(chatSessionMapper.toDto(acceptedSession, username));
+    }
+
+    @DeleteMapping("session/{sessionId}")
+    public ResponseEntity<ChatSessionResponse> delete(@PathVariable("sessionId") Long sessionId,
+                                                      @RequestHeader("username") String username) {
+        ChatSession deletedSession = chatSessionService.delete(username, sessionId);
+        return ResponseEntity.ok(chatSessionMapper.toDto(deletedSession, username));
     }
 
     @PutMapping("message/{messageId}/seen")
