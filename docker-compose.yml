@@ -254,6 +254,32 @@ services :
     volumes :
       - ${LOG_PATH}/campaign-service:/app/logs/
 
+  chat-service :
+    image : nistagram/chat-service
+    container_name : chat-service
+      build :
+        context : ./spring-nistagram-chat-service
+        dockerfile : Dockerfile
+        target : "${STAGE}"
+      ports :
+        - "${CHAT_SERVICE_PORT}:${CHAT_SERVICE_PORT}"
+      restart : unless-stopped
+      depends_on :
+        - mysql-db
+        - rabbitmq
+      environment :
+        CAMPAIGN_SERVICE_PORT : "${CHAT_SERVICE_PORT}"
+        MYSQL_HOST : "${MYSQL_HOST}"
+        MYSQL_PORT : "${MYSQL_PORT}"
+        CAMPAIGN_DB_NAME : "${CHAT_DB_NAME}"
+        MYSQL_ROOT : "${MYSQL_ROOT}"
+        MYSQL_ROOT_PASSWORD : "${MYSQL_ROOT_PASSWORD}"
+      networks :
+        - backend
+        - database
+      volumes :
+        - ${LOG_PATH}/chat-service:/app/logs/
+
 networks :
   backend :
     name : backend
