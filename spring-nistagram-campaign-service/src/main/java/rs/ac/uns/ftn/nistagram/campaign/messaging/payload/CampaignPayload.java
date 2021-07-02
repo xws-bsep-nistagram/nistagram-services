@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class TargetedCampaignTopicPayload {
+public class CampaignPayload {
 
     private Long campaignId;
     private List<String> users;
