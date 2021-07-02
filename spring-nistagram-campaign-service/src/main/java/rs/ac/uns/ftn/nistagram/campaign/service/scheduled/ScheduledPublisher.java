@@ -35,13 +35,14 @@ public class ScheduledPublisher {
         dueCampaigns.addAll(oneTimeCampaigns);
 
         List<TargetedCampaignTopicPayload> targetedCampaigns = getTargetedCampaigns(dueCampaigns);
+        if (!targetedCampaigns.isEmpty()) {
+            producer.publishShowCampaigns(targetedCampaigns);
+            log.info("Published {} campaigns to message queue", targetedCampaigns.size());
 
-        producer.publishShowCampaigns(targetedCampaigns);
-        log.info("Published {} campaigns to message queue", targetedCampaigns.size());
-
-        longTermCampaigns.forEach(longTermCampaignService::updateCampaignExposuredMoments);
-        oneTimeCampaigns.forEach(oneTimeCampaignService::setCampaignExposured);
-        log.debug("Updated campaign exposures");
+            longTermCampaigns.forEach(longTermCampaignService::updateCampaignExposuredMoments);
+            oneTimeCampaigns.forEach(oneTimeCampaignService::setCampaignExposured);
+            log.debug("Updated campaign exposures");
+        }
     }
 
     @Scheduled(cron = "0 0 0 ? * *")

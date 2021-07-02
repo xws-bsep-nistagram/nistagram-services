@@ -28,7 +28,7 @@ public class CampaignConsumer {
     @RabbitListener(queues = RabbitMQConfig.TARGETED_CAMPAIGN_SHOW_FEED_SERVICE)
     public void consumePostCreated(List<TargetedCampaignTopicPayload> payloadList, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
         acknowledgeMessage(channel, tag);
-        log.info("Consuming {} campaigns", payloadList.size());
+        log.info("Consumed {} campaigns for showing", payloadList.size());
         payloadList.forEach(payload -> {
             if (payload.getType() == CampaignType.POST) {
                 List<UserPayload> users = payload.getUsers().stream()
