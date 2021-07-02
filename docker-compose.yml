@@ -228,6 +228,32 @@ services :
     volumes :
       - ${LOG_PATH}/notification-service:/app/logs/
 
+  campaign-service :
+    image : nistagram/campaign-service
+    container_name : campaign-service
+    build :
+      context : ./spring-nistagram-campaign-service
+      dockerfile : Dockerfile
+      target : "${STAGE}"
+    ports :
+      - "${CAMPAIGN_SERVICE_PORT}:${CAMPAIGN_SERVICE_PORT}"
+    restart : unless-stopped
+    depends_on :
+      - mysql-db
+      - rabbitmq
+    environment :
+      CAMPAIGN_SERVICE_PORT : "${CAMPAIGN_SERVICE_PORT}"
+      MYSQL_HOST : "${MYSQL_HOST}"
+      MYSQL_PORT : "${MYSQL_PORT}"
+      CAMPAIGN_DB_NAME : "${CAMPAIGN_DB_NAME}"
+      MYSQL_ROOT : "${MYSQL_ROOT}"
+      MYSQL_ROOT_PASSWORD : "${MYSQL_ROOT_PASSWORD}"
+    networks :
+      - backend
+      - database
+    volumes :
+      - ${LOG_PATH}/campaign-service:/app/logs/
+
 networks :
   backend :
     name : backend

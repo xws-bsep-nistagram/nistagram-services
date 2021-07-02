@@ -21,6 +21,7 @@ import rs.ac.uns.ftn.nistagram.user.messaging.event.UserBannedEvent;
 import rs.ac.uns.ftn.nistagram.user.messaging.event.UserUpdatedEvent;
 import rs.ac.uns.ftn.nistagram.user.messaging.mappers.UserEventPayloadMapper;
 import rs.ac.uns.ftn.nistagram.user.repository.UserRepository;
+import rs.ac.uns.ftn.nistagram.user.repository.specification.UserSpecification;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,6 +120,16 @@ public class ProfileService {
 
         return foundUsers;
 
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> findBySpecification(UserSpecification specification) {
+        List<User> found = repository.findAll(specification)
+                .stream()
+                .filter(user -> !user.isBanned())
+                .collect(Collectors.toList());
+        log.info("Found {} users by specification", found.size());
+        return found;
     }
 
     public boolean isPrivate(String username) {

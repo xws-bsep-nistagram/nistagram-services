@@ -9,11 +9,13 @@ import rs.ac.uns.ftn.nistagram.user.controllers.mappers.ProfileMapper;
 import rs.ac.uns.ftn.nistagram.user.controllers.mappers.RegistrationRequestMapper;
 import rs.ac.uns.ftn.nistagram.user.domain.user.User;
 import rs.ac.uns.ftn.nistagram.user.domain.user.UserStats;
+import rs.ac.uns.ftn.nistagram.user.repository.specification.UserSpecification;
 import rs.ac.uns.ftn.nistagram.user.service.ProfileService;
 import rs.ac.uns.ftn.nistagram.user.service.RegistrationService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -127,6 +129,14 @@ public class UserController {
     public ProfileStatsDTO getProfileStats(@PathVariable String username) {
         UserStats stats = profileService.getStats(username);
         return profileMapper.map(stats);
+    }
+
+    @GetMapping("query")
+    public List<String> queryUsers(@RequestParam Map<String, String> queryMap) {
+        List<User> found = profileService.findBySpecification(new UserSpecification(queryMap));
+        return found.stream()
+                .map(User::getUsername)
+                .collect(Collectors.toList());
     }
 
 }
