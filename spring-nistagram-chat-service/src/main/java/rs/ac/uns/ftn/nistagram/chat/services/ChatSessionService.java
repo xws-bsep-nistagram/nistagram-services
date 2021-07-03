@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.chat.domain.ChatSession;
 import rs.ac.uns.ftn.nistagram.chat.domain.Message;
+import rs.ac.uns.ftn.nistagram.chat.exceptions.EntityNotFoundException;
+import rs.ac.uns.ftn.nistagram.chat.exceptions.OperationNotPermittedException;
 import rs.ac.uns.ftn.nistagram.chat.http.GraphClient;
 import rs.ac.uns.ftn.nistagram.chat.repositories.ChatSessionRepository;
 import rs.ac.uns.ftn.nistagram.chat.repositories.MessageRepository;
-import rs.ac.uns.ftn.nistagram.exceptions.EntityNotFoundException;
-import rs.ac.uns.ftn.nistagram.exceptions.OperationNotPermittedException;
 
 import java.time.LocalDateTime;
 import java.util.List;

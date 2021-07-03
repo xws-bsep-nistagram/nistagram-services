@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.exceptions;
+package rs.ac.uns.ftn.nistagram.chat.exceptions;
 
 public class EntityNotFoundException extends BusinessException {
 
