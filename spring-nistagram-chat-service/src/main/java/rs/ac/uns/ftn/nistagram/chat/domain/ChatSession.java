@@ -20,7 +20,7 @@ public class ChatSession {
     private String initiatorUsername;
     private String recipientUsername;
     private SessionStatus sessionStatus;
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.REMOVE})
     private List<Message> messages;
 
     public ChatSession(String initiatorUsername, String recipientUsername) {
