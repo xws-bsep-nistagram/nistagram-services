@@ -8,6 +8,9 @@ import lombok.Setter;
 public class UserRelationshipResponse {
     private boolean following;
 
+    public UserRelationshipResponse() {
+    }
+
     public UserRelationshipResponse(boolean following) {
         this.following = following;
     }
