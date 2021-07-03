@@ -28,6 +28,7 @@ public class StoryFeedEntry extends FeedEntry {
         super(null, LocalDateTime.now());
         this.storyId = storyId;
         super.setAd(true);
+        this.closeFriends = false;
     }
 
     @Override

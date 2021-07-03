@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import rs.ac.uns.ftn.nistagram.campaign.domain.enums.CampaignType;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,7 +37,7 @@ public class Campaign {
     private CampaignType type;
     @NotNull
     private LocalDateTime createdOn;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Advertisement> advertisements;
     @OneToMany(mappedBy = "campaign")
     private List<UserInteraction> userInteractions;

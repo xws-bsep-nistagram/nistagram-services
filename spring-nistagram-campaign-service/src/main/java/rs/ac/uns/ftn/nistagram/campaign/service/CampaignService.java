@@ -2,6 +2,8 @@ package rs.ac.uns.ftn.nistagram.campaign.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.campaign.domain.Campaign;
 import rs.ac.uns.ftn.nistagram.campaign.repository.CampaignRepository;
@@ -9,9 +11,10 @@ import rs.ac.uns.ftn.nistagram.campaign.repository.CampaignRepository;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Service
 @Slf4j
 @AllArgsConstructor
-public abstract class CampaignService<T extends Campaign> {
+public class CampaignService<T extends Campaign> {
 
     private final CampaignRepository<T> repository;
 
@@ -27,10 +30,17 @@ public abstract class CampaignService<T extends Campaign> {
         return created;
     }
 
+    @Transactional
     public T create(String username, T campaign) {
         Objects.requireNonNull(campaign);
         campaign.setCreator(username);
         return create(campaign);
+    }
+
+    @Transactional(readOnly = true)
+    public T get(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException());
     }
 
 }

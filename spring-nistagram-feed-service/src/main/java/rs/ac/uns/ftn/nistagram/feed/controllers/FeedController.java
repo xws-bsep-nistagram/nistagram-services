@@ -43,6 +43,15 @@ public class FeedController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("stories/campaign")
+    public ResponseEntity<?> getStoryCampaigns(@RequestHeader("username") String username) {
+        List<FeedResponse> response = feedService.getStoryCampaignsByUsername(username)
+                .stream()
+                .map(FeedPayloadMapper::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("stories/close/grouped")
     public ResponseEntity<?> getAllStoriesForCloseFriends(@RequestHeader("username") String username){
         List<FeedResponseGroup> response = FeedPayloadMapper.group(

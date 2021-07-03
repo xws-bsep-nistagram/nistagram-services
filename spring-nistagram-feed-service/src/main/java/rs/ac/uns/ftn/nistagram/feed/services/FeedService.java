@@ -18,6 +18,7 @@ import rs.ac.uns.ftn.nistagram.feed.repositories.PostFeedRepository;
 import rs.ac.uns.ftn.nistagram.feed.repositories.StoryFeedRepository;
 import rs.ac.uns.ftn.nistagram.feed.repositories.UserRepository;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,7 +56,7 @@ public class FeedService {
         var storyFeedEntries = storyFeedRepository
                 .findAllByUsername(username)
                 .stream()
-                .filter(e -> !e.getCloseFriends())
+                .filter(e -> !e.getCloseFriends() && !e.isAd())
                 .collect(Collectors.toList());
 
         log.info("Found '{}' story feed entries for an user '{}'", storyFeedEntries.size(), username);
@@ -74,7 +75,7 @@ public class FeedService {
 
         var storyFeedEntries = storyFeedRepository
                 .findAllByUsername(username)
-                .stream().filter(StoryFeedEntry::getCloseFriends)
+                .stream().filter(entry -> entry.getCloseFriends() && !entry.isAd())
                 .collect(Collectors.toList());
 
         log.info("Found '{}' story feed entries for an user '{}'", storyFeedEntries.size(), username);
@@ -83,6 +84,21 @@ public class FeedService {
             storyFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt).reversed());
 
         return storyFeedEntries;
+    }
+
+    @Transactional(readOnly = true)
+    public List<StoryFeedEntry> getStoryCampaignsByUsername(String username) {
+        log.info("Request for getting all the story ad campaigns for user '{}' received",
+                username);
+        List<StoryFeedEntry> all = storyFeedRepository.findAllByUsername(username)
+                .stream().filter(StoryFeedEntry::isAd)
+                .collect(Collectors.toList());
+
+        log.info("Found '{}' story feed entries for an user '{}'", all.size(), username);
+        if (all.size() != 0)
+            all.sort(Comparator.comparing(FeedEntry::getCreatedAt).reversed());
+
+        return all;
     }
 
     @Transactional
@@ -332,4 +348,5 @@ public class FeedService {
                 storyFeedEntry.getPublisher());
 
     }
+
 }
