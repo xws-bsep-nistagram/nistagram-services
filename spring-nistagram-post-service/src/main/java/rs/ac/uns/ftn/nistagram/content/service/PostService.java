@@ -69,14 +69,39 @@ public class PostService {
         Post savedPost = postRepository.save(post);
         log.info("[POST][C][C][CALL={}]", post.getAuthor());
 
-        if (post.usersTagged())
-            publishUserTagged(post);
+        if (!post.isAd()) {
+            if (post.usersTagged())
+                publishUserTagged(post);
 
-        publishPostCreated(post);
-
-        log.info("[POST][C][P][CALL={}]", post.getAuthor());
+            publishPostCreated(post);
+            log.info("[POST][C][P][CALL={}]", post.getAuthor());
+        }
 
         return savedPost;
+    }
+
+    @Transactional
+    public Post createForInfluencer(Post post) {
+        log.info("[POST][C][R][TGT={}]", post.getAuthor());
+        post.setAd(true);
+        return create(post);
+    }
+
+    @Transactional
+    public void approveAdPost(String username, Long id) {
+        log.info("[POST][C][R][CALL={}]", username);
+
+        Post found = getByIdAsAdmin(id);
+        if (!found.getAuthor().equals(username)) {
+            throw new OwnershipException();
+        }
+        if (!found.isAd() || found.isAdApproved()) {
+            throw new NistagramException("Cannot approve this ad post.");
+        }
+        found.setAdApproved(true);
+        postRepository.save(found);
+        publishPostCreated(found);
+        log.info("[POST][C][P][CALL={}]", found.getAuthor());
     }
 
     private void publishUserTagged(Post post) {

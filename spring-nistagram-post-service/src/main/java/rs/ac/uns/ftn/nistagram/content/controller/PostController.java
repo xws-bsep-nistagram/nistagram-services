@@ -33,6 +33,21 @@ public class PostController {
         return ResponseEntity.ok(mapper.toDto(createdPost));
     }
 
+    // TODO: authorize agent
+    @PostMapping("agent")
+    public ResponseEntity<?> request(@Valid @RequestBody PostCreationDTO dto) {
+        Post createdPost = postService.createForInfluencer(mapper.toDomain(dto));
+        return ResponseEntity.ok(mapper.toDto(createdPost));
+    }
+
+
+    @PutMapping("approve/{postId}")
+    public ResponseEntity<?> approveAd(@RequestHeader("username") String username,
+                                       @PathVariable Long postId) {
+        postService.approveAdPost(username, postId);
+        return ResponseEntity.ok("Ad successfully approved.");
+    }
+
     @DeleteMapping("{postId}")
     public ResponseEntity<?> delete(@RequestHeader("username") String username,
                                     @PathVariable String postId) {
