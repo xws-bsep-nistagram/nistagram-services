@@ -16,5 +16,6 @@ public class CampaignContentDTO {
     private List<UserInteraction> userInteractions;
     private List<Comment> comments;
     private LocalDateTime createdOn;
+    private Long contentId;
 
 }

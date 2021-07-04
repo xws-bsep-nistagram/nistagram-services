@@ -45,4 +45,5 @@ public class Campaign {
     private List<Comment> comments;
     @Embedded
     private TargetedGroup targetedGroup;
+    private Long contentId;
 }

@@ -36,12 +36,14 @@ public class CampaignService<T extends Campaign> {
         return created;
     }
 
+    // TODO: SAGA pattern implementation
     @Transactional
     public T create(String username, T campaign) {
         Objects.requireNonNull(campaign);
         campaign.setCreator(username);
+        Post createdPost = postClient.createAgentPost(username, convertToPost(campaign));
+        campaign.setContentId(createdPost.getId());
         T created = create(campaign);
-        postClient.createAgentPost(username, convertToPost(campaign));
         return created;
     }
 
@@ -60,6 +62,13 @@ public class CampaignService<T extends Campaign> {
     public T get(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException());
+    }
+
+    @Transactional(readOnly = true)
+    public List<T> get(String username) {
+        List<T> all = repository.findByUsername(username);
+        log.info("Fetching {} stories for agent '{}'", all.size(), username);
+        return all;
     }
 
 }

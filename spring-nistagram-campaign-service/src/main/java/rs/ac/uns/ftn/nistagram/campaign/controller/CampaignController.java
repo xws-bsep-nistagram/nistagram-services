@@ -22,6 +22,8 @@ import rs.ac.uns.ftn.nistagram.campaign.service.LongTermCampaignService;
 import rs.ac.uns.ftn.nistagram.campaign.service.OneTimeCampaignService;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -36,14 +38,16 @@ public class CampaignController {
     @PostMapping("one-time")
     public OneTimeCampaignViewDTO create(@RequestHeader("username") String username,
                                          @Valid @RequestBody NewOneTimeCampaignDTO newCampaign) {
-        OneTimeCampaign created = oneTimeCampaignService.create(username, mapper.map(newCampaign, OneTimeCampaign.class));
+        OneTimeCampaign created = oneTimeCampaignService.create(
+                username, mapper.map(newCampaign, OneTimeCampaign.class));
         return mapper.map(created, OneTimeCampaignViewDTO.class);
     }
 
     @PostMapping("long-term")
     public LongTermCampaignViewDTO create(@RequestHeader("username") String username,
                                            @Valid @RequestBody NewLongTermCampaignDTO newCampaign) {
-        LongTermCampaign created = longTermCampaignService.create(username, mapper.map(newCampaign, LongTermCampaign.class));
+        LongTermCampaign created = longTermCampaignService.create(
+                username, mapper.map(newCampaign, LongTermCampaign.class));
         return mapper.map(created, LongTermCampaignViewDTO.class);
     }
 
@@ -51,6 +55,14 @@ public class CampaignController {
     public CampaignContentDTO get(@PathVariable Long id) {
         Campaign found = campaignService.get(id);
         return mapper.map(found, CampaignContentDTO.class);
+    }
+
+    @GetMapping
+    public List<CampaignContentDTO> getAll(@RequestHeader("username") String username) {
+        List<Campaign> all = campaignService.get(username);
+        return all.stream()
+                .map(campaign -> mapper.map(campaign, CampaignContentDTO.class))
+                .collect(Collectors.toList());
     }
 
 }

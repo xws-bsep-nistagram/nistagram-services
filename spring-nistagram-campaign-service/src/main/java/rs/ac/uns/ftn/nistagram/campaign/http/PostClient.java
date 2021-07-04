@@ -9,6 +9,6 @@ import rs.ac.uns.ftn.nistagram.campaign.http.payload.Post;
 public interface PostClient {
 
     @PostMapping("agent/post")
-    void createAgentPost(@RequestHeader("username") String agentUsername, Post dto);
+    Post createAgentPost(@RequestHeader("username") String agentUsername, Post post);
 
 }
