@@ -25,4 +25,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query(value = "select p from Post p right join p.userInteractions ui where ui.username = :username and (p.ad=false or p.adApproved=true)")
     List<Post> getLikedAndDislikedByUser(@Param("username") String username);
+
+    @Query(value = "select p from Post p where p.author=:username and p.ad=true and p.adApproved=false")
+    List<Post> getNonApprovedByUsername(String username);
 }

@@ -40,8 +40,14 @@ public class PostController {
         return ResponseEntity.ok(mapper.toDto(createdPost));
     }
 
+    @GetMapping("non-approved")
+    public ResponseEntity<?> getUserNonApproved(@RequestHeader("username") String username) {
+        List<Post> nonApproved = postService.getNonApproved(username);
+        return ResponseEntity.ok(
+                nonApproved.stream().map(mapper::toDto).collect(Collectors.toList()));
+    }
 
-    @PutMapping("approve/{postId}")
+    @PutMapping("non-approved/{postId}")
     public ResponseEntity<?> approveAd(@RequestHeader("username") String username,
                                        @PathVariable Long postId) {
         postService.approveAdPost(username, postId);

@@ -539,4 +539,11 @@ public class PostService {
     }
 
 
+    @Transactional(readOnly = true)
+    public List<Post> getNonApproved(String username) {
+        log.info("[POST][G][R][CALL={}]", username);
+        List<Post> found = postRepository.getNonApprovedByUsername(username);
+        log.info("[POST][G][C][CALL={}]", username);
+        return found;
+    }
 }
