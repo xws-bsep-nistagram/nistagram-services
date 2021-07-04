@@ -6,10 +6,15 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.campaign.domain.Campaign;
+import rs.ac.uns.ftn.nistagram.campaign.http.PostClient;
+import rs.ac.uns.ftn.nistagram.campaign.http.payload.MediaLink;
+import rs.ac.uns.ftn.nistagram.campaign.http.payload.Post;
 import rs.ac.uns.ftn.nistagram.campaign.repository.CampaignRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -17,6 +22,7 @@ import java.util.Objects;
 public class CampaignService<T extends Campaign> {
 
     private final CampaignRepository<T> repository;
+    private final PostClient postClient;
 
     @Transactional
     public T create(T campaign) {
@@ -34,7 +40,20 @@ public class CampaignService<T extends Campaign> {
     public T create(String username, T campaign) {
         Objects.requireNonNull(campaign);
         campaign.setCreator(username);
-        return create(campaign);
+        T created = create(campaign);
+        postClient.createAgentPost(username, convertToPost(campaign));
+        return created;
+    }
+
+    private Post convertToPost(T campaign) {
+        if (campaign.getAdvertisements() == null || campaign.getAdvertisements().isEmpty()) {
+            throw new RuntimeException("Campaign advertisements must not be empty!");
+        }
+        List<MediaLink> links = campaign.getAdvertisements()
+                .stream()
+                .map(ad -> new MediaLink(ad.getMediaUrl()))
+                .collect(Collectors.toList());
+        return new Post(campaign.getCreator(), campaign.getName(), links);
     }
 
     @Transactional(readOnly = true)

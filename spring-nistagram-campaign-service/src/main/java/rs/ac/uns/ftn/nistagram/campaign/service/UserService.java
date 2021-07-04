@@ -6,11 +6,8 @@ import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.nistagram.campaign.domain.Campaign;
 import rs.ac.uns.ftn.nistagram.campaign.domain.TargetedGroup;
 import rs.ac.uns.ftn.nistagram.campaign.http.UserClient;
-import rs.ac.uns.ftn.nistagram.campaign.http.UserQuery;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @AllArgsConstructor

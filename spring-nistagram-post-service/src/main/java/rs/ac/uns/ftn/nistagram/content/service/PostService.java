@@ -88,6 +88,14 @@ public class PostService {
     }
 
     @Transactional
+    public Post createForAgent(String agentUsername, Post post) {
+        post.setAd(true);
+        post.setAdApproved(true);
+        post.setAuthor(agentUsername);
+        return create(post);
+    }
+
+    @Transactional
     public void approveAdPost(String username, Long id) {
         log.info("[POST][C][R][CALL={}]", username);
 
@@ -546,4 +554,5 @@ public class PostService {
         log.info("[POST][G][C][CALL={}]", username);
         return found;
     }
+
 }

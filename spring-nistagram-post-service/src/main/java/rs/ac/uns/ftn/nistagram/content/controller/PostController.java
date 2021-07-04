@@ -40,6 +40,13 @@ public class PostController {
         return ResponseEntity.ok(mapper.toDto(createdPost));
     }
 
+    @PostMapping("agent/post")
+    public ResponseEntity<?> createAdPost(@RequestHeader("username") String username,
+                                          @Valid @RequestBody PostCreationDTO dto) {
+        Post createdPost = postService.createForAgent(username, mapper.toDomain(dto));
+        return ResponseEntity.ok(mapper.toDto(createdPost));
+    }
+
     @GetMapping("non-approved")
     public ResponseEntity<?> getUserNonApproved(@RequestHeader("username") String username) {
         List<Post> nonApproved = postService.getNonApproved(username);
