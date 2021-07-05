@@ -20,6 +20,8 @@ public class EventPayloadMapper {
     private static final String FOLLOW_REQUESTED_MESSAGE = "User %s requested to follow you";
     private static final String FOLLOW_ACCEPTED_MESSAGE = "User %s accepted your follow request";
     private static final String NEW_FOLLOW_MESSAGE = "User %s is now following you.";
+    private static final String NEW_REQUEST_MESSAGE = "User %s wants to chat with you.";
+    private static final String NEW_MESSAGE = "User %s sent you a message.";
 
 
     public static List<Notification> toDomain(UserTaggedEventPayload payload) {
@@ -91,6 +93,10 @@ public class EventPayloadMapper {
                 return String.format(NEW_DISLIKE_MESSAGE, subject);
             case NEW_SHARE:
                 return String.format(NEW_SHARE_MESSAGE, subject);
+            case NEW_MESSAGE_REQUEST:
+                return String.format(NEW_REQUEST_MESSAGE, subject);
+            case NEW_MESSAGE:
+                return String.format(NEW_MESSAGE, subject);
         }
         return "";
     }

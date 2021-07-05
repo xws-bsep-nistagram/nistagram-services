@@ -18,6 +18,7 @@ public class ChatPublisher {
     private final ChatSessionMapper chatSessionMapper;
     private final MessageMapper messageMapper;
 
+
     public void publishMessage(Long sessionId, Message message) {
         log.info("Publishing a message {} to a session with an id: {}", message, sessionId);
         this.template.convertAndSend(String.format("/topic/%d", sessionId), messageMapper.toDto(message));

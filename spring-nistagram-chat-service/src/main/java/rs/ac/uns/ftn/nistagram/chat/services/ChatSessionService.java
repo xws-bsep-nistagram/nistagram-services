@@ -3,6 +3,7 @@ package rs.ac.uns.ftn.nistagram.chat.services;
 import feign.FeignException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.chat.domain.ChatSession;
@@ -12,12 +13,17 @@ import rs.ac.uns.ftn.nistagram.chat.exceptions.EntityNotFoundException;
 import rs.ac.uns.ftn.nistagram.chat.exceptions.OperationNotPermittedException;
 import rs.ac.uns.ftn.nistagram.chat.http.ContentClient;
 import rs.ac.uns.ftn.nistagram.chat.http.GraphClient;
+import rs.ac.uns.ftn.nistagram.chat.messaging.event.notifications.MessageRequestEvent;
+import rs.ac.uns.ftn.nistagram.chat.messaging.event.notifications.NewMessageEvent;
+import rs.ac.uns.ftn.nistagram.chat.messaging.event.payload.notification.NotificationType;
+import rs.ac.uns.ftn.nistagram.chat.messaging.mappers.EventPayloadMapper;
 import rs.ac.uns.ftn.nistagram.chat.repositories.ChatSessionRepository;
 import rs.ac.uns.ftn.nistagram.chat.repositories.MessageRepository;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -30,6 +36,8 @@ public class ChatSessionService {
     private final ContentClient contentClient;
     private final ChatPublisher chatPublisher;
     private final EntityManager entityManager;
+    private final ApplicationEventPublisher queuePublisher;
+    private final EventPayloadMapper mapper;
 
 
     @Transactional
@@ -55,10 +63,33 @@ public class ChatSessionService {
             checkShareRestrictions((ContentShareMessage) message);
 
         chatPublisher.publishMessage(session.getId(), message);
+        publishNewMessage(message);
 
         log.info("Message successfully saved to a session with an id: {}", session.getId());
 
         return message;
+    }
+
+    private void publishNewMessage(Message message) {
+
+        NewMessageEvent event = new NewMessageEvent(UUID.randomUUID().toString(),
+                mapper.toPayload(message, NotificationType.NEW_MESSAGE));
+
+        log.info("Publishing a new message event {}", event);
+
+        queuePublisher.publishEvent(event);
+
+    }
+
+    private void publishMessageRequest(Message message) {
+
+        MessageRequestEvent event = new MessageRequestEvent(UUID.randomUUID().toString(),
+                mapper.toPayload(message, NotificationType.NEW_MESSAGE_REQUEST));
+
+        log.info("Publishing a new message request event {}", event);
+
+        queuePublisher.publishEvent(event);
+
     }
 
     private void checkShareRestrictions(ContentShareMessage message) {
@@ -99,8 +130,10 @@ public class ChatSessionService {
 
         if (graphClient.checkFollowing(message.getReceiver(), message.getSender()).isFollowing())
             session.setSessionStatus(ChatSession.SessionStatus.ACCEPTED);
-        else
+        else {
             session.setSessionStatus(ChatSession.SessionStatus.PENDING);
+            publishMessageRequest(message);
+        }
 
         chatPublisher.publishNewSession(message.getReceiver(), session);
 
