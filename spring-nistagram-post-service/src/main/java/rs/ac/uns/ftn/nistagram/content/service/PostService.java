@@ -159,7 +159,7 @@ public class PostService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Post with an id '%d' doesn't exist", postId)
                 ));
-        if (userClient.isPrivate(post.getAuthor()))
+        if (!caller.equals(post.getAuthor()) && userClient.isPrivate(post.getAuthor()))
             graphClient.assertFollow(caller, post.getAuthor());
 
         log.info("[POST][G][C][CALL={}][ID={}]", caller, postId);

@@ -1,17 +1,21 @@
 package rs.ac.uns.ftn.nistagram.chat.services;
 
+import feign.FeignException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.chat.domain.ChatSession;
+import rs.ac.uns.ftn.nistagram.chat.domain.ContentShareMessage;
 import rs.ac.uns.ftn.nistagram.chat.domain.Message;
 import rs.ac.uns.ftn.nistagram.chat.exceptions.EntityNotFoundException;
 import rs.ac.uns.ftn.nistagram.chat.exceptions.OperationNotPermittedException;
+import rs.ac.uns.ftn.nistagram.chat.http.ContentClient;
 import rs.ac.uns.ftn.nistagram.chat.http.GraphClient;
 import rs.ac.uns.ftn.nistagram.chat.repositories.ChatSessionRepository;
 import rs.ac.uns.ftn.nistagram.chat.repositories.MessageRepository;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,7 +27,9 @@ public class ChatSessionService {
     private final ChatSessionRepository chatSessionRepository;
     private final MessageRepository messageRepository;
     private final GraphClient graphClient;
+    private final ContentClient contentClient;
     private final ChatPublisher chatPublisher;
+    private final EntityManager entityManager;
 
 
     @Transactional
@@ -41,13 +47,51 @@ public class ChatSessionService {
 
         session.pushMessage(message);
 
-        session = chatSessionRepository.save(session);
+        session = chatSessionRepository.saveAndFlush(session);
+
+        entityManager.detach(message);
+
+        if (message instanceof ContentShareMessage)
+            checkShareRestrictions((ContentShareMessage) message);
 
         chatPublisher.publishMessage(session.getId(), message);
 
         log.info("Message successfully saved to a session with an id: {}", session.getId());
 
         return message;
+    }
+
+    private void checkShareRestrictions(ContentShareMessage message) {
+        log.info("Checking share restrictions for a message: {}", message);
+        if (message.isStoryReshare())
+            checkStoryRestricted(message);
+        else
+            checkPostRestricted(message);
+    }
+
+    private void checkStoryRestricted(ContentShareMessage message) {
+        log.info("Checking story share restrictions for a message with an id: {}", message.getId());
+        try {
+            contentClient.getStoryById(message.getReceiver(), message.getContentId());
+        } catch (FeignException ex) {
+            if (ex.status() == 403) {
+                log.info("{} doesn't have an access to a shared story with an id: {}",
+                        message.getReceiver(), message.getId());
+                message.removeContentId();
+            }
+        }
+    }
+
+    private void checkPostRestricted(ContentShareMessage message) {
+        try {
+            contentClient.getPostById(message.getReceiver(), message.getContentId());
+        } catch (FeignException ex) {
+            if (ex.status() == 403) {
+                log.info("{} doesn't have an access to a shared post with an id: {}",
+                        message.getReceiver(), message.getId());
+                message.removeContentId();
+            }
+        }
     }
 
     private ChatSession buildSession(Message message) {
@@ -123,7 +167,48 @@ public class ChatSessionService {
 
         log.info("Found {} messages for a session with an id {}", session.getMessages().size(), sessionId);
 
-        return session.getMessages();
+        return filterRestricted(session.getMessages(), caller);
+    }
+
+    private List<Message> filterRestricted(List<Message> messages, String caller) {
+        messages.forEach(message -> {
+            if (message instanceof ContentShareMessage)
+                checkShareRestrictions((ContentShareMessage) message, caller);
+        });
+        return messages;
+    }
+
+    private void checkShareRestrictions(ContentShareMessage message, String caller) {
+        log.info("Checking share restrictions for a message: {}", message);
+        if (message.isStoryReshare())
+            checkStoryRestricted(message, caller);
+        else
+            checkPostRestricted(message, caller);
+    }
+
+    private void checkStoryRestricted(ContentShareMessage message, String caller) {
+        log.info("Checking story share restrictions for a message with an id: {}", message.getId());
+        try {
+            contentClient.getStoryById(caller, message.getContentId());
+        } catch (FeignException ex) {
+            if (ex.status() == 403) {
+                log.info("{} doesn't have an access to a shared story with an id: {}",
+                        caller, message.getId());
+                message.removeContentId();
+            }
+        }
+    }
+
+    private void checkPostRestricted(ContentShareMessage message, String caller) {
+        try {
+            contentClient.getPostById(caller, message.getContentId());
+        } catch (FeignException ex) {
+            if (ex.status() == 403) {
+                log.info("{} doesn't have an access to a shared post with an id: {}",
+                        caller, message.getId());
+                message.removeContentId();
+            }
+        }
     }
 
     private ChatSession getChatSession(String caller, Long sessionId) {

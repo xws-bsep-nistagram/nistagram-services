@@ -16,4 +16,5 @@ public class ChatSessionResponse {
     private String partner;
     private ChatSession.SessionStatus sessionStatus;
 
+
 }

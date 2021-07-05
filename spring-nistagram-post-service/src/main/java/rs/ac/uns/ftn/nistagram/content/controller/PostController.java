@@ -127,7 +127,7 @@ public class PostController {
     @GetMapping("like/{postId}")
     public ResponseEntity<?> like(@RequestHeader("username") String caller,
                                   @PathVariable String postId) {
-        postService.like(Long.parseLong(postId), caller); // TODO Extract username from HTTP
+        postService.like(Long.parseLong(postId), caller);
         return ResponseEntity.ok().build();
     }
 

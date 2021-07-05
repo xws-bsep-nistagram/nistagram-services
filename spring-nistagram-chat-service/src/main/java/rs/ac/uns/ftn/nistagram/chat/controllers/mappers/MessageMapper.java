@@ -40,6 +40,7 @@ public class MessageMapper {
                 .sender(request.getSender())
                 .receiver(request.getReceiver())
                 .contentId(request.getContentId())
+                .contentType(request.getContentType())
                 .build();
     }
 
@@ -89,6 +90,7 @@ public class MessageMapper {
                 .time(message.getTime())
                 .seen(message.getSeen())
                 .contentId(message.getContentId())
+                .contentType(message.getContentType())
                 .build();
 
     }
