@@ -11,6 +11,8 @@ import rs.ac.uns.ftn.nistagram.chat.domain.ChatSession;
 public class ChatSessionResponse {
 
     private Long id;
+    private String initiator;
+    private String recipient;
     private String partner;
     private ChatSession.SessionStatus sessionStatus;
 

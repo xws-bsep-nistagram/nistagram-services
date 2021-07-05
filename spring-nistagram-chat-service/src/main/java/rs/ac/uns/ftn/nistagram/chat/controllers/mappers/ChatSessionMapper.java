@@ -13,6 +13,8 @@ public class ChatSessionMapper {
                 .id(session.getId())
                 .partner(session.getInitiatorUsername().equals(caller) ? session.getRecipientUsername()
                         : session.getInitiatorUsername())
+                .initiator(session.getInitiatorUsername())
+                .recipient(session.getRecipientUsername())
                 .sessionStatus(session.getSessionStatus())
                 .build();
 
