@@ -23,6 +23,7 @@ public class ChatSessionService {
     private final ChatSessionRepository chatSessionRepository;
     private final MessageRepository messageRepository;
     private final GraphClient graphClient;
+    private final ChatPublisher chatPublisher;
 
 
     @Transactional
@@ -42,6 +43,8 @@ public class ChatSessionService {
 
         session = chatSessionRepository.save(session);
 
+        chatPublisher.publishMessage(session.getId(), message);
+
         log.info("Message successfully saved to a session with an id: {}", session.getId());
 
         return message;
@@ -54,6 +57,8 @@ public class ChatSessionService {
             session.setSessionStatus(ChatSession.SessionStatus.ACCEPTED);
         else
             session.setSessionStatus(ChatSession.SessionStatus.PENDING);
+
+        chatPublisher.publishNewSession(message.getReceiver(), session);
 
         return session;
     }

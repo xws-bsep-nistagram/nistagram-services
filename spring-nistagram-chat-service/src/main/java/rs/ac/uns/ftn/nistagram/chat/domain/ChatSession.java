@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 @Entity
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatSession {
