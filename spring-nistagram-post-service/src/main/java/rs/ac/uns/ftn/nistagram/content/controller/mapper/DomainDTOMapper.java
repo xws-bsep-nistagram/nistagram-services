@@ -53,6 +53,7 @@ public class DomainDTOMapper {
                 .location(post.getLocation())
                 .caption(post.getCaption())
                 .time(post.getTime())
+                .ad(post.isAd())
                 .build();
 
         if (post.getMediaUrls() != null)

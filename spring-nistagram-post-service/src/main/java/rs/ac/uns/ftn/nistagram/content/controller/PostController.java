@@ -33,6 +33,34 @@ public class PostController {
         return ResponseEntity.ok(mapper.toDto(createdPost));
     }
 
+    // TODO: authorize agent
+    @PostMapping("agent")
+    public ResponseEntity<?> request(@Valid @RequestBody PostCreationDTO dto) {
+        Post createdPost = postService.createForInfluencer(mapper.toDomain(dto));
+        return ResponseEntity.ok(mapper.toDto(createdPost));
+    }
+
+    @PostMapping("agent/post")
+    public ResponseEntity<?> createAdPost(@RequestHeader("username") String username,
+                                          @Valid @RequestBody PostCreationDTO dto) {
+        Post createdPost = postService.createForAgent(username, mapper.toDomain(dto));
+        return ResponseEntity.ok(mapper.toDto(createdPost));
+    }
+
+    @GetMapping("non-approved")
+    public ResponseEntity<?> getUserNonApproved(@RequestHeader("username") String username) {
+        List<Post> nonApproved = postService.getNonApproved(username);
+        return ResponseEntity.ok(
+                nonApproved.stream().map(mapper::toDto).collect(Collectors.toList()));
+    }
+
+    @PutMapping("non-approved/{postId}")
+    public ResponseEntity<?> approveAd(@RequestHeader("username") String username,
+                                       @PathVariable Long postId) {
+        postService.approveAdPost(username, postId);
+        return ResponseEntity.ok("Ad successfully approved.");
+    }
+
     @DeleteMapping("{postId}")
     public ResponseEntity<?> delete(@RequestHeader("username") String username,
                                     @PathVariable String postId) {

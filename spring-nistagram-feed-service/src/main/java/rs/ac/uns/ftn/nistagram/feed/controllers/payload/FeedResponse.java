@@ -15,5 +15,6 @@ public class FeedResponse {
     private Long contentId;
     private String publisher;
     private LocalDateTime createdAt;
+    private boolean ad;
 
 }

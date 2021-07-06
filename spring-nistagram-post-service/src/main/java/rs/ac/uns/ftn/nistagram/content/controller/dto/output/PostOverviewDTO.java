@@ -19,12 +19,14 @@ public class PostOverviewDTO extends UserContent {
     private List<CommentOverviewDTO> comments;
     private List<String> tags;
     private List<String> mediaUrls;
+    private boolean ad;
 
     @Builder
     public PostOverviewDTO(long id, String author, LocalDateTime time,
-                           String caption, Location location) {
+                           String caption, Location location, boolean ad) {
         super(author, time, caption, location);
         this.id = id;
+        this.ad = ad;
     }
 
 

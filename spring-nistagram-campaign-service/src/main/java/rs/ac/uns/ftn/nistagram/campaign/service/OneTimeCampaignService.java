@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.campaign.domain.Campaign;
 import rs.ac.uns.ftn.nistagram.campaign.domain.OneTimeCampaign;
+import rs.ac.uns.ftn.nistagram.campaign.http.PostClient;
 import rs.ac.uns.ftn.nistagram.campaign.repository.OneTimeCampaignRepository;
 
 import java.time.LocalDateTime;
@@ -17,8 +18,8 @@ public class OneTimeCampaignService extends CampaignService<OneTimeCampaign> {
 
     private final OneTimeCampaignRepository repository;
 
-    public OneTimeCampaignService(OneTimeCampaignRepository repository) {
-        super(repository);
+    public OneTimeCampaignService(OneTimeCampaignRepository repository, PostClient postClient) {
+        super(repository, postClient);
         this.repository = repository;
     }
 

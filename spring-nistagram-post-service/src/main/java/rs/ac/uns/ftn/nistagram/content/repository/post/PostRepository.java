@@ -11,18 +11,21 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    @Query(value = "select p from Post p where p.author = ?1")
+    @Query(value = "select p from Post p where p.author = ?1 and (p.ad=false or p.adApproved=true)")
     List<Post> getByUsername(String username);
 
-    @Query("select count(p) from Post p where p.author = :username")
+    @Query("select count(p) from Post p where p.author = :username and (p.ad=false or p.adApproved=true)")
     Long getCountByUsername(@Param("username") String username);
 
-    @Query(value = "select P from Post P where P.location.name = :street")
+    @Query(value = "select p from Post p where p.location.name = :street and (p.ad=false or p.adApproved=true)")
     List<Post> getByLocation(@Param("street") String street);
 
-    @Query(value = "select P from Post P left join P.tags T where T.tag = :username")
+    @Query(value = "select p from Post p left join p.tags t where t.tag = :username and (p.ad=false or p.adApproved=true)")
     List<Post> getByTagged(@Param("username") String username);
 
-    @Query(value = "select P from Post P right join P.userInteractions UI where UI.username = :username")
+    @Query(value = "select p from Post p right join p.userInteractions ui where ui.username = :username and (p.ad=false or p.adApproved=true)")
     List<Post> getLikedAndDislikedByUser(@Param("username") String username);
+
+    @Query(value = "select p from Post p where p.author=:username and p.ad=true and p.adApproved=false")
+    List<Post> getNonApprovedByUsername(String username);
 }
