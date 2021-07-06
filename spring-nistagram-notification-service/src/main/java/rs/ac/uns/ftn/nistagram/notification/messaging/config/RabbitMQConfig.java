@@ -17,4 +17,7 @@ public class RabbitMQConfig {
     public static final String FOLLOW_REQUEST_ACCEPTED_EVENT = "FOLLOW_REQUEST_ACCEPTED_EVENT";
     public static final String NEW_FOLLOW_EVENT = "NEW_FOLLOW_EVENT";
 
+    public static final String MESSAGE_REQUEST_RECEIVED_EVENT = "MESSAGE_REQUEST_RECEIVED_EVENT";
+    public static final String MESSAGE_RECEIVED_EVENT = "MESSAGE_RECEIVED_EVENT";
+
 }

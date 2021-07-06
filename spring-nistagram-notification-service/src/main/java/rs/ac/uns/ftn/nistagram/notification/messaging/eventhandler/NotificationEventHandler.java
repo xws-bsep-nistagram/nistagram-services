@@ -8,9 +8,7 @@ import org.springframework.stereotype.Component;
 import rs.ac.uns.ftn.nistagram.notification.domain.NotificationType;
 import rs.ac.uns.ftn.nistagram.notification.messaging.config.RabbitMQConfig;
 import rs.ac.uns.ftn.nistagram.notification.messaging.event.content.*;
-import rs.ac.uns.ftn.nistagram.notification.messaging.event.notifications.FollowAcceptedEvent;
-import rs.ac.uns.ftn.nistagram.notification.messaging.event.notifications.FollowRequestedEvent;
-import rs.ac.uns.ftn.nistagram.notification.messaging.event.notifications.NewFollowEvent;
+import rs.ac.uns.ftn.nistagram.notification.messaging.event.notifications.*;
 import rs.ac.uns.ftn.nistagram.notification.messaging.mappers.EventPayloadMapper;
 import rs.ac.uns.ftn.nistagram.notification.messaging.util.Converter;
 import rs.ac.uns.ftn.nistagram.notification.services.NotificationService;
@@ -118,5 +116,30 @@ public class NotificationEventHandler {
                 .toDomain(event.getNewFollowPayload()));
 
     }
+
+    @RabbitListener(queues = {RabbitMQConfig.MESSAGE_REQUEST_RECEIVED_EVENT})
+    public void handleMessageRequestEvent(@Payload String payload) {
+
+        log.info("Handling a message request event {}", payload);
+
+        MessageRequestEvent event = converter.toObject(payload, MessageRequestEvent.class);
+
+        notificationService.handleMessageRequest(EventPayloadMapper.toDomain(event.getMessageRequestPayload()));
+
+
+    }
+
+    @RabbitListener(queues = {RabbitMQConfig.MESSAGE_RECEIVED_EVENT})
+    public void handleNewMessageEvent(@Payload String payload) {
+
+        log.info("Handling a new message event {}", payload);
+
+        NewMessageEvent event = converter.toObject(payload, NewMessageEvent.class);
+
+        notificationService.handleNewMessage(EventPayloadMapper.toDomain(event.getNewMessageEventPayload()));
+
+
+    }
+
 
 }

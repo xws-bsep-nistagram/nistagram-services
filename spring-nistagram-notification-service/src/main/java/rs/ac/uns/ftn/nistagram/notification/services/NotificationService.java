@@ -159,6 +159,28 @@ public class NotificationService {
 
     }
 
+    @Transactional
+    public void handleMessageRequest(Notification messageRequestNotification) {
+
+        log.info("Handling message request notification for an user '{}'", messageRequestNotification.getTarget());
+
+        NotificationPreferencesDTO preferences = userClient.getNotificationPreferences(messageRequestNotification.getTarget());
+
+        handleNotification(messageRequestNotification,
+                preferences.isMessageRequestNotificationEnabled());
+    }
+
+    @Transactional
+    public void handleNewMessage(Notification newMessageNotification) {
+
+        log.info("Handling new message notification for an user '{}'", newMessageNotification.getTarget());
+
+        NotificationPreferencesDTO preferences = userClient.getNotificationPreferences(newMessageNotification.getTarget());
+
+        handleNotification(newMessageNotification,
+                preferences.isMessageNotificationEnabled());
+    }
+
     private void handleNotification(Notification notification, Boolean condition) {
         if (condition) {
             notificationRepository.save(notification);

@@ -11,5 +11,5 @@ public enum NotificationType {
     NEW_FOLLOWER,
     NEW_MESSAGE_REQUEST,
     NEW_MESSAGE,
-    ;
+
 }
