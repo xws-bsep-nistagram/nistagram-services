@@ -163,9 +163,10 @@ public class StoryService {
                         String.format("Story with an id '%d' doesn't exist", storyId)
                 ));
 
-        graphClient.assertFollow(caller, story.getAuthor());
+        if (!caller.equals(story.getAuthor()) && userClient.isPrivate(story.getAuthor()))
+            graphClient.assertFollow(caller, story.getAuthor());
 
-        if (story.isCloseFriends())
+        if (!caller.equals(story.getAuthor()) && story.isCloseFriends())
             graphClient.assertCloseFriends(caller, story.getAuthor());
 
         log.info("[STORY][G][C][CALL={}][ID={}]", caller, storyId);

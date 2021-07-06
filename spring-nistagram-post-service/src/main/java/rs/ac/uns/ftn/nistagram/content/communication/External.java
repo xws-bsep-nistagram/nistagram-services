@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import rs.ac.uns.ftn.nistagram.content.exception.NotCloseFriendsException;
-import rs.ac.uns.ftn.nistagram.content.exception.NotFollowException;
+import rs.ac.uns.ftn.nistagram.content.exception.NotFollowingException;
 import rs.ac.uns.ftn.nistagram.content.exception.UserBlockedException;
 
 public class External {
@@ -104,7 +104,7 @@ public class External {
         public void assertFollow(String follower, String followed) {
             if (follower.equals(followed)) return;
             boolean follows = graphClient.checkFollowing(follower, followed).getStatus();
-            if (!follows) throw new NotFollowException(follower, followed);
+            if (!follows) throw new NotFollowingException(follower, followed);
         }
 
         public void assertCloseFriends(String follower, String followed) {

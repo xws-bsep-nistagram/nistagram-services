@@ -42,11 +42,17 @@ zuul :
       stripPrefix : false
       customSensitiveHeaders : true
       sensitive-headers : Cookie,Set-Cookie
+    chat-service :
+      path : /api/chat/**
+      serviceId : chat-service
+      stripPrefix : false
+      customSensitiveHeaders : true
+      sensitive-headers : Cookie,Set-Cookie
     campaign-service :
       path : /api/campaigns/**
       serviceId : campaign-service
       stripPrefix : false
-      sensitive-headers: Cookie,Set-Cookie
+      sensitive-headers : Cookie,Set-Cookie
   ws :
     brokerages :
       notification-service :
@@ -91,9 +97,15 @@ notification-service :
   ribbon :
     listOfServers : notification-service:${NOTIFICATION_SERVICE_PORT}
 
+  <<<<<<< HEAD
+chat-service :
+  ribbon :
+    listOfServers : chat-service:${CHAT_SERVICE_PORT}
+  =======
 campaign-service :
   ribbon :
     listOfServers : campaign-service:${CAMPAIGN_SERVICE_PORT}
+  >>>>>>> develop
 
 
 nistagram.security.jwt.secret : ${JWT_SECRET:test_secret}
