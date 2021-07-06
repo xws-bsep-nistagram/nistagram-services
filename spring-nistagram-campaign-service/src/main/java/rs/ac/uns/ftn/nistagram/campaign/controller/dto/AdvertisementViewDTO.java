@@ -1,7 +1,6 @@
 package rs.ac.uns.ftn.nistagram.campaign.controller.dto;
 
 import lombok.Data;
-import java.time.LocalDateTime;
 
 @Data
 public class AdvertisementViewDTO {

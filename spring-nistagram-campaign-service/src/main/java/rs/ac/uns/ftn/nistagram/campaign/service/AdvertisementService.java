@@ -41,4 +41,10 @@ public class AdvertisementService {
         log.info("Fetched all advertisements for user {}", username);
         return all;
     }
+
+    @Transactional(readOnly = true)
+    public Advertisement get(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException());
+    }
 }
