@@ -1,5 +1,7 @@
 package rs.ac.uns.ftn.nistagram.campaign.controller.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Getter;
 import rs.ac.uns.ftn.nistagram.campaign.domain.TargetedGroup;
 import rs.ac.uns.ftn.nistagram.campaign.domain.enums.CampaignType;
@@ -19,6 +21,7 @@ public class NewOneTimeCampaignDTO {
     @NotNull
     private List<AdvertisementViewDTO> advertisements;
     @NotNull
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime exposureMoment;
     @NotNull
     private TargetedGroup targetedGroup;

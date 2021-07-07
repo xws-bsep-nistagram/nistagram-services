@@ -45,7 +45,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .addFilterBefore(new GatewayRequestLoggingFilter(), JwtTokenAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/api/auth/agent/**").hasRole("ADMIN")
-                .antMatchers("/api/auth/api-token/test").hasRole(ApiToken.EXTERNAL_APP_ROLE)
                 .antMatchers("/api/auth/api-token/**").hasRole("AGENT")
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/notification/**").permitAll()
@@ -56,6 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .antMatchers(HttpMethod.GET, "/api/content/post/public/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/content/story/public/**").permitAll()
                 .antMatchers("/api/verification/admin/**").hasRole("ADMIN")
+                .antMatchers("/api/campaigns/**").hasAnyRole(ApiToken.EXTERNAL_APP_ROLE, "AGENT")
                 .antMatchers("/api/**").hasRole("USER")
                 .anyRequest().permitAll();
     }
@@ -64,7 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     public void addCorsMappings(CorsRegistry registry) {
         registry
                 .addMapping("/**")
-                .allowedOrigins("http://localhost:8080")
+                .allowedOrigins("http://localhost:8080", "http://localhost:4000")
                 .allowCredentials(true)
                 .maxAge(3600)
                 .allowedHeaders("Accept", "Content-Type", "Origin",

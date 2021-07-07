@@ -36,18 +36,28 @@ public class CampaignController {
     private final ModelMapper mapper;
 
     @PostMapping("one-time")
-    public OneTimeCampaignViewDTO create(@RequestHeader("username") String username,
-                                         @Valid @RequestBody NewOneTimeCampaignDTO newCampaign) {
+    public OneTimeCampaignViewDTO create(
+            @RequestHeader(value = "${nistagram.headers.user}", required = false) String username,
+            @RequestHeader(value = "${nistagram.headers.agent}", required = false) String agent,
+            @Valid @RequestBody NewOneTimeCampaignDTO newCampaign) {
+
+        String caller = username == null ? agent : username;
         OneTimeCampaign created = oneTimeCampaignService.create(
-                username, mapper.map(newCampaign, OneTimeCampaign.class));
+                caller, mapper.map(newCampaign, OneTimeCampaign.class));
+
         return mapper.map(created, OneTimeCampaignViewDTO.class);
     }
 
     @PostMapping("long-term")
-    public LongTermCampaignViewDTO create(@RequestHeader("username") String username,
-                                           @Valid @RequestBody NewLongTermCampaignDTO newCampaign) {
+    public LongTermCampaignViewDTO create(
+            @RequestHeader(value = "${nistagram.headers.user}", required = false) String username,
+            @RequestHeader(value = "${nistagram.headers.agent}", required = false) String agent,
+            @Valid @RequestBody NewLongTermCampaignDTO newCampaign) {
+
+        String caller = username == null ? agent : username;
         LongTermCampaign created = longTermCampaignService.create(
-                username, mapper.map(newCampaign, LongTermCampaign.class));
+                caller, mapper.map(newCampaign, LongTermCampaign.class));
+
         return mapper.map(created, LongTermCampaignViewDTO.class);
     }
 
@@ -58,7 +68,23 @@ public class CampaignController {
     }
 
     @GetMapping
-    public List<CampaignContentDTO> getAll(@RequestHeader("username") String username) {
+    public List<CampaignContentDTO> getAll(
+            @RequestHeader(value = "${nistagram.headers.user}", required = false) String username,
+            @RequestHeader(value = "${nistagram.headers.agent}", required = false) String agent) {
+
+        String caller = username == null ? agent : username;
+        List<Campaign> all = campaignService.get(caller);
+        return all.stream()
+                .map(campaign -> mapper.map(campaign, CampaignContentDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    // TODO [TEST]
+    @GetMapping("external")
+    public List<CampaignContentDTO> getAllViaExternal(
+            @RequestHeader(value = "${nistagram.headers.user}", required = false) String username,
+            @RequestHeader(value = "${nistagram.headers.agent}", required = false) String agent) {
+
         List<Campaign> all = campaignService.get(username);
         return all.stream()
                 .map(campaign -> mapper.map(campaign, CampaignContentDTO.class))
