@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.graph.controllers.payload.UserRelationshipRequest;
+import rs.ac.uns.ftn.nistagram.user.graph.domain.Recommendation;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.UserStats;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.notifications.FollowAcceptedEvent;
@@ -94,6 +95,48 @@ public class FollowerService {
         log.info("Follow request from user {} to user {} has been accepted",
                 subject,
                 target);
+    }
+
+    @Transactional
+    public List<Recommendation> recommend(String username) {
+        constraintChecker.userPresenceCheck(username);
+
+        log.info("Finding follow recommendations for an user :'{}'", username);
+
+        if (!followerRepository.hasFollowings(username))
+            return findMostPopular(username);
+        else
+            return findRecommendations(username);
+
+    }
+
+    private List<Recommendation> findRecommendations(String username) {
+        List<Recommendation> recommendations = new ArrayList<>();
+
+        List<User> recommendedUsers = followerRepository.recommend(username);
+        log.info("Found {} recommendations for an user :'{}'", recommendedUsers.size(), username);
+
+        if (recommendedUsers.isEmpty())
+            return findMostPopular(username);
+
+        recommendedUsers.forEach(user -> {
+            List<User> mutualConnections = followerRepository
+                    .findMutualConnection(username, user.getUsername());
+            recommendations.add(new Recommendation(user, mutualConnections));
+        });
+
+        return recommendations;
+    }
+
+    private List<Recommendation> findMostPopular(String username) {
+        List<Recommendation> recommendations = new ArrayList<>();
+
+        log.info("User {} follows no one, returning users ordered by popularity", username);
+
+        List<User> mostPopularUsers = followerRepository.findAllOrderedByPopularity(username);
+        mostPopularUsers.forEach(user -> recommendations.add(new Recommendation(user)));
+
+        return recommendations;
     }
 
     private void publishUserFollowed(String subject, String target) {

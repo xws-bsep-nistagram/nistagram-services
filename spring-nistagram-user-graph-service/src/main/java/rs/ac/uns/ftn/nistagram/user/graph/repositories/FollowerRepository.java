@@ -7,6 +7,23 @@ import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
 import java.util.List;
 
 public interface FollowerRepository extends Neo4jRepository<User, String> {
+
+    @Query("MATCH (user:User {username: $0})-[:FOLLOWS]->(m)-[:FOLLOWS]->(recommendation) " +
+            "WHERE NOT (user)-[:FOLLOWS]->(recommendation) " +
+            "AND NOT (user)-[:SENT_FOLLOW_REQUEST]->(recommendation) " +
+            "RETURN DISTINCT recommendation")
+    List<User> recommend(String subject);
+
+    @Query("MATCH (user:User {username: $0})-[:FOLLOWS]->(following)-[:FOLLOWS]->(target: User{username: $1}) " +
+            "RETURN following")
+    List<User> findMutualConnection(String subject, String target);
+
+    @Query("MATCH (user:User)<-[r:FOLLOWS]-(follower:User) " +
+            "WHERE NOT (:User {username: $0})-[:FOLLOWS]->(user) " +
+            "AND NOT (:User {username: $0})-[:SENT_FOLLOW_REQUEST]->(user)" +
+            "RETURN user,count(r) ORDER BY count(r) DESC;")
+    List<User> findAllOrderedByPopularity(String username);
+
     @Query("RETURN EXISTS( (:User {username: $0})-[:FOLLOWS]->(:User {username: $1}) )")
     Boolean isFollowing(String subject, String target);
 

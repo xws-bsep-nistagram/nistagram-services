@@ -97,16 +97,12 @@ notification-service :
   ribbon :
     listOfServers : notification-service:${NOTIFICATION_SERVICE_PORT}
 
-  <<<<<<< HEAD
 chat-service :
   ribbon :
     listOfServers : chat-service:${CHAT_SERVICE_PORT}
-  =======
 campaign-service :
   ribbon :
     listOfServers : campaign-service:${CAMPAIGN_SERVICE_PORT}
-  >>>>>>> develop
-
 
 nistagram.security.jwt.secret : ${JWT_SECRET:test_secret}
 
