@@ -37,6 +37,8 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authToken.getAuthentication());
         }
+        else log.info("auth-service: No user auth token found.");
+
         filterChain.doFilter(request, response);
     }
 

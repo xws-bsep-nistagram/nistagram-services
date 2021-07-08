@@ -100,9 +100,15 @@ notification-service :
 chat-service :
   ribbon :
     listOfServers : chat-service:${CHAT_SERVICE_PORT}
+
 campaign-service :
   ribbon :
     listOfServers : campaign-service:${CAMPAIGN_SERVICE_PORT}
 
+
 nistagram.security.jwt.secret : ${JWT_SECRET:test_secret}
+
+nistagram.headers.agent : agent
+nistagram.headers.app : app
+nistagram.headers.user : username
 
