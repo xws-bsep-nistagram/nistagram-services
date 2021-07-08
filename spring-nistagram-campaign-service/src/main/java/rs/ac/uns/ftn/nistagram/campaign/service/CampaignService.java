@@ -75,6 +75,9 @@ public class CampaignService<T extends Campaign> {
         if (!repository.existsById(id)) {
             throw new RuntimeException();
         }
+        Post createdPost = postClient.createAgentPost(campaignUpdate.getCreator(), convertToPost(campaignUpdate));
+        postClient.deleteAgentPost(campaignUpdate.getCreator(), campaignUpdate.getContentId());
+        campaignUpdate.setContentId(createdPost.getId());
         campaignUpdate.setId(id);
         return repository.save(campaignUpdate);
     }
@@ -87,6 +90,7 @@ public class CampaignService<T extends Campaign> {
         }
         campaignUpdate.setCreator(username);
         campaignUpdate.setCreatedOn(found.getCreatedOn());
+        campaignUpdate.setContentId(found.getContentId());
         return update(id, campaignUpdate);
     }
 
