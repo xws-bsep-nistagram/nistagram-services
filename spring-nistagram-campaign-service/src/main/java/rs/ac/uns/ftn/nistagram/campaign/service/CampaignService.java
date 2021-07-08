@@ -36,7 +36,6 @@ public class CampaignService<T extends Campaign> {
         return created;
     }
 
-    // TODO: SAGA pattern implementation
     @Transactional
     public T create(String username, T campaign) {
         Objects.requireNonNull(campaign);
@@ -69,6 +68,26 @@ public class CampaignService<T extends Campaign> {
         List<T> all = repository.findByUsername(username);
         log.info("Fetching {} stories for agent '{}'", all.size(), username);
         return all;
+    }
+
+    @Transactional
+    public T update(Long id, T campaignUpdate) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException();
+        }
+        campaignUpdate.setId(id);
+        return repository.save(campaignUpdate);
+    }
+
+    @Transactional
+    public T update(Long id, T campaignUpdate, String username) {
+        T found = get(id);
+        if (!found.getCreator().equals(username)) {
+            throw new RuntimeException("User doesn't own that campaign!");
+        }
+        campaignUpdate.setCreator(username);
+        campaignUpdate.setCreatedOn(found.getCreatedOn());
+        return update(id, campaignUpdate);
     }
 
 }
