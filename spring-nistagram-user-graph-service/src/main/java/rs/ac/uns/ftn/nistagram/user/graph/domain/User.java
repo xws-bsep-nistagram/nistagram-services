@@ -9,13 +9,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 
+@Node
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Builder
-@Node
 public class User {
 
     @Id
