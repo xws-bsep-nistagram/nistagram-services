@@ -18,8 +18,7 @@ public class OneTimeCampaignViewDTO {
     private String name;
     private CampaignType type;
     private List<AdvertisementViewDTO> advertisements;
-    private List<UserInteraction> userInteractions;
-    private List<Comment> comments;
+    private Long contentId;
     private LocalDateTime exposureMoment;
     private TargetedGroup targetedGroup;
 

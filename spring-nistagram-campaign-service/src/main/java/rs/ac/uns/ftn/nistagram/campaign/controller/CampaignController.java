@@ -1,6 +1,7 @@
 package rs.ac.uns.ftn.nistagram.campaign.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.nistagram.campaign.controller.dto.CampaignContentDTO;
 import rs.ac.uns.ftn.nistagram.campaign.controller.dto.LongTermCampaignViewDTO;
@@ -76,9 +77,9 @@ public class CampaignController {
     }
 
     @GetMapping("{id}")
-    public CampaignContentDTO get(@PathVariable Long id) {
+    public ResponseEntity<?> get(@PathVariable Long id) {
         Campaign found = campaignService.get(id);
-        return mapper.map(found);
+        return ResponseEntity.ok(mapper.map(found));
     }
 
     @GetMapping

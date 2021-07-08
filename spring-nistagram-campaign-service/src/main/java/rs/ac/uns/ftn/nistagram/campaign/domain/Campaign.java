@@ -44,6 +44,7 @@ public class Campaign {
     @OneToMany(mappedBy = "campaign")
     private List<Comment> comments;
     @Embedded
-    private TargetedGroup targetedGroup;
+    private TargetedGroup targetedGroup = new TargetedGroup();
     private Long contentId;
+
 }
