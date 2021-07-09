@@ -5,6 +5,10 @@ spring :
   application :
     name : spring-nistagram-api-gateway
 
+opentracing :
+  jaeger :
+    http-sender :
+      url : http://jaeger:14268/api/traces
 
 zuul :
   host :
