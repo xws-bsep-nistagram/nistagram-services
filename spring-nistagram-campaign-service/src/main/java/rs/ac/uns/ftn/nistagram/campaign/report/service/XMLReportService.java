@@ -36,6 +36,34 @@ public class XMLReportService {
         existDbClient.put(databasePath, statistics);
     }
 
+    private final String USER_INTERACTIONS_EXT = "/ui";
+    private final String COMMENTS_EXT = "/comments";
+    private final String AD_CLICKS_EXT = "/ad";
+    private final String CAMPAIGN_CLICKS_EXT = "/campaign";
+
+    private String concatenateDocumentPath(String agent, String ext) {
+        return "nistagram/report/" + agent + ext;
+    }
+
+    public void generateReport(String agent) {
+        List<StatisticsDisplayBundle> statistics = generateCampaignReport(agent);
+
+        existDbClient.put(concatenateDocumentPath(agent, USER_INTERACTIONS_EXT), statistics.get(0));
+        existDbClient.put(concatenateDocumentPath(agent, COMMENTS_EXT), statistics.get(1));
+        existDbClient.put(concatenateDocumentPath(agent, AD_CLICKS_EXT), statistics.get(2));
+        existDbClient.put(concatenateDocumentPath(agent, CAMPAIGN_CLICKS_EXT), statistics.get(3));
+    }
+
+    public List<StatisticsDisplayBundle> getReport(String agent) {
+        return List.of(
+                existDbClient.get(concatenateDocumentPath(agent, USER_INTERACTIONS_EXT)),
+                existDbClient.get(concatenateDocumentPath(agent, COMMENTS_EXT)),
+                existDbClient.get(concatenateDocumentPath(agent, AD_CLICKS_EXT)),
+                existDbClient.get(concatenateDocumentPath(agent, CAMPAIGN_CLICKS_EXT))
+        );
+    }
+
+
     public List<StatisticsDisplayBundle> generateCampaignReport(String agent) {
         CampaignReportBundle campaignReportBundle = collectDomainData(agent);
         return List.of(
