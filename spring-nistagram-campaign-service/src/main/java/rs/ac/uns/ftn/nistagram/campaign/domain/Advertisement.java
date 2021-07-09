@@ -5,10 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,6 +22,6 @@ public class Advertisement {
     private String caption;
     private String mediaUrl;
     private String websiteUrl;
-    private long redirectCount;
-
+    @OneToMany(mappedBy = "advertisement", cascade = CascadeType.REMOVE)
+    private List<AdvertisementClick> advertisementClicks;
 }

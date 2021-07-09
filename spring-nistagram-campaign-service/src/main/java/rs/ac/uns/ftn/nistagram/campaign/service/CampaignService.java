@@ -1,5 +1,6 @@
 package rs.ac.uns.ftn.nistagram.campaign.service;
 
+import feign.FeignException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
@@ -92,6 +93,19 @@ public class CampaignService<T extends Campaign> {
         campaignUpdate.setCreatedOn(found.getCreatedOn());
         campaignUpdate.setContentId(found.getContentId());
         return update(id, campaignUpdate);
+    }
+
+    @Transactional
+    public void delete(String username, Long id) {
+        Campaign found = get(id);
+        if (!found.getCreator().equals(username)) {
+            throw new RuntimeException("User doesn't own that campaign!");
+        }
+        try {
+            postClient.deleteAgentPost(username, found.getContentId());
+        } catch(FeignException.NotFound ignored) {}
+        repository.deleteById(id);
+        log.info("Deleted campaign with id {}", id);
     }
 
 }
