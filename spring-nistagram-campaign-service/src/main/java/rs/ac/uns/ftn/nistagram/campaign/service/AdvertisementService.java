@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.campaign.domain.Advertisement;
+import rs.ac.uns.ftn.nistagram.campaign.exception.CampaignException;
+import rs.ac.uns.ftn.nistagram.campaign.exception.EntityNotFoundException;
 import rs.ac.uns.ftn.nistagram.campaign.repository.AdvertisementRepository;
 
 import java.util.List;
@@ -27,7 +29,8 @@ public class AdvertisementService {
     public Advertisement create(Advertisement advertisement) {
         Objects.requireNonNull(advertisement);
         if (advertisement.getId() != null && repository.existsById(advertisement.getId())) {
-            throw new RuntimeException();
+            throw new CampaignException(
+                    String.format("Advertisement with id %d already exists!", advertisement.getId()));
         }
         Advertisement created = repository.save(advertisement);
         log.info("Agent '{}' created advertisement with id {}", created.getCreator(), created.getId());
@@ -45,6 +48,7 @@ public class AdvertisementService {
     @Transactional(readOnly = true)
     public Advertisement get(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Advertisement with id %d doesn't exist!", id)));
     }
 }

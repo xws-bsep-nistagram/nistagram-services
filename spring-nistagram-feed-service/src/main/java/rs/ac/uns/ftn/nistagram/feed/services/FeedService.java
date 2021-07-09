@@ -348,4 +348,9 @@ public class FeedService {
 
     }
 
+    @Transactional
+    public void deleteAds(Long campaignId) {
+        postFeedRepository.deleteAllByPostId(campaignId);
+        storyFeedRepository.deleteAllByStoryId(campaignId);
+    }
 }

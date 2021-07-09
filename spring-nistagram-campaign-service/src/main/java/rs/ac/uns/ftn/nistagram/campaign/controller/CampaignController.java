@@ -82,6 +82,11 @@ public class CampaignController {
         return ResponseEntity.ok(mapper.map(found));
     }
 
+    @DeleteMapping("{id}")
+    public void delete(@RequestHeader("username") String username, @PathVariable Long id) {
+        campaignService.delete(username, id);
+    }
+
     @GetMapping
     public List<CampaignContentDTO> getAll(
             @RequestHeader(value = "${nistagram.headers.user}", required = false) String username,

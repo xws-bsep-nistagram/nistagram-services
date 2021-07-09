@@ -14,4 +14,6 @@ public interface StoryFeedRepository extends JpaRepository<StoryFeedEntry, Long>
     @Query("select sfe from StoryFeedEntry sfe where sfe.publisher =:username")
     List<StoryFeedEntry> findAllByPublisher(String username);
 
+    void deleteAllByStoryId(Long storyId);
+
 }

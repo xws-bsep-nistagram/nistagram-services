@@ -7,6 +7,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import rs.ac.uns.ftn.nistagram.feed.http.payload.user.UserPayload;
 import rs.ac.uns.ftn.nistagram.feed.messaging.config.RabbitMQConfig;
+import rs.ac.uns.ftn.nistagram.feed.messaging.event.campaign.CampaignDeleteEvent;
 import rs.ac.uns.ftn.nistagram.feed.messaging.event.campaign.CampaignsPublishEvent;
 import rs.ac.uns.ftn.nistagram.feed.messaging.mappers.campaign.CampaignPayloadMapper;
 import rs.ac.uns.ftn.nistagram.feed.messaging.payload.campaign.CampaignType;
@@ -45,6 +46,13 @@ public class CampaignEventHandler {
                 service.addCampaignToStoryFeeds(users, CampaignPayloadMapper.toStory(campaignPayload));
             }
         });
+    }
+
+    @RabbitListener(queues = RabbitMQConfig.CAMPAIGN_DELETE_EVENT)
+    public void handleCampaignDelete(@Payload String payload) {
+        log.debug("Handling campaign delete event {}", payload);
+        CampaignDeleteEvent event = converter.toObject(payload, CampaignDeleteEvent.class);
+        service.deleteAds(event.getCampaignId());
     }
 
 }

@@ -1,10 +1,12 @@
 package rs.ac.uns.ftn.nistagram.campaign.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.campaign.domain.LongTermCampaign;
 import rs.ac.uns.ftn.nistagram.campaign.http.PostClient;
+import rs.ac.uns.ftn.nistagram.campaign.messaging.util.TransactionIdHolder;
 import rs.ac.uns.ftn.nistagram.campaign.repository.LongTermCampaignRepository;
 
 import java.time.LocalDate;
@@ -19,8 +21,12 @@ public class LongTermCampaignService extends CampaignService<LongTermCampaign> {
 
     private final LongTermCampaignRepository repository;
 
-    public LongTermCampaignService(LongTermCampaignRepository repository, PostClient postClient) {
-        super(repository, postClient);
+    public LongTermCampaignService(
+            LongTermCampaignRepository repository,
+            PostClient postClient,
+            ApplicationEventPublisher publisher,
+            TransactionIdHolder transactionIdHolder) {
+        super(repository, postClient, publisher, transactionIdHolder);
         this.repository = repository;
     }
 
