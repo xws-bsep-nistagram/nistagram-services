@@ -2,8 +2,13 @@ package rs.ac.uns.ftn.nistagram.campaign.report.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import rs.ac.uns.ftn.nistagram.campaign.domain.Campaign;
 import rs.ac.uns.ftn.nistagram.campaign.http.payload.ExistDbPayload;
+import rs.ac.uns.ftn.nistagram.campaign.report.domain.CampaignReportBundle;
+import rs.ac.uns.ftn.nistagram.campaign.report.domain.Content;
 import rs.ac.uns.ftn.nistagram.campaign.report.service.XMLReportService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/campaigns/report")
@@ -22,6 +27,10 @@ public class XMLReportController {
         return xmlReportService.testPost(payload.getDatabasePath(), payload.getXmlData());
     }
 
-    // TODO How to package XML? String to XML or directly send?
+    @GetMapping("log")
+    public CampaignReportBundle logCampaignReport(@RequestHeader("${nistagram.headers.agent}") String agent) {
+        return xmlReportService.generateCampaignReport(agent);
+    }
+
     // TODO Generate PDF for a certain API token owner
 }

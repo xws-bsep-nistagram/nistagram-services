@@ -39,12 +39,7 @@ public class Campaign {
     private LocalDateTime createdOn;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Advertisement> advertisements;
-    @OneToMany(mappedBy = "campaign")
-    private List<UserInteraction> userInteractions;
-    @OneToMany(mappedBy = "campaign")
-    private List<Comment> comments;
     @Embedded
     private TargetedGroup targetedGroup = new TargetedGroup();
     private Long contentId;
-
 }
