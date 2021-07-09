@@ -17,6 +17,7 @@ public class NotificationResponse {
     private boolean seen;
     private LocalDateTime time;
     private String subject;
+    private String target;
     private String text;
     private NotificationType notificationType;
 
