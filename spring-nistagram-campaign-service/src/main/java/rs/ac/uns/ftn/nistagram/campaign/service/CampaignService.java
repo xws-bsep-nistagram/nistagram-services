@@ -2,11 +2,10 @@ package rs.ac.uns.ftn.nistagram.campaign.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.campaign.domain.Campaign;
-import rs.ac.uns.ftn.nistagram.campaign.http.PostClient;
+import rs.ac.uns.ftn.nistagram.campaign.http.client.PostClient;
 import rs.ac.uns.ftn.nistagram.campaign.http.payload.MediaLink;
 import rs.ac.uns.ftn.nistagram.campaign.http.payload.Post;
 import rs.ac.uns.ftn.nistagram.campaign.repository.CampaignRepository;

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.nistagram.campaign.domain.Campaign;
 import rs.ac.uns.ftn.nistagram.campaign.domain.TargetedGroup;
-import rs.ac.uns.ftn.nistagram.campaign.http.UserClient;
+import rs.ac.uns.ftn.nistagram.campaign.http.client.UserClient;
 
 import java.util.List;
 
