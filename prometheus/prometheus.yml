@@ -1,0 +1,49 @@
+global :
+  scrape_interval : 10s
+
+scrape_configs :
+  - job_name : 'api-gateway'
+    metrics_path : '/actuator/prometheus'
+    scrape_interval : 5s
+    static_configs :
+      - targets : [ 'gateway:8040' ]
+  - job_name : 'auth-service'
+    metrics_path : '/actuator/prometheus'
+    scrape_interval : 5s
+    static_configs :
+      - targets : [ 'auth-service:9000' ]
+  - job_name : 'campaign-service'
+    metrics_path : '/actuator/prometheus'
+    scrape_interval : 5s
+    static_configs :
+      - targets : [ 'campaign-service:9006' ]
+  - job_name : 'chat-service'
+    metrics_path : '/actuator/prometheus'
+    scrape_interval : 5s
+    static_configs :
+      - targets : [ 'chat-service:9007' ]
+  - job_name : 'feed-service'
+    metrics_path : '/actuator/prometheus'
+    scrape_interval : 5s
+    static_configs :
+      - targets : [ 'feed-service:9001' ]
+  - job_name : 'notification-service'
+    metrics_path : '/actuator/prometheus'
+    scrape_interval : 5s
+    static_configs :
+      - targets : [ 'notification-service:9005' ]
+  - job_name : 'post-service'
+    metrics_path : '/actuator/prometheus'
+    scrape_interval : 5s
+    static_configs :
+      - targets : [ 'post-service:9002' ]
+  - job_name : 'user-graph-service'
+    metrics_path : '/actuator/prometheus'
+    scrape_interval : 5s
+    static_configs :
+      - targets : [ 'user-graph-service:9004' ]
+  - job_name : 'user-service'
+    metrics_path : '/actuator/prometheus'
+    scrape_interval : 5s
+    static_configs :
+      - targets : [ 'user-service:9003' ]
