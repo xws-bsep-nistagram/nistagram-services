@@ -46,7 +46,8 @@ public class ContentExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleOtherRuntimeErrors(RuntimeException e) {
         log.error(e.getMessage(), e);
-        return ResponseEntity.internalServerError().body("An internal server error occurred.");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("An internal server error occurred.");
     }
 
     @ExceptionHandler(UserBlockedException.class)

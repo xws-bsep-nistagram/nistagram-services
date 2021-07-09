@@ -1,5 +1,29 @@
 server :
-  port : ${API_GATEWAY_PORT:9090}
+  port : 8040
+
+spring :
+  application :
+    name : spring-nistagram-api-gateway
+
+opentracing :
+  jaeger :
+    http-sender :
+      url : http://jaeger:14268/api/traces
+
+management :
+  endpoint :
+    metrics :
+      enabled : true
+    prometheus :
+      enabled : true
+  metrics :
+    export :
+      prometheus :
+        enabled : true
+  endpoints :
+    web :
+      exposure :
+        include : "*"
 
 zuul :
   host :
@@ -111,4 +135,5 @@ nistagram.security.jwt.secret : ${JWT_SECRET:test_secret}
 nistagram.headers.agent : agent
 nistagram.headers.app : app
 nistagram.headers.user : username
+
 

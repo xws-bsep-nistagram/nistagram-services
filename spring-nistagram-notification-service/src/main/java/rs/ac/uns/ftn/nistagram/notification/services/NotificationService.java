@@ -44,7 +44,7 @@ public class NotificationService {
     public Notification hide(String username, Long notificationId) {
         log.info("Hiding notification with an id: {} for an user '{}'", notificationId, username);
 
-        Notification notification = notificationRepository.getById(notificationId);
+        Notification notification = notificationRepository.getOne(notificationId);
         if (!notification.getTarget().equals(username)) {
             log.warn("Cannot hide notification with an id: {} because user '{}' doesn't own it", notificationId, username);
             throw new OperationNotPermittedException("Cannot hide this notification");
