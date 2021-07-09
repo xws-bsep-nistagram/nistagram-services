@@ -55,7 +55,7 @@ public class FeedService {
         var storyFeedEntries = storyFeedRepository
                 .findAllByUsername(username)
                 .stream()
-                .filter(e -> !e.getCloseFriends() && !e.isAd())
+                .filter(e -> !e.getCloseFriends() && !e.isAd() && !e.isExpired())
                 .collect(Collectors.toList());
 
         log.info("Found '{}' story feed entries for an user '{}'", storyFeedEntries.size(), username);
@@ -74,7 +74,7 @@ public class FeedService {
 
         var storyFeedEntries = storyFeedRepository
                 .findAllByUsername(username)
-                .stream().filter(entry -> entry.getCloseFriends() && !entry.isAd())
+                .stream().filter(entry -> entry.getCloseFriends() && !entry.isAd() && !entry.isExpired())
                 .collect(Collectors.toList());
 
         log.info("Found '{}' story feed entries for an user '{}'", storyFeedEntries.size(), username);
