@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import rs.ac.uns.ftn.nistagram.campaign.report.domain.StatisticsDisplayBundle;
 import rs.ac.uns.ftn.nistagram.campaign.report.http.interceptor.ExistDbInterceptor;
 
 @FeignClient(
@@ -16,8 +17,8 @@ import rs.ac.uns.ftn.nistagram.campaign.report.http.interceptor.ExistDbIntercept
 public interface ExistDbClient {
 
     @GetMapping("{url}")
-    String get(@PathVariable("url") String url);
+    StatisticsDisplayBundle get(@PathVariable("url") String url);
 
     @PutMapping("{databasePath}")
-    String put(@PathVariable("databasePath") String databasePath, @RequestBody String xmlData);
+    void put(@PathVariable("databasePath") String databasePath, @RequestBody StatisticsDisplayBundle statistics);
 }
