@@ -5,6 +5,10 @@
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/controllers/payload/FeedResponseGroup.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/event/userrelations/UserUnmutedEvent.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/exceptions/EntityNotFoundException.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/payload/campaign/CampaignPayload.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/event/user/RegistrationSucceededEvent.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/event/user/RegistrationFailedEvent.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/eventlistener/UserEventListener.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/http/UserGraphClient.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/domain/entry/feed/PostFeedEntry.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/http/mappers/UserContentMapper.java
@@ -15,6 +19,7 @@
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/util/TransactionIdHolder.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/repositories/PostFeedRepository.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/mappers/story/StoryTopicPayloadMapper.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/eventhandler/CampaignEventHandler.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/SpringNistagramFeedServiceApplication.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/event/post/PostDeletedEvent.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/domain/user/User.java
@@ -29,6 +34,8 @@
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/exceptions/BusinessException.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/http/ContentClient.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/payload/story/StoryEventPayload.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/payload/campaign/CampaignType.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/mappers/campaign/CampaignPayloadMapper.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/payload/user/UserEventPayload.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/services/UserService.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/controllers/FeedController.java
@@ -40,6 +47,7 @@
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/event/story/StoryCreatedEvent.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/util/Converter.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/domain/entry/campaign/PostCampaignEntry.java
+/home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/event/campaign/CampaignsPublishEvent.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/controllers/payload/FeedResponse.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/eventhandler/UserRelationEventHandler.java
 /home/vakslen/faks/nistagram/nistagram-services/spring-nistagram-feed-service/src/main/java/rs/ac/uns/ftn/nistagram/feed/messaging/eventhandler/UserEventHandler.java
