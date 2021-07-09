@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.stream.Collectors;
-
 @Slf4j
 @RestControllerAdvice
 public class UserExceptionHandler {
@@ -51,9 +49,7 @@ public class UserExceptionHandler {
         log.info(e.getMessage());
         log.trace(e.getMessage(), e);
 
-        return e.getFieldErrors().stream()
-                .map(error -> error.getField() + ":" + error.getDefaultMessage())
-                .collect(Collectors.joining(", "));
+        return e.getMessage();
     }
 
 

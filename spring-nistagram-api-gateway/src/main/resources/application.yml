@@ -1,6 +1,11 @@
 server :
   port : ${API_GATEWAY_PORT:9090}
 
+spring :
+  application :
+    name : spring-nistagram-api-gateway
+
+
 zuul :
   host :
     socket-timeout-millis : 20000
@@ -111,4 +116,5 @@ nistagram.security.jwt.secret : ${JWT_SECRET:test_secret}
 nistagram.headers.agent : agent
 nistagram.headers.app : app
 nistagram.headers.user : username
+
 

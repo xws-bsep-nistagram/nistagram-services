@@ -1,5 +1,24 @@
 version : '3'
 services :
+  jaeger :
+    image : jaegertracing/all-in-one:1.17
+    container_name : 'jaeger'
+    restart : on-failure
+    depends_on :
+      - user-service
+      - user-graph-service
+      - auth-service
+      - post-service
+      - feed-service
+      - notification-service
+      - chat-service
+      - campaign-service
+      - gateway
+    ports :
+      - 16686:16686
+    networks :
+      - backend
+
   rabbitmq :
     image : rabbitmq:3-management-alpine
     container_name : 'rabbitmq'
@@ -60,6 +79,8 @@ services :
       - post-service
       - feed-service
       - notification-service
+      - chat-service
+      - campaign-service
     environment :
       API_GATEWAY_PORT : "${API_GATEWAY_PORT}"
       AUTH_SERVICE_PORT : "${AUTH_SERVICE_PORT}"
