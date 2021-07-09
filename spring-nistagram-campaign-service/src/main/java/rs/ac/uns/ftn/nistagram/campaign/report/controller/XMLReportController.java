@@ -13,20 +13,13 @@ public class XMLReportController {
     private final XMLReportService xmlReportService;
 
     @GetMapping
-    public String testGet() {
-        return "Hello world";
-    }
-
-    @GetMapping
     public String testGet(@RequestBody ExistDbPayload payload) {
-        System.out.println("xml-report: Testing get...");
         return xmlReportService.testGet(payload.getDatabasePath());
     }
 
     @PutMapping
     public String testPost(@RequestBody ExistDbPayload payload) {
-        System.out.println("xml-report: Testing post...");
-        return "TBD.";
+        return xmlReportService.testPost(payload.getDatabasePath(), payload.getXmlData());
     }
 
     // TODO How to package XML? String to XML or directly send?
