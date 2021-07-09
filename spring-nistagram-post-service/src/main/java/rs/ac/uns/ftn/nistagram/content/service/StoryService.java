@@ -78,7 +78,7 @@ public class StoryService {
 
         //When creating a share story, shared post is faked by setting a post id,
         //so I had to manually fetch it here.
-        Post sharedPost = postRepository.getById(shareStory.getSharedPost().getId());
+        Post sharedPost = postRepository.getOne(shareStory.getSharedPost().getId());
 
         PostInteractionEventPayload payload = EventPayloadMapper.toPayload(sharedPost, shareStory.getTime(), shareStory.getAuthor());
 

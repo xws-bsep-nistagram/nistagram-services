@@ -18,7 +18,6 @@ import rs.ac.uns.ftn.nistagram.feed.repositories.PostFeedRepository;
 import rs.ac.uns.ftn.nistagram.feed.repositories.StoryFeedRepository;
 import rs.ac.uns.ftn.nistagram.feed.repositories.UserRepository;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -166,7 +165,7 @@ public class FeedService {
     public void addTargetsContent(String subject, String target) {
         log.info("All the '{}' available post and stories are being added to a '{}' feed", target, subject);
 
-        var foundSubject = userRepository.getById(subject);
+        var foundSubject = userRepository.getOne(subject);
 
         appendTargetPostCollection(foundSubject, getUsersPosts(target));
         appendTargetStoryCollection(foundSubject, getUsersStories(target));
@@ -224,7 +223,7 @@ public class FeedService {
     public void removeTargetsContent(String subject, String target) {
         log.info("All the '{}' post and stories are being removed from a '{}' feed", target, subject);
 
-        User foundSubject = userRepository.getById(subject);
+        User foundSubject = userRepository.getOne(subject);
         removeTargetsPostFromSubjectsFeed(target, foundSubject);
         removeTargetsStoriesFromSubjectsFeed(target, foundSubject);
 
@@ -261,7 +260,7 @@ public class FeedService {
 
         PostFeedEntry foundEntry = findPostFeedEntry(postFeedEntry);
         followers.forEach(follower -> {
-            User foundFollower = userRepository.getById(follower.getUsername());
+            User foundFollower = userRepository.getOne(follower.getUsername());
             foundEntry.removeUser(foundFollower);
             foundFollower.removeFromPostFeed(foundEntry);
             userRepository.save(foundFollower);
@@ -281,7 +280,7 @@ public class FeedService {
 
         StoryFeedEntry foundEntry = findStoryFeedEntry(storyFeedEntry);
         followers.forEach(follower -> {
-            User foundFollower = userRepository.getById(follower.getUsername());
+            User foundFollower = userRepository.getOne(follower.getUsername());
             foundEntry.removeUser(foundFollower);
             foundFollower.removeFromStoryFeed(foundEntry);
             userRepository.save(foundFollower);
@@ -322,7 +321,7 @@ public class FeedService {
         }
 
         followers.forEach(follower -> {
-            User foundFollower = userRepository.getById(follower.getUsername());
+            User foundFollower = userRepository.getOne(follower.getUsername());
             postFeedEntry.addUser(foundFollower);
             foundFollower.addToPostFeed(postFeedEntry);
         });
@@ -338,7 +337,7 @@ public class FeedService {
         }
 
         followers.forEach(follower -> {
-            User foundFollower = userRepository.getById(follower.getUsername());
+            User foundFollower = userRepository.getOne(follower.getUsername());
             storyFeedEntry.addUser(foundFollower);
             foundFollower.addToStoryFeed(storyFeedEntry);
         });
@@ -349,4 +348,9 @@ public class FeedService {
 
     }
 
+    @Transactional
+    public void deleteAds(Long campaignId) {
+        postFeedRepository.deleteAllByPostId(campaignId);
+        storyFeedRepository.deleteAllByStoryId(campaignId);
+    }
 }

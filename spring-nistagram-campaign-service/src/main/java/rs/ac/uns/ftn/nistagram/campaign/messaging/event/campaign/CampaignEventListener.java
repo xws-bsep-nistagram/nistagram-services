@@ -25,4 +25,12 @@ public class CampaignEventListener {
         rabbitTemplate.convertAndSend(RabbitMQConfig.CAMPAIGNS_PUBLISH_EVENT, converter.toJSON(event));
     }
 
+    @Async
+    @EventListener
+    public void onCampaignDelete(CampaignDeleteEvent event) {
+        log.info("Sending campaign delete event to {}, event: {}", RabbitMQConfig.CAMPAIGN_DELETE_EVENT, event);
+
+        rabbitTemplate.convertAndSend(RabbitMQConfig.CAMPAIGN_DELETE_EVENT, converter.toJSON(event));
+    }
+
 }

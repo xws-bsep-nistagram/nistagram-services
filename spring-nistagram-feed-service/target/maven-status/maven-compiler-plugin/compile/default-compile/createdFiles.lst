@@ -14,8 +14,11 @@ rs/ac/uns/ftn/nistagram/feed/controllers/payload/FeedResponseGroupEntry.class
 rs/ac/uns/ftn/nistagram/feed/messaging/mappers/story/StoryTopicPayloadMapper.class
 rs/ac/uns/ftn/nistagram/feed/messaging/event/user/RegistrationSucceededEvent.class
 rs/ac/uns/ftn/nistagram/feed/SpringNistagramFeedServiceApplication.class
+rs/ac/uns/ftn/nistagram/feed/messaging/mappers/campaign/CampaignPayloadMapper.class
+rs/ac/uns/ftn/nistagram/feed/messaging/payload/campaign/CampaignPayload.class
 rs/ac/uns/ftn/nistagram/feed/http/payload/story/StoryResponse.class
 rs/ac/uns/ftn/nistagram/feed/messaging/payload/story/StoryEventPayload$StoryEventPayloadBuilder.class
+rs/ac/uns/ftn/nistagram/feed/messaging/eventhandler/CampaignEventHandler.class
 rs/ac/uns/ftn/nistagram/feed/repositories/UserRepository.class
 rs/ac/uns/ftn/nistagram/feed/repositories/StoryFeedRepository.class
 rs/ac/uns/ftn/nistagram/feed/messaging/payload/post/PostEventPayload.class
@@ -30,6 +33,7 @@ rs/ac/uns/ftn/nistagram/feed/messaging/payload/user/UserEventPayload.class
 rs/ac/uns/ftn/nistagram/feed/http/UserGraphClient.class
 rs/ac/uns/ftn/nistagram/feed/messaging/util/TransactionIdHolder.class
 rs/ac/uns/ftn/nistagram/feed/domain/user/User.class
+rs/ac/uns/ftn/nistagram/feed/messaging/payload/campaign/CampaignType.class
 rs/ac/uns/ftn/nistagram/feed/messaging/util/Converter.class
 rs/ac/uns/ftn/nistagram/feed/messaging/event/userrelations/UserUnfollowedEvent.class
 rs/ac/uns/ftn/nistagram/feed/messaging/eventhandler/UserRelationEventHandler.class
@@ -37,6 +41,7 @@ rs/ac/uns/ftn/nistagram/feed/controllers/payload/FeedResponse.class
 rs/ac/uns/ftn/nistagram/feed/messaging/event/user/UserBannedEvent.class
 rs/ac/uns/ftn/nistagram/feed/messaging/payload/post/PostEventPayload$PostEventPayloadBuilder.class
 rs/ac/uns/ftn/nistagram/feed/messaging/event/post/PostCreatedEvent.class
+rs/ac/uns/ftn/nistagram/feed/messaging/event/campaign/CampaignsPublishEvent.class
 rs/ac/uns/ftn/nistagram/feed/services/UserService.class
 rs/ac/uns/ftn/nistagram/feed/messaging/mappers/post/PostTopicPayloadMapper.class
 rs/ac/uns/ftn/nistagram/feed/http/ContentClient.class

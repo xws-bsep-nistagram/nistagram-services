@@ -1,19 +1,14 @@
 package rs.ac.uns.ftn.nistagram.campaign.controller;
 
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.nistagram.campaign.controller.dto.CampaignContentDTO;
 import rs.ac.uns.ftn.nistagram.campaign.controller.dto.LongTermCampaignViewDTO;
 import rs.ac.uns.ftn.nistagram.campaign.controller.dto.NewLongTermCampaignDTO;
 import rs.ac.uns.ftn.nistagram.campaign.controller.dto.NewOneTimeCampaignDTO;
 import rs.ac.uns.ftn.nistagram.campaign.controller.dto.OneTimeCampaignViewDTO;
+import rs.ac.uns.ftn.nistagram.campaign.controller.mapper.CampaignMapper;
 import rs.ac.uns.ftn.nistagram.campaign.domain.Campaign;
 import rs.ac.uns.ftn.nistagram.campaign.domain.LongTermCampaign;
 import rs.ac.uns.ftn.nistagram.campaign.domain.OneTimeCampaign;
@@ -33,7 +28,7 @@ public class CampaignController {
     private final OneTimeCampaignService oneTimeCampaignService;
     private final LongTermCampaignService longTermCampaignService;
     private final CampaignService<Campaign> campaignService;
-    private final ModelMapper mapper;
+    private final CampaignMapper mapper;
 
     @PostMapping("one-time")
     public OneTimeCampaignViewDTO create(
@@ -61,10 +56,35 @@ public class CampaignController {
         return mapper.map(created, LongTermCampaignViewDTO.class);
     }
 
+    @PutMapping("one-time/{id}")
+    public OneTimeCampaignViewDTO update(
+            @RequestHeader("${nistagram.headers.user}") String username,
+            @Valid @RequestBody NewOneTimeCampaignDTO campaignUpdate,
+            @PathVariable Long id) {
+        OneTimeCampaign updated = oneTimeCampaignService.update(
+                id, mapper.map(campaignUpdate, OneTimeCampaign.class), username);
+        return mapper.map(updated, OneTimeCampaignViewDTO.class);
+    }
+
+    @PutMapping("long-term/{id}")
+    public LongTermCampaignViewDTO update(
+            @RequestHeader("${nistagram.headers.user}") String username,
+            @Valid @RequestBody NewLongTermCampaignDTO campaignUpdate,
+            @PathVariable Long id) {
+        LongTermCampaign updated = longTermCampaignService.update(
+                id, mapper.map(campaignUpdate, LongTermCampaign.class), username);
+        return mapper.map(updated, LongTermCampaignViewDTO.class);
+    }
+
     @GetMapping("{id}")
-    public CampaignContentDTO get(@PathVariable Long id) {
+    public ResponseEntity<?> get(@PathVariable Long id) {
         Campaign found = campaignService.get(id);
-        return mapper.map(found, CampaignContentDTO.class);
+        return ResponseEntity.ok(mapper.map(found));
+    }
+
+    @DeleteMapping("{id}")
+    public void delete(@RequestHeader("username") String username, @PathVariable Long id) {
+        campaignService.delete(username, id);
     }
 
     @GetMapping

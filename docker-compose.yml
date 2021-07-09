@@ -1,5 +1,56 @@
 version : '3'
 services :
+  jaeger :
+    image : jaegertracing/all-in-one:1.17
+    container_name : 'jaeger'
+    restart : on-failure
+    depends_on :
+      - user-service
+      - user-graph-service
+      - auth-service
+      - post-service
+      - feed-service
+      - notification-service
+      - chat-service
+      - campaign-service
+      - gateway
+    ports :
+      - 16686:16686
+    networks :
+      - backend
+
+  prometheus :
+    image : prom/prometheus
+    container_name : 'prometheus'
+    restart : on-failure
+    depends_on :
+      - user-service
+      - user-graph-service
+      - auth-service
+      - post-service
+      - feed-service
+      - notification-service
+      - chat-service
+      - campaign-service
+      - gateway
+    ports :
+      - 9999:9090
+    networks :
+      - backend
+    volumes :
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana :
+    image : grafana/grafana
+    container_name : 'grafana'
+    depends_on :
+      - prometheus
+    ports :
+      - 3000:3000
+    networks :
+      - backend
+
+
   rabbitmq :
     image : rabbitmq:3-management-alpine
     container_name : 'rabbitmq'
@@ -51,7 +102,7 @@ services :
       dockerfile : Dockerfile
       target : "${STAGE}"
     ports :
-      - "${API_GATEWAY_PORT}:${API_GATEWAY_PORT}"
+      - "${API_GATEWAY_PORT}:8040"
     restart : unless-stopped
     depends_on :
       - user-service
@@ -60,6 +111,8 @@ services :
       - post-service
       - feed-service
       - notification-service
+      - chat-service
+      - campaign-service
     environment :
       API_GATEWAY_PORT : "${API_GATEWAY_PORT}"
       AUTH_SERVICE_PORT : "${AUTH_SERVICE_PORT}"

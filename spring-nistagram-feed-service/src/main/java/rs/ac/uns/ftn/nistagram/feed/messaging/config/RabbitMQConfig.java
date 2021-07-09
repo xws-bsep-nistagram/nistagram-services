@@ -17,6 +17,8 @@ public class RabbitMQConfig {
     public static final String USER_UNFOLLOWED_EVENT = "USER_UNFOLLOWED_EVENT";
     public static final String USER_MUTED_EVENT = "USER_MUTED_EVENT";
     public static final String USER_UNMUTED_EVENT = "USER_UNMUTED_EVENT";
+
     public static final String CAMPAIGNS_PUBLISH_EVENT = "CAMPAIGNS_PUBLISH_EVENT";
+    public static final String CAMPAIGN_DELETE_EVENT = "CAMPAIGN_DELETE_EVENT";
 
 }

@@ -1,5 +1,6 @@
 package rs.ac.uns.ftn.nistagram.campaign.controller.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import rs.ac.uns.ftn.nistagram.campaign.domain.Comment;
 import rs.ac.uns.ftn.nistagram.campaign.domain.TargetedGroup;
@@ -19,8 +20,7 @@ public class LongTermCampaignViewDTO {
     private String name;
     private CampaignType type;
     private List<AdvertisementViewDTO> advertisements;
-    private List<UserInteraction> userInteractions;
-    private List<Comment> comments;
+    private Long contentId;
     private List<LocalTime> exposureMoments;
     private LocalDateTime createdOn;
     private LocalDate startsOn;
