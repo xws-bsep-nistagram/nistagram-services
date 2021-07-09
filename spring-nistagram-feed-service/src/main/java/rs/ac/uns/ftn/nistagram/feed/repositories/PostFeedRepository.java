@@ -13,4 +13,7 @@ public interface PostFeedRepository extends JpaRepository<PostFeedEntry, Long> {
 
     @Query("select pfe from PostFeedEntry pfe where pfe.publisher =:username")
     List<PostFeedEntry> findAllByPublisher(String username);
+
+    void deleteAllByPostId(Long postId);
+
 }

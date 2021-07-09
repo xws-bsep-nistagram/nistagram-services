@@ -3,13 +3,15 @@ package rs.ac.uns.ftn.nistagram.campaign.service;
 import feign.FeignException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.campaign.domain.Campaign;
 import rs.ac.uns.ftn.nistagram.campaign.http.PostClient;
 import rs.ac.uns.ftn.nistagram.campaign.http.payload.MediaLink;
 import rs.ac.uns.ftn.nistagram.campaign.http.payload.Post;
+import rs.ac.uns.ftn.nistagram.campaign.messaging.event.campaign.CampaignDeleteEvent;
+import rs.ac.uns.ftn.nistagram.campaign.messaging.util.TransactionIdHolder;
 import rs.ac.uns.ftn.nistagram.campaign.repository.CampaignRepository;
 
 import java.time.LocalDateTime;
@@ -24,6 +26,8 @@ public class CampaignService<T extends Campaign> {
 
     private final CampaignRepository<T> repository;
     private final PostClient postClient;
+    private final ApplicationEventPublisher publisher;
+    private final TransactionIdHolder transactionIdHolder;
 
     @Transactional
     public T create(T campaign) {
@@ -104,8 +108,15 @@ public class CampaignService<T extends Campaign> {
         try {
             postClient.deleteAgentPost(username, found.getContentId());
         } catch(FeignException.NotFound ignored) {}
+        publishCampaignDelete(id);
         repository.deleteById(id);
         log.info("Deleted campaign with id {}", id);
+    }
+
+    private void publishCampaignDelete(Long id) {
+        CampaignDeleteEvent event = new CampaignDeleteEvent(
+                transactionIdHolder.getCurrentTransactionId(), id);
+        publisher.publishEvent(event);
     }
 
 }
