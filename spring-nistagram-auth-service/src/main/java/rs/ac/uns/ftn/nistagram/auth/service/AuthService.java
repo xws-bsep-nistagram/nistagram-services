@@ -10,10 +10,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.auth.domain.*;
+import rs.ac.uns.ftn.nistagram.auth.http.user.UserClient;
 import rs.ac.uns.ftn.nistagram.auth.infrastructure.JwtEncoder;
-import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.JwtEncryptionException;
-import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.JwtException;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.auth.BannedException;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.auth.JwtEncryptionException;
+import rs.ac.uns.ftn.nistagram.auth.infrastructure.exceptions.auth.JwtException;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,9 +32,13 @@ public class AuthService {
     private final PasswordResetService passwordResetService;
     private final PasswordEncoder passwordEncoder;
     private final JwtEncoder encoder;
+    private final UserClient userClient;
 
     public String authenticate(AuthRequest authRequest) {
         authenticationManager.authenticate(authRequest.convert());
+
+        bannedCheck(authRequest.getUsername());
+
         UserDetails userDetails = getUser(authRequest.getUsername());
 
         log.info("Successfully authenticated user '{}' with roles: {}", userDetails.getUsername(), userDetails.getAuthorities());
@@ -39,10 +46,12 @@ public class AuthService {
         return encryptDetails(userDetails);
     }
 
+
     @Transactional(readOnly = true)
     public UserDetails getUser(String username) {
         return credentialsService.loadUserByUsername(username);
     }
+
 
     @Transactional
     public String register(RegistrationRequest registrationRequest) {
@@ -90,7 +99,15 @@ public class AuthService {
         return claims.get("username").asString();
     }
 
+    private void bannedCheck(String username) {
+        if (userClient.isBanned(username).isProfileBanned())
+            throw new BannedException("Account is banned");
+    }
+
     public void activate(String uuid) {
+        if (!credentialsService.existsByUuid(uuid))
+            throw new EntityNotFoundException("An error occurred while registering your account. Please try again");
+
         credentialsService.activate(uuid);
     }
 
@@ -99,8 +116,13 @@ public class AuthService {
     }
 
     public void resetPassword(PasswordResetBundle bundle) {
-        // TODO This is a pretty bad place to hash a password
         bundle.setPassword(passwordEncoder.encode(bundle.getPassword()));
         passwordResetService.resetPassword(bundle);
     }
+
+    public void registerAgent(String username) {
+        credentialsService.addUserRole(username, "ROLE_AGENT");
+    }
+
+
 }

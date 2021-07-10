@@ -1,5 +1,56 @@
 version : '3'
 services :
+  jaeger :
+    image : jaegertracing/all-in-one:1.17
+    container_name : 'jaeger'
+    restart : on-failure
+    depends_on :
+      - user-service
+      - user-graph-service
+      - auth-service
+      - post-service
+      - feed-service
+      - notification-service
+      - chat-service
+      - campaign-service
+      - gateway
+    ports :
+      - 16686:16686
+    networks :
+      - backend
+
+  prometheus :
+    image : prom/prometheus
+    container_name : 'prometheus'
+    restart : on-failure
+    depends_on :
+      - user-service
+      - user-graph-service
+      - auth-service
+      - post-service
+      - feed-service
+      - notification-service
+      - chat-service
+      - campaign-service
+      - gateway
+    ports :
+      - 9999:9090
+    networks :
+      - backend
+    volumes :
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana :
+    image : grafana/grafana
+    container_name : 'grafana'
+    depends_on :
+      - prometheus
+    ports :
+      - 3000:3000
+    networks :
+      - backend
+
+
   rabbitmq :
     image : rabbitmq:3-management-alpine
     container_name : 'rabbitmq'
@@ -9,6 +60,8 @@ services :
       - 15672:15672
     networks :
       - backend
+    volumes :
+      - ./rabbitmq/rabbitmq-definitions.json:/etc/rabbitmq/definitions.json
 
   neo4j-db :
     image : neo4j:latest
@@ -41,6 +94,18 @@ services :
     volumes :
       - ${MYSQL_LOCAL_PATH}/data:/var/lib/mysql
 
+  existdb :
+    image : existdb/existdb:latest
+    container_name : existdb
+    restart : on-failure
+    ports : 
+      - "${EXISTDB_PORT_1}:${EXISTDB_PORT_1}"
+      - "${EXISTDB_PORT_2}:${EXISTDB_PORT_2}"
+    networks: 
+      - database
+    volumes : 
+      - ${EXISTDB_LOCAL_PATH}/data:/var/lib/existdb
+
   gateway :
     image : nistagram/api-gateway
     container_name : gateway
@@ -49,7 +114,7 @@ services :
       dockerfile : Dockerfile
       target : "${STAGE}"
     ports :
-      - "${API_GATEWAY_PORT}:${API_GATEWAY_PORT}"
+      - "${API_GATEWAY_PORT}:8040"
     restart : unless-stopped
     depends_on :
       - user-service
@@ -58,6 +123,8 @@ services :
       - post-service
       - feed-service
       - notification-service
+      - chat-service
+      - campaign-service
     environment :
       API_GATEWAY_PORT : "${API_GATEWAY_PORT}"
       AUTH_SERVICE_PORT : "${AUTH_SERVICE_PORT}"
@@ -66,7 +133,9 @@ services :
       USER_GRAPH_SERVICE_PORT : "${USER_GRAPH_SERVICE_PORT}"
       FEED_SERVICE_PORT : "${FEED_SERVICE_PORT}"
       NOTIFICATION_SERVICE_PORT : "${NOTIFICATION_SERVICE_PORT}"
+      CHAT_SERVICE_PORT : "${CHAT_SERVICE_PORT}"
       JWT_SECRET : "${JWT_SECRET}"
+      CAMPAIGN_SERVICE_PORT : "${CAMPAIGN_SERVICE_PORT}"
     networks :
       - backend
 
@@ -225,6 +294,59 @@ services :
       - database
     volumes :
       - ${LOG_PATH}/notification-service:/app/logs/
+
+  campaign-service :
+    image : nistagram/campaign-service
+    container_name : campaign-service
+    build :
+      context : ./spring-nistagram-campaign-service
+      dockerfile : Dockerfile
+      target : "${STAGE}"
+    ports :
+      - "${CAMPAIGN_SERVICE_PORT}:${CAMPAIGN_SERVICE_PORT}"
+    restart : unless-stopped
+    depends_on :
+      - mysql-db
+      - rabbitmq
+    environment :
+      CAMPAIGN_SERVICE_PORT : "${CAMPAIGN_SERVICE_PORT}"
+      MYSQL_HOST : "${MYSQL_HOST}"
+      MYSQL_PORT : "${MYSQL_PORT}"
+      CAMPAIGN_DB_NAME : "${CAMPAIGN_DB_NAME}"
+      MYSQL_ROOT : "${MYSQL_ROOT}"
+      MYSQL_ROOT_PASSWORD : "${MYSQL_ROOT_PASSWORD}"
+    networks :
+      - backend
+      - database
+    volumes :
+      - ${LOG_PATH}/campaign-service:/app/logs/
+      - ${PDF_PATH}:/app/pdfs
+
+  chat-service :
+    image : nistagram/chat-service
+    container_name : chat-service
+    build :
+      context : ./spring-nistagram-chat-service
+      dockerfile : Dockerfile
+      target : "${STAGE}"
+    ports :
+      - "${CHAT_SERVICE_PORT}:${CHAT_SERVICE_PORT}"
+    restart : unless-stopped
+    depends_on :
+      - mysql-db
+      - rabbitmq
+    environment :
+      CHAT_SERVICE_PORT : "${CHAT_SERVICE_PORT}"
+      MYSQL_HOST : "${MYSQL_HOST}"
+      MYSQL_PORT : "${MYSQL_PORT}"
+      CHAT_DB_NAME : "${CHAT_DB_NAME}"
+      MYSQL_ROOT : "${MYSQL_ROOT}"
+      MYSQL_ROOT_PASSWORD : "${MYSQL_ROOT_PASSWORD}"
+    networks :
+      - backend
+      - database
+    volumes :
+      - ${LOG_PATH}/chat-service:/app/logs/
 
 networks :
   backend :

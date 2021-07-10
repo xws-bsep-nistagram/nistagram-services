@@ -15,8 +15,8 @@ public interface UserGraphClient {
     @GetMapping("/followers")
     List<UserPayload> getFollowers(@RequestHeader("username") String username);
 
-    @GetMapping("/{username}/close-friends")
-    List<UserPayload> getCloseFriends(@PathVariable("username") String username);
+    @GetMapping("/close-friends")
+    List<UserPayload> getCloseFriends(@RequestHeader("username") String username);
 
     @GetMapping("/muted/{target}")
     MutedRelationshipResponse hasMuted(@RequestHeader("username") String subject, @PathVariable String target);

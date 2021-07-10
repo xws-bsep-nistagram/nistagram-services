@@ -3,9 +3,11 @@ package rs.ac.uns.ftn.nistagram.user.graph.services;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
 import rs.ac.uns.ftn.nistagram.user.graph.repositories.CloseFriendRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,7 +18,8 @@ public class CloseFriendService {
     private final CloseFriendRepository closeFriendRepository;
     private final UserConstraintChecker constraintChecker;
 
-    public void addCloseFriend(String subject, String target){
+    @Transactional
+    public void addCloseFriend(String subject, String target) {
         log.info("Received a close friend request from {} to {}",
                 subject,
                 target);
@@ -29,7 +32,8 @@ public class CloseFriendService {
                 target);
     }
 
-    public void removeCloseFriend(String subject, String target){
+    @Transactional
+    public void removeCloseFriend(String subject, String target) {
         log.info("Received a close friend removal request from {} to {}",
                 subject,
                 target);
@@ -40,10 +44,14 @@ public class CloseFriendService {
         log.info("User {} is no longer in users {} close friends list", subject, target);
     }
 
-    public List<User> findCloseFriends(String username){
+    @Transactional
+    public List<User> findCloseFriends(String username) {
         constraintChecker.userPresenceCheck(username);
 
-        var closeFriends = closeFriendRepository.findCloseFriends(username);
+        List<User> closeFriends = new ArrayList<>();
+
+        if (closeFriendRepository.hasCloseFriends(username))
+            closeFriends = closeFriendRepository.findCloseFriends(username);
 
         log.info("Found {} close friends for user {}", closeFriends.size(), username);
 

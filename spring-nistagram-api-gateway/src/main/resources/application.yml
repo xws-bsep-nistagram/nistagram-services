@@ -1,5 +1,29 @@
 server :
-  port : ${API_GATEWAY_PORT:9090}
+  port : 8040
+
+spring :
+  application :
+    name : spring-nistagram-api-gateway
+
+opentracing :
+  jaeger :
+    http-sender :
+      url : http://jaeger:14268/api/traces
+
+management :
+  endpoint :
+    metrics :
+      enabled : true
+    prometheus :
+      enabled : true
+  metrics :
+    export :
+      prometheus :
+        enabled : true
+  endpoints :
+    web :
+      exposure :
+        include : "*"
 
 zuul :
   host :
@@ -41,6 +65,17 @@ zuul :
       serviceId : notification-service
       stripPrefix : false
       customSensitiveHeaders : true
+      sensitive-headers : Cookie,Set-Cookie
+    chat-service :
+      path : /api/chat/**
+      serviceId : chat-service
+      stripPrefix : false
+      customSensitiveHeaders : true
+      sensitive-headers : Cookie,Set-Cookie
+    campaign-service :
+      path : /api/campaigns/**
+      serviceId : campaign-service
+      stripPrefix : false
       sensitive-headers : Cookie,Set-Cookie
   ws :
     brokerages :
@@ -86,6 +121,19 @@ notification-service :
   ribbon :
     listOfServers : notification-service:${NOTIFICATION_SERVICE_PORT}
 
+chat-service :
+  ribbon :
+    listOfServers : chat-service:${CHAT_SERVICE_PORT}
+
+campaign-service :
+  ribbon :
+    listOfServers : campaign-service:${CAMPAIGN_SERVICE_PORT}
+
 
 nistagram.security.jwt.secret : ${JWT_SECRET:test_secret}
+
+nistagram.headers.agent : agent
+nistagram.headers.app : app
+nistagram.headers.user : username
+
 

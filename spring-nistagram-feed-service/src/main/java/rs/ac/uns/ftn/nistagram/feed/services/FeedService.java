@@ -33,6 +33,7 @@ public class FeedService {
     private final PostFeedRepository postFeedRepository;
     private final StoryFeedRepository storyFeedRepository;
 
+    @Transactional(readOnly = true)
     public List<PostFeedEntry> getPostFeedByUsername(String username) {
         log.info("Request for getting all the post feed entries for {} received", username);
 
@@ -47,13 +48,14 @@ public class FeedService {
         return postFeedEntries;
     }
 
+    @Transactional(readOnly = true)
     public List<StoryFeedEntry> getStoryFeedByUsername(String username) {
         log.info("Request for getting all the story feed entries for an user '{}' received", username);
 
         var storyFeedEntries = storyFeedRepository
                 .findAllByUsername(username)
                 .stream()
-                .filter(e -> !e.getCloseFriends())
+                .filter(e -> !e.getCloseFriends() && !e.isAd() && !e.isExpired())
                 .collect(Collectors.toList());
 
         log.info("Found '{}' story feed entries for an user '{}'", storyFeedEntries.size(), username);
@@ -64,6 +66,7 @@ public class FeedService {
         return storyFeedEntries;
     }
 
+    @Transactional(readOnly = true)
     public List<StoryFeedEntry> getCloseFriendStoryFeedByUsername(String username) {
 
         log.info("Request for getting all the close friend story feed entries for an user '{}' received",
@@ -71,7 +74,7 @@ public class FeedService {
 
         var storyFeedEntries = storyFeedRepository
                 .findAllByUsername(username)
-                .stream().filter(StoryFeedEntry::getCloseFriends)
+                .stream().filter(entry -> entry.getCloseFriends() && !entry.isAd() && !entry.isExpired())
                 .collect(Collectors.toList());
 
         log.info("Found '{}' story feed entries for an user '{}'", storyFeedEntries.size(), username);
@@ -80,6 +83,21 @@ public class FeedService {
             storyFeedEntries.sort(Comparator.comparing(FeedEntry::getCreatedAt).reversed());
 
         return storyFeedEntries;
+    }
+
+    @Transactional(readOnly = true)
+    public List<StoryFeedEntry> getStoryCampaignsByUsername(String username) {
+        log.info("Request for getting all the story ad campaigns for user '{}' received",
+                username);
+        List<StoryFeedEntry> all = storyFeedRepository.findAllByUsername(username)
+                .stream().filter(StoryFeedEntry::isAd)
+                .collect(Collectors.toList());
+
+        log.info("Found '{}' story feed entries for an user '{}'", all.size(), username);
+        if (all.size() != 0)
+            all.sort(Comparator.comparing(FeedEntry::getCreatedAt).reversed());
+
+        return all;
     }
 
     @Transactional
@@ -94,6 +112,12 @@ public class FeedService {
     }
 
     @Transactional
+    public void addCampaignToPostFeeds(List<UserPayload> users, PostFeedEntry postFeedEntry) {
+        log.info("Campaign being added to targeted user groups");
+        populatePostFeeds(users, postFeedEntry);
+    }
+
+    @Transactional
     public void addToStoryFeeds(StoryFeedEntry storyFeedEntry) {
         log.info("Story by '{}' are being added to the all of his follower feeds",
                 storyFeedEntry.getPublisher());
@@ -105,6 +129,12 @@ public class FeedService {
             followers = userGraphClient.getFollowers(storyFeedEntry.getPublisher());
 
         populateStoryFeeds(followers, storyFeedEntry);
+    }
+
+    @Transactional
+    public void addCampaignToStoryFeeds(List<UserPayload> users, StoryFeedEntry storyFeedEntry) {
+        log.info("Campaign being added to targeted user group");
+        populateStoryFeeds(users, storyFeedEntry);
     }
 
     @Transactional
@@ -135,7 +165,7 @@ public class FeedService {
     public void addTargetsContent(String subject, String target) {
         log.info("All the '{}' available post and stories are being added to a '{}' feed", target, subject);
 
-        var foundSubject = userRepository.getById(subject);
+        var foundSubject = userRepository.getOne(subject);
 
         appendTargetPostCollection(foundSubject, getUsersPosts(target));
         appendTargetStoryCollection(foundSubject, getUsersStories(target));
@@ -193,7 +223,7 @@ public class FeedService {
     public void removeTargetsContent(String subject, String target) {
         log.info("All the '{}' post and stories are being removed from a '{}' feed", target, subject);
 
-        User foundSubject = userRepository.getById(subject);
+        User foundSubject = userRepository.getOne(subject);
         removeTargetsPostFromSubjectsFeed(target, foundSubject);
         removeTargetsStoriesFromSubjectsFeed(target, foundSubject);
 
@@ -230,7 +260,7 @@ public class FeedService {
 
         PostFeedEntry foundEntry = findPostFeedEntry(postFeedEntry);
         followers.forEach(follower -> {
-            User foundFollower = userRepository.getById(follower.getUsername());
+            User foundFollower = userRepository.getOne(follower.getUsername());
             foundEntry.removeUser(foundFollower);
             foundFollower.removeFromPostFeed(foundEntry);
             userRepository.save(foundFollower);
@@ -250,7 +280,7 @@ public class FeedService {
 
         StoryFeedEntry foundEntry = findStoryFeedEntry(storyFeedEntry);
         followers.forEach(follower -> {
-            User foundFollower = userRepository.getById(follower.getUsername());
+            User foundFollower = userRepository.getOne(follower.getUsername());
             foundEntry.removeUser(foundFollower);
             foundFollower.removeFromStoryFeed(foundEntry);
             userRepository.save(foundFollower);
@@ -291,7 +321,7 @@ public class FeedService {
         }
 
         followers.forEach(follower -> {
-            User foundFollower = userRepository.getById(follower.getUsername());
+            User foundFollower = userRepository.getOne(follower.getUsername());
             postFeedEntry.addUser(foundFollower);
             foundFollower.addToPostFeed(postFeedEntry);
         });
@@ -307,7 +337,7 @@ public class FeedService {
         }
 
         followers.forEach(follower -> {
-            User foundFollower = userRepository.getById(follower.getUsername());
+            User foundFollower = userRepository.getOne(follower.getUsername());
             storyFeedEntry.addUser(foundFollower);
             foundFollower.addToStoryFeed(storyFeedEntry);
         });
@@ -316,5 +346,11 @@ public class FeedService {
                 storyFeedEntry.getCloseFriends() ? "Close friend stories" : "Stories",
                 storyFeedEntry.getPublisher());
 
+    }
+
+    @Transactional
+    public void deleteAds(Long campaignId) {
+        postFeedRepository.deleteAllByPostId(campaignId);
+        storyFeedRepository.deleteAllByStoryId(campaignId);
     }
 }

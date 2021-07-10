@@ -28,6 +28,11 @@ public class ContentExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
+    @ExceptionHandler(NotFollowingException.class)
+    public ResponseEntity<?> handleNotFollowingException(Exception e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<?> handleEntityNotFoundException(Exception e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -41,7 +46,8 @@ public class ContentExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleOtherRuntimeErrors(RuntimeException e) {
         log.error(e.getMessage(), e);
-        return ResponseEntity.internalServerError().body("An internal server error occurred.");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("An internal server error occurred.");
     }
 
     @ExceptionHandler(UserBlockedException.class)

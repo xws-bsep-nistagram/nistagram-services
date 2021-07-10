@@ -1,12 +1,10 @@
 package rs.ac.uns.ftn.nistagram.user.domain.user;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.Embeddable;
 
-@Getter
-@Setter
+@Data
 @Embeddable
 public class AdministrativeData {
 

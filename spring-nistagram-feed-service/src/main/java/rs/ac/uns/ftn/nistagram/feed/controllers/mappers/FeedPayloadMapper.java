@@ -20,6 +20,7 @@ public class FeedPayloadMapper {
                 .contentId(postFeedEntry.getPostId())
                 .createdAt(postFeedEntry.getCreatedAt())
                 .publisher(postFeedEntry.getPublisher())
+                .ad(postFeedEntry.isAd())
                 .build();
 
     }
@@ -31,6 +32,7 @@ public class FeedPayloadMapper {
                 .contentId(storyFeedEntry.getStoryId())
                 .createdAt(storyFeedEntry.getCreatedAt())
                 .publisher(storyFeedEntry.getPublisher())
+                .ad(storyFeedEntry.isAd())
                 .build();
     }
 

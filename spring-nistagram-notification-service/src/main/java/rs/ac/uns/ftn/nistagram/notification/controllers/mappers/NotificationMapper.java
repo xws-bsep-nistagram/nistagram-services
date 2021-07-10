@@ -9,6 +9,8 @@ public class NotificationMapper {
         return NotificationResponse
                 .builder()
                 .notificationType(notification.getNotificationType())
+                .subject(notification.getSubject())
+                .target(notification.getTarget())
                 .seen(notification.isSeen())
                 .contentId(notification.getContentId())
                 .time(notification.getTime())

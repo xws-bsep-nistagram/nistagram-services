@@ -43,6 +43,8 @@ public class Post extends UserContent {
     private List<ShareStory> shareStories;
     @OneToMany(mappedBy = "reportedPost", cascade = CascadeType.REMOVE)
     private List<PostReport> postReports;
+    private boolean ad;
+    private boolean adApproved;
 
     @Override
     public boolean equals(Object obj) {

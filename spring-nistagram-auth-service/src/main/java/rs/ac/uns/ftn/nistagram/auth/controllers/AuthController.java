@@ -5,20 +5,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.AuthRequestDTO;
-import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.AuthTokenDTO;
-import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.PasswordResetRequestDTO;
-import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.RegistrationRequestDTO;
-import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.RolesDTO;
-import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.TokenRequestDTO;
-import rs.ac.uns.ftn.nistagram.auth.controllers.mappers.AuthRequestMapper;
-import rs.ac.uns.ftn.nistagram.auth.controllers.mappers.AuthTokenMapper;
-import rs.ac.uns.ftn.nistagram.auth.controllers.mappers.PasswordResetRequestMapper;
-import rs.ac.uns.ftn.nistagram.auth.controllers.mappers.RegistrationRequestMapper;
-import rs.ac.uns.ftn.nistagram.auth.controllers.mappers.RoleMapper;
+import rs.ac.uns.ftn.nistagram.auth.controllers.dtos.*;
+import rs.ac.uns.ftn.nistagram.auth.controllers.mappers.*;
 import rs.ac.uns.ftn.nistagram.auth.domain.AuthToken;
 import rs.ac.uns.ftn.nistagram.auth.domain.PasswordResetBundle;
 import rs.ac.uns.ftn.nistagram.auth.service.AuthService;
+import rs.ac.uns.ftn.nistagram.auth.service.CredentialsService;
 
 import javax.validation.Valid;
 
@@ -28,6 +20,7 @@ import javax.validation.Valid;
 public class AuthController {
 
     private final AuthService authService;
+    private final CredentialsService credentialsService;
     private final AuthRequestMapper authMapper;
     private final RegistrationRequestMapper registrationMapper;
     private final PasswordResetRequestMapper passwordResetRequestMapper;
@@ -38,6 +31,12 @@ public class AuthController {
     public ResponseEntity<Void> authenticate(@RequestBody AuthRequestDTO authRequest) {
         String generatedToken = authService.authenticate(authMapper.toDomain(authRequest));
         return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, generatedToken).build();
+    }
+
+    @DeleteMapping("{username}")
+    public ResponseEntity<?> delete(@PathVariable String username) {
+        credentialsService.delete(username);
+        return ResponseEntity.ok("Account successfully deleted");
     }
 
     @GetMapping
@@ -73,5 +72,11 @@ public class AuthController {
     public String resetPassword(@RequestBody @Valid PasswordResetBundle bundle) {
         authService.resetPassword(bundle);
         return "Password has been successfully reset.";
+    }
+
+    @PutMapping("agent/{username}")
+    public String registerAgent(@PathVariable String username) {
+        authService.registerAgent(username);
+        return "Agent successfully registered.";
     }
 }

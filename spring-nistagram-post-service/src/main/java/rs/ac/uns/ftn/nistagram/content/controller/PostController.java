@@ -33,10 +33,44 @@ public class PostController {
         return ResponseEntity.ok(mapper.toDto(createdPost));
     }
 
+    // TODO: authorize agent
+    @PostMapping("agent")
+    public ResponseEntity<?> request(@Valid @RequestBody PostCreationDTO dto) {
+        Post createdPost = postService.createForInfluencer(mapper.toDomain(dto));
+        return ResponseEntity.ok(mapper.toDto(createdPost));
+    }
+
+    @PostMapping("agent/post")
+    public ResponseEntity<?> createAdPost(@RequestHeader("username") String username,
+                                          @Valid @RequestBody PostCreationDTO dto) {
+        Post createdPost = postService.createForAgent(username, mapper.toDomain(dto));
+        return ResponseEntity.ok(mapper.toDto(createdPost));
+    }
+
+    @GetMapping("non-approved")
+    public ResponseEntity<?> getUserNonApproved(@RequestHeader("username") String username) {
+        List<Post> nonApproved = postService.getNonApproved(username);
+        return ResponseEntity.ok(
+                nonApproved.stream().map(mapper::toDto).collect(Collectors.toList()));
+    }
+
+    @PutMapping("non-approved/{postId}")
+    public ResponseEntity<?> approveAd(@RequestHeader("username") String username,
+                                       @PathVariable Long postId) {
+        postService.approveAdPost(username, postId);
+        return ResponseEntity.ok("Ad successfully approved.");
+    }
+
     @DeleteMapping("{postId}")
     public ResponseEntity<?> delete(@RequestHeader("username") String username,
                                     @PathVariable String postId) {
         postService.delete(username, Long.parseLong(postId));
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("admin/{postId}")
+    public ResponseEntity<?> deleteAsAdmin(@PathVariable String postId) {
+        postService.delete(Long.parseLong(postId));
         return ResponseEntity.ok().build();
     }
 
@@ -71,6 +105,11 @@ public class PostController {
     public ResponseEntity<?> getById(@RequestHeader("username") String caller,
                                      @PathVariable String postId) {
         return ResponseEntity.ok(mapper.toDto(postService.getById(Long.parseLong(postId), caller)));
+    }
+
+    @GetMapping("admin/{postId}")
+    public ResponseEntity<?> getByIdAsAdmin(@PathVariable String postId) {
+        return ResponseEntity.ok(mapper.toDto(postService.getByIdAsAdmin(Long.parseLong(postId))));
     }
 
     @GetMapping("/public/{postId}")
@@ -108,15 +147,15 @@ public class PostController {
     @GetMapping("interactions")
     public ResponseEntity<?> getLikedAndDislikedPostsForUser(@RequestHeader("username") String caller) {
         return ResponseEntity.ok(
-            postService.getLikedAndDisliked(caller)
-                .stream().map(mapper::toDto).collect(Collectors.toList())
+                postService.getLikedAndDisliked(caller)
+                        .stream().map(mapper::toDto).collect(Collectors.toList())
         );
     }
 
     @GetMapping("like/{postId}")
     public ResponseEntity<?> like(@RequestHeader("username") String caller,
                                   @PathVariable String postId) {
-        postService.like(Long.parseLong(postId), caller); // TODO Extract username from HTTP
+        postService.like(Long.parseLong(postId), caller);
         return ResponseEntity.ok().build();
     }
 

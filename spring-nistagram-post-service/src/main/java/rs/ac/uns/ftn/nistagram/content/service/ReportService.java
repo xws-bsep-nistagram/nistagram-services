@@ -3,6 +3,7 @@ package rs.ac.uns.ftn.nistagram.content.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.content.domain.core.post.Post;
 import rs.ac.uns.ftn.nistagram.content.domain.core.report.BaseReport;
 import rs.ac.uns.ftn.nistagram.content.domain.core.report.PostReport;
@@ -14,6 +15,7 @@ import rs.ac.uns.ftn.nistagram.content.repository.report.StoryReportRepository;
 import rs.ac.uns.ftn.nistagram.content.repository.story.StoryRepository;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -26,6 +28,7 @@ public class ReportService {
     private final StoryRepository storyRepository;
 
 
+    @Transactional
     public PostReport reportPost(BaseReport report, Long postId) {
         log.info("Reporting a post with an id: {}", postId);
 
@@ -42,6 +45,7 @@ public class ReportService {
         return postReport;
     }
 
+    @Transactional
     public StoryReport reportStory(BaseReport report, Long storyId) {
         log.info("Reporting a story with an id: {}", storyId);
 
@@ -59,4 +63,40 @@ public class ReportService {
         return storyReport;
 
     }
+
+    @Transactional(readOnly = true)
+    public List<PostReport> getReportedPosts() {
+        return postReportRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<StoryReport> getReportedStories() {
+        return storyReportRepository.findAll();
+    }
+
+    @Transactional
+    public PostReport deletePostReport(Long postReportId) {
+        PostReport postReport = postReportRepository.findById(postReportId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Post report with an id '%d' doesn't exist", postReportId)
+                ));
+
+        postReportRepository.delete(postReport);
+
+        return postReport;
+    }
+
+    @Transactional
+    public StoryReport deleteStoryReport(Long storyReportId) {
+        StoryReport storyReport = storyReportRepository.findById(storyReportId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Post report with an id '%d' doesn't exist", storyReportId)
+                ));
+
+        storyReportRepository.delete(storyReport);
+
+        return storyReport;
+    }
+
+
 }

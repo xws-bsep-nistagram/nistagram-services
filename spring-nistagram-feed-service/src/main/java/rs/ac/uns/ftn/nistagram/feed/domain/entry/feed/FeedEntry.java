@@ -27,6 +27,7 @@ public class FeedEntry {
     private List<User> users;
     private String publisher;
     private LocalDateTime createdAt;
+    private boolean ad = false;
 
     public FeedEntry(String publisher, LocalDateTime createdAt){
         this.publisher = publisher;

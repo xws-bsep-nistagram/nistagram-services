@@ -1,7 +1,9 @@
 package rs.ac.uns.ftn.nistagram.user.controllers.mappers;
 
 import org.springframework.stereotype.Component;
-import rs.ac.uns.ftn.nistagram.user.controllers.dtos.*;
+import rs.ac.uns.ftn.nistagram.user.controllers.dtos.profile.*;
+import rs.ac.uns.ftn.nistagram.user.domain.agent.Agent;
+import rs.ac.uns.ftn.nistagram.user.domain.agent.AgentRegistrationRequest;
 import rs.ac.uns.ftn.nistagram.user.domain.user.PersonalData;
 import rs.ac.uns.ftn.nistagram.user.domain.user.PrivacyData;
 import rs.ac.uns.ftn.nistagram.user.domain.user.User;
@@ -24,6 +26,32 @@ public class ProfileMapper {
                 user.getPersonalData().getWebsite(),
                 user.getPersonalData().getBio(),
                 user.getAdministrativeData().isVerified());
+    }
+
+    public ProfileViewDTO map(AgentRegistrationRequest request) {
+        return new ProfileViewDTO(
+                request.getUser().getUsername(),
+                request.getUser().getPersonalData().getFullName(),
+                request.getUser().getPersonalData().getEmail(),
+                request.getUser().getPersonalData().getPhoneNumber(),
+                request.getUser().getPersonalData().getGender(),
+                request.getUser().getPersonalData().getDateOfBirth(),
+                request.getWebsite(),
+                request.getUser().getPersonalData().getBio(),
+                request.getUser().getAdministrativeData().isVerified());
+    }
+
+    public ProfileViewDTO map(Agent agent) {
+        return new ProfileViewDTO(
+                agent.getUser().getUsername(),
+                agent.getUser().getPersonalData().getFullName(),
+                agent.getUser().getPersonalData().getEmail(),
+                agent.getUser().getPersonalData().getPhoneNumber(),
+                agent.getUser().getPersonalData().getGender(),
+                agent.getUser().getPersonalData().getDateOfBirth(),
+                agent.getWebsite(),
+                agent.getUser().getPersonalData().getBio(),
+                agent.getUser().getAdministrativeData().isVerified());
     }
 
     public PrivacyDataViewDTO map(PrivacyData privacyData) {
