@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.nistagram.campaign.domain.Campaign;
 import rs.ac.uns.ftn.nistagram.campaign.exception.CampaignException;
 import rs.ac.uns.ftn.nistagram.campaign.exception.EntityNotFoundException;
-import rs.ac.uns.ftn.nistagram.campaign.http.PostClient;
+import rs.ac.uns.ftn.nistagram.campaign.http.client.PostClient;
 import rs.ac.uns.ftn.nistagram.campaign.http.payload.MediaLink;
 import rs.ac.uns.ftn.nistagram.campaign.http.payload.Post;
 import rs.ac.uns.ftn.nistagram.campaign.messaging.event.campaign.CampaignDeleteEvent;

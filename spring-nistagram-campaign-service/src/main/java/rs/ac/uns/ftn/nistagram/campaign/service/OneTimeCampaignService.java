@@ -4,9 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import rs.ac.uns.ftn.nistagram.campaign.domain.Campaign;
 import rs.ac.uns.ftn.nistagram.campaign.domain.OneTimeCampaign;
-import rs.ac.uns.ftn.nistagram.campaign.http.PostClient;
+import rs.ac.uns.ftn.nistagram.campaign.http.client.PostClient;
 import rs.ac.uns.ftn.nistagram.campaign.messaging.util.TransactionIdHolder;
 import rs.ac.uns.ftn.nistagram.campaign.repository.OneTimeCampaignRepository;
 

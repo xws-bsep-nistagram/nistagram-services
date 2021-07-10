@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.nistagram.campaign.http;
+package rs.ac.uns.ftn.nistagram.campaign.http.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;

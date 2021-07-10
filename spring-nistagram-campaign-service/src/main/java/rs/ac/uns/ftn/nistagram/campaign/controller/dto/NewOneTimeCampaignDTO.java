@@ -25,5 +25,4 @@ public class NewOneTimeCampaignDTO {
     private LocalDateTime exposureMoment;
     @NotNull
     private TargetedGroup targetedGroup;
-
 }
