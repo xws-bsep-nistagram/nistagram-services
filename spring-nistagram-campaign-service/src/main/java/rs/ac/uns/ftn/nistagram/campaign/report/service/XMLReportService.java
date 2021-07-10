@@ -11,6 +11,8 @@ import rs.ac.uns.ftn.nistagram.campaign.report.domain.Content;
 import rs.ac.uns.ftn.nistagram.campaign.report.domain.StatisticsDisplayBundle;
 import rs.ac.uns.ftn.nistagram.campaign.report.http.client.ContentClient;
 import rs.ac.uns.ftn.nistagram.campaign.report.http.client.ExistDbClient;
+import rs.ac.uns.ftn.nistagram.campaign.report.pdf.PDF;
+import rs.ac.uns.ftn.nistagram.campaign.report.pdf.StatisticsToText;
 import rs.ac.uns.ftn.nistagram.campaign.repository.CampaignRepository;
 
 import java.util.List;
@@ -24,12 +26,12 @@ public class XMLReportService {
     private final CampaignRepository<Campaign> campaignRepository;
     private final ContentClient contentClient;
 
-    public StatisticsDisplayBundle testGet(String url) {
-        return existDbClient.get(url);
-    }
+    public final String PDF_PATH = "./pdfs/";
 
-    public void testPost(String databasePath, StatisticsDisplayBundle statistics) {
-        existDbClient.put(databasePath, statistics);
+    public void generateReportAndSavePdf(String agent) {
+        generateReport(agent);
+        String pdfText = StatisticsToText.call(getReport(agent));
+        PDF.createAndSave(PDF_PATH + agent, pdfText);
     }
 
     private final String USER_INTERACTIONS_EXT = "/ui";
@@ -41,7 +43,7 @@ public class XMLReportService {
         return "nistagram/report/" + agent + ext;
     }
 
-    public void generateReport(String agent) {
+    private void generateReport(String agent) {
         List<StatisticsDisplayBundle> statistics = generateCampaignReport(agent);
 
         existDbClient.put(concatenateDocumentPath(agent, USER_INTERACTIONS_EXT), statistics.get(0));
@@ -50,7 +52,7 @@ public class XMLReportService {
         existDbClient.put(concatenateDocumentPath(agent, CAMPAIGN_CLICKS_EXT), statistics.get(3));
     }
 
-    public List<StatisticsDisplayBundle> getReport(String agent) {
+    private List<StatisticsDisplayBundle> getReport(String agent) {
         return List.of(
                 existDbClient.get(concatenateDocumentPath(agent, USER_INTERACTIONS_EXT)),
                 existDbClient.get(concatenateDocumentPath(agent, COMMENTS_EXT)),
@@ -60,7 +62,7 @@ public class XMLReportService {
     }
 
 
-    public List<StatisticsDisplayBundle> generateCampaignReport(String agent) {
+    private List<StatisticsDisplayBundle> generateCampaignReport(String agent) {
         CampaignReportBundle campaignReportBundle = collectDomainData(agent);
         return List.of(
                 extractUserInteractionsAsStatistics(campaignReportBundle),
@@ -70,7 +72,7 @@ public class XMLReportService {
         );
     }
 
-    public CampaignReportBundle collectDomainData(String agent) {
+    private CampaignReportBundle collectDomainData(String agent) {
         // Fetch all campaigns for this agent
         List<Campaign> allCampaigns = campaignRepository.findByUsername(agent);
         allCampaigns.forEach(camp -> log.info("xml-report-service: Campaign: {}", camp.getName()));

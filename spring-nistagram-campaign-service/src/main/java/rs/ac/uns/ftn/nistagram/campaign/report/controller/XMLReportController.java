@@ -7,14 +7,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import rs.ac.uns.ftn.nistagram.campaign.report.domain.StatisticsDisplayBundle;
-import rs.ac.uns.ftn.nistagram.campaign.report.pdf.PDF;
 import rs.ac.uns.ftn.nistagram.campaign.report.service.XMLReportService;
 
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/campaigns/report")
@@ -33,25 +30,20 @@ public class XMLReportController {
 //        xmlReportService.testPost(payload.getDatabasePath(), payload.getXmlData());
 //    }
 
-    @PutMapping
-    public void generateReport(@RequestHeader("agent") String agent) {
-        xmlReportService.generateReport(agent);
-    }
+//    @PutMapping
+//    public void generateReport(@RequestHeader("agent") String agent) {
+//        xmlReportService.generateReport(agent);
+//    }
+//
+//    @GetMapping
+//    public List<StatisticsDisplayBundle> getReport(@RequestHeader("agent") String agent) {
+//        return xmlReportService.getReport(agent);
+//    }
 
     @GetMapping
-    public List<StatisticsDisplayBundle> getReport(@RequestHeader("agent") String agent) {
-        return xmlReportService.getReport(agent);
-    }
-
-    @PutMapping("pdf")
-    public void pdf() {
-        System.out.println("Current working directory: " + System.getProperty("user.dir"));
-        PDF.test("./pdfs/pdf");
-    }
-
-    @GetMapping("pdf")
-    public ResponseEntity<Resource> getPdf() {
-        Path path = Paths.get("./pdfs/pdf");
+    public ResponseEntity<Resource> pdf(@RequestHeader("agent") String agent) {
+        xmlReportService.generateReportAndSavePdf(agent);
+        Path path = Paths.get(xmlReportService.PDF_PATH + agent);
         Resource resource = null;
         try {
             resource = new UrlResource(path.toUri());

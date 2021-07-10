@@ -11,6 +11,12 @@ import java.io.IOException;
 
 public class PDF {
 
+    public static void createAndSave(String location, String text) {
+        PDDocument pdf = PDF.create("Campaign report");
+        PDF.write(pdf, text);
+        PDF.save(pdf, location);
+    }
+
     public static void test(String location) {
         PDDocument pdf = PDF.create("Hello world");
         String text = "Hello world. \nI am feeling extremely grateful today because\n I got my first dose of vaxx. \nNow since you all might be wondering I \ndid in fact get it in the hospital.";

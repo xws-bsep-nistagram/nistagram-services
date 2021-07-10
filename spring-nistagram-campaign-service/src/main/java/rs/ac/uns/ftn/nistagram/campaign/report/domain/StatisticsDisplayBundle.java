@@ -22,7 +22,8 @@ public class StatisticsDisplayBundle {
         this.statistics.add(new Pair<>(s, i));
     }
 
+    //Comparator.comparing(Pair::getSecond)
     public void sort() {
-        statistics.sort(Comparator.comparing(Pair::getSecond));
+        statistics.sort((a, b) -> b.getSecond().compareTo(a.getSecond()));
     }
 }
