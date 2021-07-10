@@ -94,6 +94,18 @@ services :
     volumes :
       - ${MYSQL_LOCAL_PATH}/data:/var/lib/mysql
 
+  existdb :
+    image : existdb/existdb:latest
+    container_name : existdb
+    restart : on-failure
+    ports : 
+      - "${EXISTDB_PORT_1}:${EXISTDB_PORT_1}"
+      - "${EXISTDB_PORT_2}:${EXISTDB_PORT_2}"
+    networks: 
+      - database
+    volumes : 
+      - ${EXISTDB_LOCAL_PATH}/data:/var/lib/existdb
+
   gateway :
     image : nistagram/api-gateway
     container_name : gateway
@@ -308,6 +320,7 @@ services :
       - database
     volumes :
       - ${LOG_PATH}/campaign-service:/app/logs/
+      - ${PDF_PATH}:/app/pdfs
 
   chat-service :
     image : nistagram/chat-service
