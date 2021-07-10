@@ -1,13 +1,10 @@
 package rs.ac.uns.ftn.nistagram.campaign.report.service;
 
-import com.fasterxml.jackson.databind.JsonSerializer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.nistagram.campaign.domain.Advertisement;
 import rs.ac.uns.ftn.nistagram.campaign.domain.Campaign;
-import rs.ac.uns.ftn.nistagram.campaign.domain.LongTermCampaign;
-import rs.ac.uns.ftn.nistagram.campaign.domain.OneTimeCampaign;
 import rs.ac.uns.ftn.nistagram.campaign.domain.enums.CampaignType;
 import rs.ac.uns.ftn.nistagram.campaign.report.domain.CampaignReportBundle;
 import rs.ac.uns.ftn.nistagram.campaign.report.domain.Content;
@@ -16,7 +13,6 @@ import rs.ac.uns.ftn.nistagram.campaign.report.http.client.ContentClient;
 import rs.ac.uns.ftn.nistagram.campaign.report.http.client.ExistDbClient;
 import rs.ac.uns.ftn.nistagram.campaign.repository.CampaignRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
