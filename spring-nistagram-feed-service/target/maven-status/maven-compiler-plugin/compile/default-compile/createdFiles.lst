@@ -48,6 +48,7 @@ rs/ac/uns/ftn/nistagram/feed/http/ContentClient.class
 rs/ac/uns/ftn/nistagram/feed/controllers/payload/FeedResponseGroup.class
 rs/ac/uns/ftn/nistagram/feed/domain/entry/feed/PostFeedEntry$PostFeedEntryBuilder.class
 rs/ac/uns/ftn/nistagram/feed/controllers/FeedController.class
+rs/ac/uns/ftn/nistagram/feed/messaging/event/campaign/CampaignDeleteEvent.class
 rs/ac/uns/ftn/nistagram/feed/messaging/event/userrelations/UserMutedEvent.class
 rs/ac/uns/ftn/nistagram/feed/messaging/event/story/StoryCreatedEvent.class
 rs/ac/uns/ftn/nistagram/feed/messaging/config/RabbitMQConfig.class

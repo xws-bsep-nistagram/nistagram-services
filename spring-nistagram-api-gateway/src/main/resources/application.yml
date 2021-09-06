@@ -5,26 +5,6 @@ spring :
   application :
     name : spring-nistagram-api-gateway
 
-opentracing :
-  jaeger :
-    http-sender :
-      url : http://jaeger:14268/api/traces
-
-management :
-  endpoint :
-    metrics :
-      enabled : true
-    prometheus :
-      enabled : true
-  metrics :
-    export :
-      prometheus :
-        enabled : true
-  endpoints :
-    web :
-      exposure :
-        include : "*"
-
 zuul :
   host :
     socket-timeout-millis : 20000
