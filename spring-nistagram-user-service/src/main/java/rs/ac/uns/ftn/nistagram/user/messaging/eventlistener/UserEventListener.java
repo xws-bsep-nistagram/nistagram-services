@@ -26,7 +26,7 @@ public class UserEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onCreateEvent(UserCreatedEvent event) {
 
-        log.info("Sending user created event to {}, event: {}",
+        log.info("Publishing an {}, event: {}",
                 RabbitMQConfig.USER_CREATED_EVENT_GRAPH_SERVICE, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_CREATED_EVENT_GRAPH_SERVICE,

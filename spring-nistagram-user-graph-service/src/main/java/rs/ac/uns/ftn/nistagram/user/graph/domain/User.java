@@ -22,7 +22,7 @@ public class User {
     @EqualsAndHashCode.Include
     private String username;
     private ProfileType profileType;
-    private RegistrationStatus registrationStatus;
+    private Boolean banned;
     @Relationship(type = "FOLLOWS")
     private Set<User> follows;
     @Relationship(type = "SENT_FOLLOW_REQUEST")
@@ -34,6 +34,15 @@ public class User {
     @Relationship(type = "IS_CLOSE_FRIEND")
     private Set<User> closeFriends;
 
+    public void ban(){
+        banned = true;
+    }
+    public void unban(){
+        banned = false;
+    }
+    public Boolean isBanned(){
+        return banned;
+    }
 
     public void addFollowing(User following) {
         if (following.getProfileType() == ProfileType.PRIVATE)

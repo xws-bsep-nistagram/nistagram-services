@@ -55,14 +55,14 @@ public class AuthService {
 
     @Transactional
     public String register(RegistrationRequest registrationRequest) {
-        log.info("New registration request with username '{}'", registrationRequest.getUsername());
+        log.info("New registration request for an user with an username '{}'", registrationRequest.getUsername());
         registrationRequest.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
         Credentials credentials = credentialsService.registerUser(registrationRequest);
 
         log.info("Sending activation mail to '{}'", registrationRequest.getEmail());
         mailService.sendActivationMessage(credentials);
 
-        log.debug("User with username '{}' created", registrationRequest.getUsername());
+        log.debug("User with an username '{}' registered", registrationRequest.getUsername());
         return encryptDetails(credentials);
     }
 

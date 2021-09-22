@@ -1,5 +1,6 @@
 package rs.ac.uns.ftn.nistagram.user.controllers;
 
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.nistagram.user.controllers.dtos.ProfileBannedResponse;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/users")
+@AllArgsConstructor
 public class UserController {
 
     private final RegistrationService registrationService;
@@ -27,20 +29,10 @@ public class UserController {
     private final ProfileMapper profileMapper;
     private final RegistrationRequestMapper registrationRequestMapper;
 
-    public UserController(RegistrationService registrationService,
-                          ProfileService profileService,
-                          ProfileMapper profileMapper,
-                          RegistrationRequestMapper registrationRequestMapper) {
-        this.registrationService = registrationService;
-        this.profileService = profileService;
-        this.profileMapper = profileMapper;
-        this.registrationRequestMapper = registrationRequestMapper;
-    }
-
     @PostMapping("register")
     public ResponseEntity<String> register(@Valid @RequestBody RegistrationRequestDTO request) {
         registrationService.register(registrationRequestMapper.toDomain(request));
-        return ResponseEntity.ok("User successfully registered");
+        return ResponseEntity.ok("Registration requested");
     }
 
     @GetMapping("profile")

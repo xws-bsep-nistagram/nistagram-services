@@ -23,7 +23,8 @@ public class UserEventListener {
     @EventListener
     public void onRegistrationFailedEvent(RegistrationFailedEvent event) {
 
-        log.info("Sending registration failed event to {}, event: {}", RabbitMQConfig.REGISTRATION_FAILED_EVENT_USER_SERVICE, event);
+        log.info("Publishing an {}, event: {}",
+                RabbitMQConfig.REGISTRATION_FAILED_EVENT_USER_SERVICE, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.REGISTRATION_FAILED_EVENT_USER_SERVICE, converter.toJSON(event));
 
@@ -33,7 +34,8 @@ public class UserEventListener {
     @EventListener
     public void onUserCreatedEvent(UserCreatedEvent event) {
 
-        log.info("Sending a user created event to {}, event: {}", RabbitMQConfig.USER_CREATED_EVENT_FEED_SERVICE, event);
+        log.info("Publishing an {}, event: {}",
+                RabbitMQConfig.USER_CREATED_EVENT_FEED_SERVICE, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_CREATED_EVENT_FEED_SERVICE, converter.toJSON(event));
 

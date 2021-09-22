@@ -23,7 +23,8 @@ public class UserEventListener {
     @EventListener
     public void onRegistrationFailedEvent(RegistrationFailedEvent event) {
 
-        log.info("Sending registration failed event to {}, event: {}", RabbitMQConfig.REGISTRATION_FAILED_TOPIC, event);
+        log.info("Publishing an {}, event: {}",
+                RabbitMQConfig.REGISTRATION_FAILED_TOPIC, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.REGISTRATION_FAILED_TOPIC, ROUTING_KEY, converter.toJSON(event));
 

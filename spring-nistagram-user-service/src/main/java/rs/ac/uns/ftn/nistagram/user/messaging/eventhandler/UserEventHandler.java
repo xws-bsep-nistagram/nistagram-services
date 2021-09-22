@@ -28,7 +28,7 @@ public class UserEventHandler {
 
         RegistrationFailedEvent event = converter.toObject(payload, RegistrationFailedEvent.class);
 
-        profileService.delete(event.getUsername());
+        profileService.invalidate(event.getUsername());
 
         authClient.delete(event.getUsername());
 

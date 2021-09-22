@@ -28,30 +28,28 @@ public class RegistrationService {
     private final ApplicationEventPublisher publisher;
 
     @Transactional
-    public String register(RegistrationRequest request) {
-        Credentials credentials = new Credentials(
-                request.getUsername(),
-                request.getPassword(),
-                request.getEmail()
-        );
+    public void register(RegistrationRequest request) {
+
+        Credentials credentials = new Credentials(request);
+
+        sendRegistrationRequest(credentials);
 
         User created = repository.save(createNewUser(request));
 
-        log.info("Created new user profile for an username '{}'", created.getUsername());
+        log.info("Received a registration request for an user profile with an username '{}'",
+                created.getUsername());
 
-        String jwt = sendRegistrationRequest(credentials);
+        publishRegisteredUser(created);
 
-        publish(created);
-
-        return jwt;
     }
 
-    public String sendRegistrationRequest(Credentials credentials) {
+    public void sendRegistrationRequest(Credentials credentials) {
         try {
-            log.info("Sending registration request from user-service to auth-service for username '{}'", credentials.getUsername());
-            return authClient.register(credentials);
+            log.info("Sending a registration request from user-service to auth-service for an user profile with an username '{}'",
+                    credentials.getUsername());
+            authClient.register(credentials);
         } catch (FeignException e) {
-            if (e.status() == 403) {
+            if (e.status() == 403 && e.responseBody().isPresent()) {
                 String message = StandardCharsets.UTF_8.decode(e.responseBody().get()).toString();
                 throw new RegistrationException(message);
             } else {
@@ -60,12 +58,10 @@ public class RegistrationService {
         }
     }
 
-    private void publish(User user) {
+    private void publishRegisteredUser(User user) {
 
         UserCreatedEvent event = new UserCreatedEvent(UUID.randomUUID().toString(),
                 UserEventPayloadMapper.toPayload(user));
-
-        log.info("Publishing an user created event {}", event);
 
         publisher.publishEvent(event);
     }

@@ -29,7 +29,7 @@ public class UserEventHandler {
     @RabbitListener(queues = {RabbitMQConfig.USER_CREATED_EVENT_FEED_SERVICE})
     public void handleUserCreated(@Payload String payload) {
 
-        log.info("Handling a created user event {}", payload);
+        log.info("Handling an user created event: {}", payload);
 
         UserCreatedEvent userCreatedEvent = converter.toObject(payload, UserCreatedEvent.class);
 
@@ -37,7 +37,7 @@ public class UserEventHandler {
 
         try {
             userService.create(UserEventPayloadMapper.toDomain(userCreatedEvent.getUserEventPayload()));
-        } catch (EntityAlreadyExistsException e) {
+        } catch (Exception e) {
             publishRegistrationFailed(userCreatedEvent.getUserEventPayload().getUsername());
         }
     }
@@ -46,8 +46,6 @@ public class UserEventHandler {
 
         RegistrationFailedEvent event = new RegistrationFailedEvent(transactionIdHolder.getCurrentTransactionId(),
                 username);
-
-        log.info("Publishing a registration failed event {}", event);
 
         publisher.publishEvent(event);
 

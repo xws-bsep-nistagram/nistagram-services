@@ -83,11 +83,13 @@ public class ProfileService {
     }
 
     @Transactional
-    public User delete(String username) {
+    public User invalidate(String username) {
 
         User found = get(username);
 
-        repository.delete(found);
+        found.invalidateRegistration();
+
+        found = repository.save(found);
 
         return found;
 

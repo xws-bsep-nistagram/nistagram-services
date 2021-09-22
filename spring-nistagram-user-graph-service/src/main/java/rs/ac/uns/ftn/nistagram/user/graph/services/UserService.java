@@ -18,15 +18,13 @@ import rs.ac.uns.ftn.nistagram.user.graph.repositories.UserRepository;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final TransactionIdHolder transactionIdHolder;
-    private final ApplicationEventPublisher publisher;
 
     @Transactional
     public void create(User user) {
         log.info("Received a user creation request for a user {}", user.getUsername());
         userUniquenessCheck(user);
         User createdUser = userRepository.save(user);
-        log.info("User {} has been successfully created", createdUser.getUsername());
+        log.info("User with an username '{}' has been successfully registered", createdUser.getUsername());
     }
 
     @Transactional
@@ -48,9 +46,7 @@ public class UserService {
     @Transactional
     public void delete(String username) {
         log.info("Received a user delete request for a user {}", username);
-
         userRepository.detachDelete(username);
-
         log.info("User {} has been successfully deleted", username);
 
     }
