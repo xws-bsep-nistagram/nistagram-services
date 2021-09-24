@@ -14,6 +14,12 @@ public interface UserRepository extends Neo4jRepository<User, String> {
     @Query("MATCH (u:User { username: $0 }) SET u.profileType = $1 RETURN u")
     User update(String username, ProfileType profileType);
 
+    @Query("MATCH (u:User { username: $0 }) SET u.banned = true RETURN u")
+    User ban(String username);
+
+    @Query("MATCH (u:User { username: $0 }) SET u.banned = false RETURN u")
+    User unban(String username);
+
     @Query("MATCH (u:User { username: $0 }) DETACH DELETE u")
     void detachDelete(String username);
 }

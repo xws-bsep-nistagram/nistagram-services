@@ -4,7 +4,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-    public static final String USER_BANNED_EVENT = "USER_BANNED_EVENT_POST_SERVICE";
+    public static final String USER_BANNED_POST_CHANNEL = "USER_BANNED_POST_CHANNEL";
+    public static final String USER_BAN_SAGA_REPLY_CHANNEL = "USER_BAN_SAGA_REPLY_CHANNEL";
 
     public static final String POST_CREATED_EVENT = "POST_CREATED_EVENT";
     public static final String POST_DELETED_EVENT = "POST_DELETED_EVENT";

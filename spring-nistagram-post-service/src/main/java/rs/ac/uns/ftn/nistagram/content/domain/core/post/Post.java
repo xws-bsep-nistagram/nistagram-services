@@ -43,6 +43,7 @@ public class Post extends UserContent {
     private List<ShareStory> shareStories;
     @OneToMany(mappedBy = "reportedPost", cascade = CascadeType.REMOVE)
     private List<PostReport> postReports;
+
     private boolean ad;
     private boolean adApproved;
 
@@ -55,6 +56,7 @@ public class Post extends UserContent {
     public boolean usersTagged() {
         return this.tags != null && !this.tags.isEmpty();
     }
+
 
     public void addReport(PostReport postReport) {
         if (this.postReports == null) postReports = new ArrayList<>();

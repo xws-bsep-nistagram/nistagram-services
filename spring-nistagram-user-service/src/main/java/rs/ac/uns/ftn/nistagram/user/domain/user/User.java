@@ -3,6 +3,7 @@ package rs.ac.uns.ftn.nistagram.user.domain.user;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import rs.ac.uns.ftn.nistagram.user.domain.user.preferences.NotificationPreferences;
 
 import javax.persistence.Embedded;
@@ -13,6 +14,7 @@ import javax.persistence.Id;
 @Getter
 @Setter
 @Entity
+@ToString
 public class User {
 
     @Id

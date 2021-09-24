@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import rs.ac.uns.ftn.nistagram.user.messaging.config.RabbitMQConfig;
-import rs.ac.uns.ftn.nistagram.user.messaging.event.UserBannedEvent;
 import rs.ac.uns.ftn.nistagram.user.messaging.event.UserCreatedEvent;
 import rs.ac.uns.ftn.nistagram.user.messaging.event.UserUpdatedEvent;
 import rs.ac.uns.ftn.nistagram.user.messaging.util.Converter;
@@ -41,16 +40,6 @@ public class UserEventListener {
         log.info("Sending user updated event to {}, event: {}", RabbitMQConfig.USER_UPDATED_TOPIC, event);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_UPDATED_TOPIC, ROUTING_KEY, converter.toJSON(event));
-
-    }
-
-    @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void onBanEvent(UserBannedEvent event) {
-
-        log.info("Sending user banned event to {}, event: {}", RabbitMQConfig.USER_BANNED_TOPIC, event);
-
-        rabbitTemplate.convertAndSend(RabbitMQConfig.USER_BANNED_TOPIC, ROUTING_KEY, converter.toJSON(event));
 
     }
 

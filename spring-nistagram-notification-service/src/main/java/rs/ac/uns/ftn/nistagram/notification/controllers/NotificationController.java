@@ -25,6 +25,6 @@ public class NotificationController {
 
     @DeleteMapping("{notificationId}")
     public ResponseEntity<?> delete(@RequestHeader("username") String username, @PathVariable Long notificationId) {
-        return ResponseEntity.ok(NotificationMapper.toDto(notificationService.hide(username, notificationId)));
+        return ResponseEntity.ok(NotificationMapper.toDto(notificationService.markAsSeen(username, notificationId)));
     }
 }

@@ -14,6 +14,7 @@ import rs.ac.uns.ftn.nistagram.user.graph.repositories.MutedUserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -33,7 +34,8 @@ public class MutedUserService {
             return new ArrayList<>();
         }
 
-        List<User> mutedUsers = mutedUserRepository.findMutedUsers(username);
+        List<User> mutedUsers = mutedUserRepository.findMutedUsers(username)
+                .stream().filter(user -> !user.isBanned()).collect(Collectors.toList());
         log.info("Found {} muted users for user {}", mutedUsers.size(), username);
 
         return mutedUsers;

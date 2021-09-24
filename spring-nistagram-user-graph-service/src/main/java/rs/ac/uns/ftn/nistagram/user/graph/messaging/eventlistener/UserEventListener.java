@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.config.RabbitMQConfig;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.user.RegistrationFailedEvent;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.user.UserCreatedEvent;
+import rs.ac.uns.ftn.nistagram.user.graph.messaging.payload.user.UserBannedReply;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.util.Converter;
 
 @Slf4j
@@ -39,6 +40,16 @@ public class UserEventListener {
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_CREATED_EVENT_FEED_SERVICE, converter.toJSON(event));
 
+    }
+
+    @Async
+    @EventListener
+    public void onUserBanFailedEvent(UserBannedReply reply){
+
+        log.info("Publishing a reply to {}, reply: {}",
+                RabbitMQConfig.USER_BAN_SAGA_REPLY_CHANNEL, reply);
+
+        rabbitTemplate.convertAndSend(RabbitMQConfig.USER_BAN_SAGA_REPLY_CHANNEL, converter.toJSON(reply));
     }
 
 }

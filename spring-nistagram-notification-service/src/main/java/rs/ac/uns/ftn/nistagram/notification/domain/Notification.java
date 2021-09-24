@@ -21,10 +21,18 @@ public class Notification {
     private Long id;
     private Long contentId;
     private boolean seen;
+    private boolean hidden;
     private LocalDateTime time;
     private String subject;
     private String target;
     private String text;
     private NotificationType notificationType;
 
+    public void hide(){
+        hidden = true;
+    }
+
+    public void unhide(){
+        hidden = false;
+    }
 }

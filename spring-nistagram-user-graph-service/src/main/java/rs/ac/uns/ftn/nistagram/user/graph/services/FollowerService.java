@@ -22,6 +22,7 @@ import rs.ac.uns.ftn.nistagram.user.graph.repositories.MutedUserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -43,7 +44,8 @@ public class FollowerService {
             return new ArrayList<>();
         }
 
-        List<User> followers = followerRepository.findFollowings(username);
+        List<User> followers = followerRepository.findFollowings(username)
+                .stream().filter(user -> !user.isBanned()).collect(Collectors.toList());
         log.info("Found {} followings for user {}", followers.size(), username);
 
         return followers;
@@ -58,7 +60,8 @@ public class FollowerService {
             return new ArrayList<>();
         }
 
-        List<User> followers = followerRepository.findFollowers(username);
+        List<User> followers = followerRepository.findFollowers(username).stream()
+                .filter(user -> !user.isBanned()).collect(Collectors.toList());;
         log.info("Found {} followers for user {}", followers.size(), username);
 
         return followers;
@@ -73,7 +76,8 @@ public class FollowerService {
             return new ArrayList<>();
         }
 
-        List<User> followers = followerRepository.findPendingFollowings(username);
+        List<User> followers = followerRepository.findPendingFollowings(username)
+                .stream().filter(user -> !user.isBanned()).collect(Collectors.toList());
         log.info("Found {} pending follow requests for user {}", followers.size(), username);
 
         return followers;
@@ -113,7 +117,7 @@ public class FollowerService {
     private List<Recommendation> findRecommendations(String username) {
         List<Recommendation> recommendations = new ArrayList<>();
 
-        List<User> recommendedUsers = followerRepository.recommend(username);
+        List<User> recommendedUsers = followerRepository.recommend(username).stream().filter(user -> !user.isBanned()).collect(Collectors.toList());
         log.info("Found {} recommendations for an user :'{}'", recommendedUsers.size(), username);
 
         if (recommendedUsers.isEmpty())
@@ -133,7 +137,8 @@ public class FollowerService {
 
         log.info("User {} follows no one, returning users ordered by popularity", username);
 
-        List<User> mostPopularUsers = followerRepository.findAllOrderedByPopularity(username);
+        List<User> mostPopularUsers = followerRepository.findAllOrderedByPopularity(username)
+                .stream().filter(user -> !user.isBanned()).collect(Collectors.toList());
         mostPopularUsers.forEach(user -> recommendations.add(new Recommendation(user)));
 
         return recommendations;
@@ -271,20 +276,19 @@ public class FollowerService {
     }
 
     public boolean checkFollowing(String subject, String target) {
-        constraintChecker.userPresenceCheck(subject);
-        constraintChecker.userPresenceCheck(target);
+        constraintChecker.basicRelationCheck(subject, target);
         return followerRepository.isFollowing(subject, target);
 
     }
 
     public boolean checkPending(String subject, String target) {
-        constraintChecker.userPresenceCheck(subject);
-        constraintChecker.userPresenceCheck(target);
+        constraintChecker.basicRelationCheck(subject, target);
         return followerRepository.sentFollowRequest(subject, target);
     }
 
     public UserStats getStats(String subject) {
         constraintChecker.userPresenceCheck(subject);
+        constraintChecker.userBannedCheck(subject);
         Long following = followerRepository.findFollowingCount(subject);
         Long followers = followerRepository.findFollowerCount(subject);
         return new UserStats(following, followers);

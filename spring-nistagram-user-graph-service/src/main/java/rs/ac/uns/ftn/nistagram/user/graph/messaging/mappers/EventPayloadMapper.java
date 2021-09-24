@@ -14,6 +14,7 @@ public class EventPayloadMapper {
         return User
                 .builder()
                 .username(payload.getUsername())
+                .banned(false)
                 .profileType(payload.getPrivacyData().isProfilePrivate()
                         ? ProfileType.PRIVATE : ProfileType.PUBLIC)
                 .build();

@@ -8,10 +8,10 @@ import rs.ac.uns.ftn.nistagram.user.messaging.payload.UserEventPayload;
 @Getter
 @Setter
 @ToString
-public class UserBannedEvent {
+public class UserBanEvent {
 
     private String transactionId;
 
-    private UserEventPayload userEventPayload;
+    private String username;
 
 }

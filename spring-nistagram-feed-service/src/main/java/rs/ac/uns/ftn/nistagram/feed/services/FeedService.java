@@ -10,6 +10,7 @@ import rs.ac.uns.ftn.nistagram.feed.domain.entry.feed.PostFeedEntry;
 import rs.ac.uns.ftn.nistagram.feed.domain.entry.feed.StoryFeedEntry;
 import rs.ac.uns.ftn.nistagram.feed.domain.user.User;
 import rs.ac.uns.ftn.nistagram.feed.exceptions.EntityNotFoundException;
+import rs.ac.uns.ftn.nistagram.feed.exceptions.OperationNotPermittedException;
 import rs.ac.uns.ftn.nistagram.feed.http.ContentClient;
 import rs.ac.uns.ftn.nistagram.feed.http.UserGraphClient;
 import rs.ac.uns.ftn.nistagram.feed.http.mappers.UserContentMapper;
@@ -35,9 +36,14 @@ public class FeedService {
 
     @Transactional(readOnly = true)
     public List<PostFeedEntry> getPostFeedByUsername(String username) {
-        log.info("Request for getting all the post feed entries for {} received", username);
+        log.info("Request for getting all the post feed entries for an user with an username '{}' received", username);
+
+        userAbsenceCheck(username);
+        userBannedCheck(username);
 
         var postFeedEntries = postFeedRepository.findAllByUsername(username);
+
+        postFeedEntries.removeIf(postFeedEntry -> userRepository.getOne(postFeedEntry.getPublisher()).isBanned());
 
         log.info("Found '{}' post entries for an user '{}'", postFeedEntries.size(), username);
 
@@ -58,6 +64,8 @@ public class FeedService {
                 .filter(e -> !e.getCloseFriends() && !e.isAd() && !e.isExpired())
                 .collect(Collectors.toList());
 
+        storyFeedEntries.removeIf(entry -> userRepository.getOne(entry.getPublisher()).isBanned());
+
         log.info("Found '{}' story feed entries for an user '{}'", storyFeedEntries.size(), username);
 
         if (storyFeedEntries.size() != 0)
@@ -77,6 +85,8 @@ public class FeedService {
                 .stream().filter(entry -> entry.getCloseFriends() && !entry.isAd() && !entry.isExpired())
                 .collect(Collectors.toList());
 
+        storyFeedEntries.removeIf(entry -> userRepository.getOne(entry.getPublisher()).isBanned());
+
         log.info("Found '{}' story feed entries for an user '{}'", storyFeedEntries.size(), username);
 
         if (storyFeedEntries.size() != 0)
@@ -89,15 +99,18 @@ public class FeedService {
     public List<StoryFeedEntry> getStoryCampaignsByUsername(String username) {
         log.info("Request for getting all the story ad campaigns for user '{}' received",
                 username);
-        List<StoryFeedEntry> all = storyFeedRepository.findAllByUsername(username)
+
+        List<StoryFeedEntry> campaigns = storyFeedRepository.findAllByUsername(username)
                 .stream().filter(StoryFeedEntry::isAd)
                 .collect(Collectors.toList());
 
-        log.info("Found '{}' story feed entries for an user '{}'", all.size(), username);
-        if (all.size() != 0)
-            all.sort(Comparator.comparing(FeedEntry::getCreatedAt).reversed());
+        campaigns.removeIf(entry -> userRepository.getOne(entry.getPublisher()).isBanned());
 
-        return all;
+        log.info("Found '{}' story feed entries for an user '{}'", campaigns.size(), username);
+        if (campaigns.size() != 0)
+            campaigns.sort(Comparator.comparing(FeedEntry::getCreatedAt).reversed());
+
+        return campaigns;
     }
 
     @Transactional
@@ -172,6 +185,24 @@ public class FeedService {
 
         log.info("All the '{}' available post and stories successfully added to a '{}' feed", target, subject);
 
+    }
+
+    private void userBannedCheck(String username) {
+        User found = userRepository.getOne(username);
+
+        if(found.isBanned()){
+            var message = String.format("User '%s' is banned", username);
+            log.warn(message);
+            throw new OperationNotPermittedException(message);
+        }
+    }
+
+    private void userAbsenceCheck(String username) {
+        if (!userRepository.existsById(username)) {
+            var message = String.format("User '%s' doesn't exist", username);
+            log.warn(message);
+            throw new EntityNotFoundException(message);
+        }
     }
 
     private void appendTargetStoryCollection(User foundSubject, List<StoryFeedEntry> targetStoryCollection) {

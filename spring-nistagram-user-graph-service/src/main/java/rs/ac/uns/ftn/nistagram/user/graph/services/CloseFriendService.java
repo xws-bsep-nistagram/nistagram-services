@@ -9,6 +9,7 @@ import rs.ac.uns.ftn.nistagram.user.graph.repositories.CloseFriendRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -51,7 +52,8 @@ public class CloseFriendService {
         List<User> closeFriends = new ArrayList<>();
 
         if (closeFriendRepository.hasCloseFriends(username))
-            closeFriends = closeFriendRepository.findCloseFriends(username);
+            closeFriends = closeFriendRepository.findCloseFriends(username)
+                    .stream().filter(user -> !user.isBanned()).collect(Collectors.toList());;
 
         log.info("Found {} close friends for user {}", closeFriends.size(), username);
 

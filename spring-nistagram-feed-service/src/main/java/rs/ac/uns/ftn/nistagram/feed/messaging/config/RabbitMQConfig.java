@@ -6,7 +6,9 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
     public static final String USER_CREATED_EVENT_FEED_SERVICE = "USER_CREATED_EVENT_FEED_SERVICE";
     public static final String REGISTRATION_FAILED_TOPIC = "REGISTRATION_FAILED_TOPIC";
-    public static final String USER_BANNED_EVENT = "USER_BANNED_EVENT_FEED_SERVICE";
+    public static final String USER_BANNED_FEED_CHANNEL = "USER_BANNED_FEED_CHANNEL";
+    public static final String USER_UNBAN_FEED_CHANNEL = "USER_UNBAN_FEED_CHANNEL";
+    public static final String USER_BAN_SAGA_REPLY_CHANNEL = "USER_BAN_SAGA_REPLY_CHANNEL";
 
     public static final String POST_CREATED_EVENT = "POST_CREATED_EVENT";
     public static final String POST_DELETED_EVENT = "POST_DELETED_EVENT";

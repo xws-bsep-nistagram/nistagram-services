@@ -68,28 +68,56 @@
       "arguments": {}
     },
     {
-      "name": "USER_BANNED_EVENT_GRAPH_SERVICE",
+      "name": "USER_BANNED_GRAPH_CHANNEL",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
       "arguments": {}
     },
     {
-      "name": "USER_BANNED_EVENT_FEED_SERVICE",
+      "name": "USER_UNBAN_GRAPH_CHANNEL",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
       "arguments": {}
     },
     {
-      "name": "USER_BANNED_EVENT_NOTIFICATION_SERVICE",
+      "name": "USER_BANNED_FEED_CHANNEL",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
       "arguments": {}
     },
     {
-      "name": "USER_BANNED_EVENT_POST_SERVICE",
+      "name": "USER_UNBAN_FEED_CHANNEL",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "USER_BANNED_NOTIFICATION_CHANNEL",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "USER_UNBAN_NOTIFICATION_CHANNEL",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "USER_BANNED_POST_CHANNEL",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "USER_BAN_SAGA_REPLY_CHANNEL",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
@@ -247,15 +275,6 @@
       "arguments": {}
     },
     {
-      "name": "USER_BANNED_TOPIC",
-      "vhost": "/",
-      "type": "fanout",
-      "durable": true,
-      "auto_delete": false,
-      "internal": false,
-      "arguments": {}
-    },
-    {
       "name": "REGISTRATION_FAILED_TOPIC",
       "vhost": "/",
       "type": "fanout",
@@ -286,38 +305,6 @@
       "source": "USER_UPDATED_TOPIC",
       "vhost": "/",
       "destination": "USER_UPDATED_EVENT_GRAPH_SERVICE",
-      "destination_type": "queue",
-      "routing_key": "",
-      "arguments": {}
-    },
-    {
-      "source": "USER_BANNED_TOPIC",
-      "vhost": "/",
-      "destination": "USER_BANNED_EVENT_GRAPH_SERVICE",
-      "destination_type": "queue",
-      "routing_key": "",
-      "arguments": {}
-    },
-    {
-      "source": "USER_BANNED_TOPIC",
-      "vhost": "/",
-      "destination": "USER_BANNED_EVENT_FEED_SERVICE",
-      "destination_type": "queue",
-      "routing_key": "",
-      "arguments": {}
-    },
-    {
-      "source": "USER_BANNED_TOPIC",
-      "vhost": "/",
-      "destination": "USER_BANNED_EVENT_NOTIFICATION_SERVICE",
-      "destination_type": "queue",
-      "routing_key": "",
-      "arguments": {}
-    },
-    {
-      "source": "USER_BANNED_TOPIC",
-      "vhost": "/",
-      "destination": "USER_BANNED_EVENT_POST_SERVICE",
       "destination_type": "queue",
       "routing_key": "",
       "arguments": {}

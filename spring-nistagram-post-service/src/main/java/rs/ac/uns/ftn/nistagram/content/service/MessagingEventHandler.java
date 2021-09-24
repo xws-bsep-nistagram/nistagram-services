@@ -24,19 +24,40 @@ public class MessagingEventHandler {
 
     @Transactional
     public void handleUserBanned(String username) {
-        log.info("Handling user banned request for an user {}", username);
+        log.info("Handling user banned request for an user with an username '{}'", username);
 
-        List<Post> postsByUser = postRepository.getByUsername(username);
-        postsByUser.forEach(postRepository::delete);
-        log.info("All of the posts by {} have been deleted", username);
+        hidePostsByUser(username);
 
-        List<Story> storiesByUser = storyRepository.getAllByUsername(username);
-        storiesByUser.forEach(storyRepository::delete);
-        log.info("All of the stories by {} have been deleted", username);
+        hideStoriesByUser(username);
 
+        hideTagsContainingUser(username);
+    }
+
+    private void hideTagsContainingUser(String username) {
         List<Tag> tags = tagRepository.findByTag(username);
-        tags.forEach(tagRepository::delete);
-        log.info("Tags containing user {} have been deleted", username);
+        tags.forEach(tag -> {
+            tag.hide();
+            tagRepository.save(tag);
+        });
+        log.info("Tags containing user '{}' have been hidden", username);
+    }
+
+    private void hideStoriesByUser(String username) {
+        List<Story> storiesByUser = storyRepository.getAllByUsername(username);
+        storiesByUser.forEach(story -> {
+            story.hide();
+            storyRepository.save(story);
+        });
+        log.info("All of the stories by '{}' have been hidden", username);
+    }
+
+    private void hidePostsByUser(String username) {
+        List<Post> postsByUser = postRepository.getByUsername(username);
+        postsByUser.forEach(post -> {
+            post.hide();
+            postRepository.save(post);
+        });
+        log.info("All of the posts by '{}' have been hidden", username);
     }
 
 }

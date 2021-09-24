@@ -15,6 +15,7 @@ import rs.ac.uns.ftn.nistagram.notification.repositories.NotificationRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -37,12 +38,15 @@ public class NotificationService {
         List<Notification> notifications = notificationRepository.findByUsername(username);
         if (notifications == null)
             return new ArrayList<>();
-        return notifications;
+        return notifications
+                .stream()
+                .filter(notification -> !notification.isHidden())
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Notification hide(String username, Long notificationId) {
-        log.info("Hiding notification with an id: {} for an user '{}'", notificationId, username);
+    public Notification markAsSeen(String username, Long notificationId) {
+        log.info("Marking notification with an id: {} for an user '{}' as seen", notificationId, username);
 
         Notification notification = notificationRepository.getOne(notificationId);
         if (!notification.getTarget().equals(username)) {
@@ -50,7 +54,7 @@ public class NotificationService {
             throw new OperationNotPermittedException("Cannot hide this notification");
         }
 
-        log.info("Notification with an id: {} successfully hidden", notificationId);
+        log.info("Notification with an id: {} successfully marked as seen", notificationId);
         notification.setSeen(true);
         notificationRepository.save(notification);
         return notification;
@@ -58,15 +62,32 @@ public class NotificationService {
 
     @Transactional
     public void handleUserBanned(String username) {
-        log.info("Handling user banned event for an user '{}'",
-                username);
+        log.info("Received an user ban request for for an user with an username '{}'", username);
 
         List<Notification> notifications = notificationRepository.findAllContaining(username);
 
-        notifications.forEach(notificationRepository::delete);
+        notifications.forEach(notification -> {
+            notification.hide();
+            notificationRepository.save(notification);
+        });
 
-        log.info("Notifications containing '{}' as a subject or as a target are successfully removed",
-                username);
+        log.info("User with an username '{}' has been successfully banned", username);
+
+    }
+
+    @Transactional
+    public void handleUserUnbanned(String username) {
+
+        log.info("Received an user unban request for for an user with an username '{}'", username);
+
+        List<Notification> notifications = notificationRepository.findAllContaining(username);
+
+        notifications.forEach(notification -> {
+            notification.unhide();
+            notificationRepository.save(notification);
+        });
+
+        log.info("User with an username '{}' has been successfully unbanned", username);
 
     }
 
@@ -211,21 +232,18 @@ public class NotificationService {
     }
 
     private boolean postLikedPreferencesSatisfied(Notification postLikedNotification, NotificationPreferencesDTO preferences) {
-        System.out.println(preferences.toString());
         return preferences.likeNotificationEnabled() ||
                 (preferences.likeNotificationEnabledForFollowers()
                         && isFollowing(postLikedNotification.getTarget(), postLikedNotification.getSubject()));
     }
 
     private boolean postDislikedPreferencesSatisfied(Notification postDislikedNotification, NotificationPreferencesDTO preferences) {
-        System.out.println(preferences.toString());
         return preferences.dislikeNotificationEnabled() ||
                 (preferences.dislikeNotificationEnabledForFollowers()
                         && isFollowing(postDislikedNotification.getTarget(), postDislikedNotification.getSubject()));
     }
 
     private boolean postSharedPreferencesSatisfied(Notification postSharedNotification, NotificationPreferencesDTO preferences) {
-        System.out.println(preferences.toString());
         return preferences.shareNotificationEnabled() ||
                 (preferences.shareNotificationEnabledForFollowers()
                         && isFollowing(postSharedNotification.getTarget(), postSharedNotification.getSubject()));
@@ -234,6 +252,5 @@ public class NotificationService {
     private boolean isFollowing(String subject, String target) {
         return userGraphClient.checkFollowing(subject, target).isFollowing();
     }
-
 
 }

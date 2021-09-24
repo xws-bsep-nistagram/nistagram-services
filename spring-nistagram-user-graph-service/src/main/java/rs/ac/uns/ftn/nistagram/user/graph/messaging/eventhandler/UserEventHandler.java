@@ -8,10 +8,11 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.config.RabbitMQConfig;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.user.RegistrationFailedEvent;
-import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.user.UserBannedEvent;
+import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.user.UserBanEvent;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.user.UserCreatedEvent;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.event.user.UserUpdatedEvent;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.mappers.EventPayloadMapper;
+import rs.ac.uns.ftn.nistagram.user.graph.messaging.payload.user.UserBannedReply;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.util.Converter;
 import rs.ac.uns.ftn.nistagram.user.graph.messaging.util.TransactionIdHolder;
 import rs.ac.uns.ftn.nistagram.user.graph.services.UserService;
@@ -83,16 +84,40 @@ public class UserEventHandler {
 
     }
 
-    @RabbitListener(queues = {RabbitMQConfig.USER_BANNED_EVENT})
+    @RabbitListener(queues = {RabbitMQConfig.USER_BANNED_GRAPH_CHANNEL})
     public void handleUserBanned(@Payload String payload) {
 
         log.info("Handling an user banned event: {}", payload);
 
-        UserBannedEvent event = converter.toObject(payload, UserBannedEvent.class);
+        UserBanEvent event = converter.toObject(payload, UserBanEvent.class);
 
         transactionIdHolder.setCurrentTransactionId(event.getTransactionId());
 
-        userService.delete(EventPayloadMapper.toDomain(event.getUserEventPayload()));
+        UserBannedReply reply = new UserBannedReply(RabbitMQConfig.USER_BANNED_GRAPH_CHANNEL,
+                event.getUsername());
+
+        try{
+            userService.ban(event.getUsername());
+            reply.setOperationSucceeded(true);
+        }catch (Exception e){
+            reply.setOperationSucceeded(false);
+            log.warn("Banning an user with an username '{}' failed", event.getUsername());
+        }
+
+        publisher.publishEvent(reply);
+
+    }
+
+    @RabbitListener(queues = {RabbitMQConfig.USER_UNBAN_GRAPH_CHANNEL})
+    public void handleUserUnbanned(@Payload String payload){
+
+        log.info("Handling an user unbanned event: {}", payload);
+
+        UserBanEvent event = converter.toObject(payload, UserBanEvent.class);
+
+        transactionIdHolder.setCurrentTransactionId(event.getTransactionId());
+
+        userService.unban(event.getUsername());
 
     }
 

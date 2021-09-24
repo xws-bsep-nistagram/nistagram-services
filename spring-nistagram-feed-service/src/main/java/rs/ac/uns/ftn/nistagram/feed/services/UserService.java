@@ -24,14 +24,12 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PostFeedRepository postFeedRepository;
-    private final StoryFeedRepository storyFeedRepository;
     private final ApplicationEventPublisher publisher;
     private final TransactionIdHolder transactionIdHolder;
 
     @Transactional
     public void create(User user) {
-        userPresenceCheck(user);
+        userPresenceCheck(user.getUsername());
         log.info("User creation request for an user '{}' received", user.getUsername());
         userRepository.save(user);
         publishRegistrationSucceeded(user);
@@ -50,51 +48,49 @@ public class UserService {
 
 
     @Transactional
-    public void delete(User user) {
-        userAbsenceCheck(user);
+    public void ban(String username) {
+        log.info("Received an user ban request for for an user with an username '{}'", username);
 
-        log.info("User deletion request for an user '{}' received", user.getUsername());
+        userAbsenceCheck(username);
 
-        clearUserFeed(user);
-        clearFollowersFeed(user);
-        userRepository.deleteById(user.getUsername());
+        User found = userRepository.getOne(username);
+        found.ban();
+        userRepository.save(found);
 
-        log.info("User '{}' has been successfully deleted", user.getUsername());
+        log.info("User with an username '{}' has been successfully banned", username);
     }
 
-    private void clearUserFeed(User user) {
-        List<PostFeedEntry> postFeedEntries = postFeedRepository.findAllByUsername(user.getUsername());
-        postFeedEntries.forEach(postFeedRepository::delete);
+    @Transactional
+    public void unban(String username) {
 
-        List<StoryFeedEntry> storyFeedEntries = storyFeedRepository.findAllByUsername(user.getUsername());
-        storyFeedEntries.forEach(storyFeedRepository::delete);
-    }
+        log.info("Received an user unban request for for an user with an username '{}'", username);
 
-    private void clearFollowersFeed(User user) {
-        List<PostFeedEntry> postFeedEntries = postFeedRepository.findAllByPublisher(user.getUsername());
-        postFeedEntries.forEach(postFeedRepository::delete);
+        userAbsenceCheck(username);
 
-        List<StoryFeedEntry> storyFeedEntries = storyFeedRepository.findAllByPublisher(user.getUsername());
-        storyFeedEntries.forEach(storyFeedRepository::delete);
+        User found = userRepository.getOne(username);
+        found.unban();
+        userRepository.save(found);
+
+        log.info("User with an username '{}' has been successfully unbanned", username);
 
     }
 
-    private void userPresenceCheck(User user) {
-        if (userRepository.existsById(user.getUsername())) {
-            var message = String.format("User '%s' already exist", user.getUsername());
+
+    private void userPresenceCheck(String username) {
+        if (userRepository.existsById(username)) {
+            var message = String.format("User '%s' already exist",username);
             log.warn(message);
             throw new EntityAlreadyExistsException(message);
         }
     }
 
 
-    private void userAbsenceCheck(User user) {
-        if (!userRepository.existsById(user.getUsername())) {
-            var message = String.format("User '%s' doesn't exist", user.getUsername());
+    private void userAbsenceCheck(String username) {
+        if (!userRepository.existsById(username)) {
+            var message = String.format("User '%s' doesn't exist", username);
             log.warn(message);
             throw new EntityNotFoundException(message);
         }
     }
-
 
 }

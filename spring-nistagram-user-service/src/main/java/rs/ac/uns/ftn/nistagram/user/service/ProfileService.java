@@ -17,11 +17,11 @@ import rs.ac.uns.ftn.nistagram.user.http.post.PostClient;
 import rs.ac.uns.ftn.nistagram.user.http.post.PostStats;
 import rs.ac.uns.ftn.nistagram.user.infrastructure.exceptions.BannedException;
 import rs.ac.uns.ftn.nistagram.user.infrastructure.exceptions.EntityNotFoundException;
-import rs.ac.uns.ftn.nistagram.user.messaging.event.UserBannedEvent;
 import rs.ac.uns.ftn.nistagram.user.messaging.event.UserUpdatedEvent;
 import rs.ac.uns.ftn.nistagram.user.messaging.mappers.UserEventPayloadMapper;
 import rs.ac.uns.ftn.nistagram.user.repository.UserRepository;
 import rs.ac.uns.ftn.nistagram.user.repository.specification.UserSpecification;
+import rs.ac.uns.ftn.nistagram.user.sagas.UserSagaOrchestrator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +38,7 @@ public class ProfileService {
     private final UserGraphClient userGraphClient;
     private final PostClient postClient;
     private final UserStatsMapper statsMapper;
+    private final UserSagaOrchestrator userSagaOrchestrator;
 
 
     @Transactional(readOnly = true)
@@ -68,40 +69,21 @@ public class ProfileService {
     @Transactional
     public User ban(String username) {
         User found = get(username);
+
         bannedCheck(found);
-        log.info("Banning user: '{}'", username);
 
-        found.ban();
-        repository.save(found);
-
-        publishUserBanned(found);
-
-        log.info("User: '{}' successfully banned.", username);
+        userSagaOrchestrator.executeBanSaga(found);
 
         return found;
-
     }
 
     @Transactional
-    public User invalidate(String username) {
-
+    public User delete(String username) {
         User found = get(username);
 
-        found.invalidateRegistration();
-
-        found = repository.save(found);
+        repository.delete(found);
 
         return found;
-
-    }
-
-    private void publishUserBanned(User user) {
-        UserBannedEvent event = new UserBannedEvent(UUID.randomUUID().toString(),
-                UserEventPayloadMapper.toPayload(user));
-
-        log.info("Publishing an user banned event {}", event);
-
-        publisher.publishEvent(event);
     }
 
     @Transactional
@@ -113,6 +95,7 @@ public class ProfileService {
 
     @Transactional(readOnly = true)
     public List<User> find(String usernameQuery, String caller) {
+
         List<User> foundUsers = repository.findAllByUsernameContains(usernameQuery)
                 .stream()
                 .filter(user -> !user.isBanned())

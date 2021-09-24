@@ -14,6 +14,7 @@ import rs.ac.uns.ftn.nistagram.user.graph.repositories.FollowerRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -33,7 +34,8 @@ public class BlockedUserService {
             return new ArrayList<>();
         }
 
-        List<User> blockedUsers = blockedUserRepository.findBlockedUsers(username);
+        List<User> blockedUsers = blockedUserRepository.findBlockedUsers(username)
+                .stream().filter(user -> !user.isBanned()).collect(Collectors.toList());
         log.info("Found {} blocked users for an user {}", blockedUsers.size(), username);
 
         return blockedUsers;

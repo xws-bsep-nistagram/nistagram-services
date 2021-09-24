@@ -2,6 +2,7 @@ rs/ac/uns/ftn/nistagram/feed/domain/entry/feed/StoryFeedEntry.class
 rs/ac/uns/ftn/nistagram/feed/controllers/mappers/FeedPayloadMapper.class
 rs/ac/uns/ftn/nistagram/feed/controllers/payload/FeedResponseGroupEntry$FeedResponseGroupEntryBuilder.class
 rs/ac/uns/ftn/nistagram/feed/messaging/event/user/RegistrationFailedEvent.class
+rs/ac/uns/ftn/nistagram/feed/messaging/event/user/UserBannedReply$UserBannedReplyBuilder.class
 rs/ac/uns/ftn/nistagram/feed/messaging/event/user/UserCreatedEvent.class
 rs/ac/uns/ftn/nistagram/feed/messaging/payload/story/StoryPayloadType.class
 rs/ac/uns/ftn/nistagram/feed/messaging/eventhandler/ContentEventHandler.class
@@ -13,6 +14,7 @@ rs/ac/uns/ftn/nistagram/feed/messaging/event/post/PostDeletedEvent.class
 rs/ac/uns/ftn/nistagram/feed/controllers/payload/FeedResponseGroupEntry.class
 rs/ac/uns/ftn/nistagram/feed/messaging/mappers/story/StoryTopicPayloadMapper.class
 rs/ac/uns/ftn/nistagram/feed/messaging/event/user/RegistrationSucceededEvent.class
+rs/ac/uns/ftn/nistagram/feed/messaging/event/user/UserBanEvent.class
 rs/ac/uns/ftn/nistagram/feed/SpringNistagramFeedServiceApplication.class
 rs/ac/uns/ftn/nistagram/feed/messaging/mappers/campaign/CampaignPayloadMapper.class
 rs/ac/uns/ftn/nistagram/feed/messaging/payload/campaign/CampaignPayload.class
@@ -38,7 +40,6 @@ rs/ac/uns/ftn/nistagram/feed/messaging/util/Converter.class
 rs/ac/uns/ftn/nistagram/feed/messaging/event/userrelations/UserUnfollowedEvent.class
 rs/ac/uns/ftn/nistagram/feed/messaging/eventhandler/UserRelationEventHandler.class
 rs/ac/uns/ftn/nistagram/feed/controllers/payload/FeedResponse.class
-rs/ac/uns/ftn/nistagram/feed/messaging/event/user/UserBannedEvent.class
 rs/ac/uns/ftn/nistagram/feed/messaging/payload/post/PostEventPayload$PostEventPayloadBuilder.class
 rs/ac/uns/ftn/nistagram/feed/messaging/event/post/PostCreatedEvent.class
 rs/ac/uns/ftn/nistagram/feed/messaging/event/campaign/CampaignsPublishEvent.class
@@ -67,6 +68,7 @@ rs/ac/uns/ftn/nistagram/feed/http/payload/user/ProfileType.class
 rs/ac/uns/ftn/nistagram/feed/controllers/payload/FeedResponse$FeedResponseBuilder.class
 rs/ac/uns/ftn/nistagram/feed/exceptions/EntityAlreadyExistsException.class
 rs/ac/uns/ftn/nistagram/feed/exceptions/EntityNotFoundException.class
+rs/ac/uns/ftn/nistagram/feed/messaging/event/user/UserBannedReply.class
 rs/ac/uns/ftn/nistagram/feed/messaging/payload/user/relations/UserRelationshipRequest.class
 rs/ac/uns/ftn/nistagram/feed/messaging/eventhandler/UserEventHandler.class
 rs/ac/uns/ftn/nistagram/feed/messaging/payload/post/PostPayloadType.class

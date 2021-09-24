@@ -15,8 +15,16 @@ public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
+    private boolean hidden;
     @NotEmpty
     private String tag;
     @ManyToOne
     private Post post;
+
+    public void hide(){
+        hidden = true;
+    }
+    public void unhide(){
+        hidden = false;
+    }
 }

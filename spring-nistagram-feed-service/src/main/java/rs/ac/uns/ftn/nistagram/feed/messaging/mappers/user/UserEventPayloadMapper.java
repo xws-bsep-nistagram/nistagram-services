@@ -9,6 +9,7 @@ public class UserEventPayloadMapper {
         return User
                 .builder()
                 .username(payload.getUsername())
+                .banned(false)
                 .build();
     }
 }

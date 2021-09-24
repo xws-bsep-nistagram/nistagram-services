@@ -20,6 +20,7 @@ public class User {
     @Id
     @EqualsAndHashCode.Include
     private String username;
+    private boolean banned;
     @ManyToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<PostFeedEntry> postFeedEntries;
     @ManyToMany(mappedBy = "users", cascade = CascadeType.ALL)
@@ -28,6 +29,14 @@ public class User {
     private List<PostCampaignEntry> postCampaignEntries;
     @ManyToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<StoryCampaignEntry> storyCampaignEntries;
+
+    public void ban(){
+        banned = true;
+    }
+
+    public void unban(){
+        banned = false;
+    }
 
     public void addToPostFeed(PostFeedEntry postFeedEntry) {
         postFeedEntries.add(postFeedEntry);

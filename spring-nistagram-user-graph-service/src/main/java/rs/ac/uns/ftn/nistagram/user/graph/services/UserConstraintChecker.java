@@ -3,6 +3,7 @@ package rs.ac.uns.ftn.nistagram.user.graph.services;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.nistagram.user.graph.domain.User;
 import rs.ac.uns.ftn.nistagram.user.graph.exceptions.EntityAlreadyExistsException;
 import rs.ac.uns.ftn.nistagram.user.graph.exceptions.OperationNotPermittedException;
 import rs.ac.uns.ftn.nistagram.user.graph.repositories.*;
@@ -18,14 +19,12 @@ public class UserConstraintChecker {
     private final FollowerRepository followerRepository;
 
     public void pendingRequestCheck(String subject, String target) {
-        userPresenceCheck(subject);
-        userPresenceCheck(target);
+        basicRelationCheck(subject, target);
         followRequestExists(subject, target);
     }
 
     public void followRequestCheck(String subject, String target) {
-        userPresenceCheck(subject);
-        userPresenceCheck(target);
+        basicRelationCheck(subject, target);
         blockedConstraintCheck(subject, target);
         alreadyFollowsCheck(subject, target);
         followRequestPresenceCheck(subject, target);
@@ -33,43 +32,53 @@ public class UserConstraintChecker {
 
 
     public void unfollowRequestCheck(String subject, String target) {
-        userPresenceCheck(subject);
-        userPresenceCheck(target);
+        basicRelationCheck(subject, target);
         followingConstraintCheck(subject, target);
     }
 
     public void muteRequestCheck(String subject, String target) {
-        userPresenceCheck(subject);
-        userPresenceCheck(target);
+        basicRelationCheck(subject, target);
         followingConstraintCheck(subject, target);
         blockedConstraintCheck(subject, target);
         alreadyMutedConstraintCheck(subject, target);
     }
 
     public void unmuteRequestCheck(String subject, String target) {
-        userPresenceCheck(subject);
-        userPresenceCheck(target);
+        basicRelationCheck(subject, target);
         mutedConstraintCheck(subject, target);
     }
 
     public void blockRequestCheck(String subject, String target) {
-        userPresenceCheck(subject);
-        userPresenceCheck(target);
+        basicRelationCheck(subject, target);
         alreadyBlockedCheck(subject, target);
     }
 
     public void unblockRequestCheck(String subject, String target) {
-        userPresenceCheck(subject);
-        userPresenceCheck(target);
+        basicRelationCheck(subject, target);
         unblockConstraintCheck(subject, target);
     }
 
     public void closeFriendRequestCheck(String subject, String target) {
-        userPresenceCheck(subject);
-        userPresenceCheck(target);
+        basicRelationCheck(subject, target);
         blockedConstraintCheck(subject, target);
         followingConstraintCheck(subject, target);
         alreadyCloseFriendCheck(subject, target);
+    }
+
+    public void basicRelationCheck(String subject, String target) {
+        userPresenceCheck(subject);
+        userPresenceCheck(target);
+        userBannedCheck(subject);
+        userBannedCheck(target);
+    }
+
+    public void userBannedCheck(String username) {
+        User found = userRepository.findById(username).get();
+        if(found.isBanned()){
+            var message = String.format("User with an username '%s' is banned", username);
+            log.warn(message);
+            throw new OperationNotPermittedException(message);
+        }
     }
 
     public void closeFriendRemovalCheck(String subject, String target) {
